@@ -4,6 +4,7 @@
 
 package frc.robot.Util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import frc.robot.Util.PIDDisplay.PIDSetter;
 /** Add your docs here. */
 public class SparkMaxSetter implements PIDSetter {
 
-    private List<SparkMaxConfig> configs;
+    private List<SparkMaxConfig> configs = new ArrayList<SparkMaxConfig>();
     private Gains gains;
     
     public SparkMaxSetter(SparkMaxConfig... configs){
