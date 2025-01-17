@@ -103,6 +103,7 @@ public class SwerveModule {
 
         //#region Turn Motor
         turnMotor = new SparkMax(turnID, MotorType.kBrushless);
+        turnPIDController = turnMotor.getClosedLoopController();
         turnConfig = new SparkMaxConfig();
         turnConfig
             .inverted(true)

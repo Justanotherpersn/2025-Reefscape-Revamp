@@ -4,11 +4,14 @@
 
 package frc.robot.Subsystems;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.signals.InvertedValue;
 
@@ -20,6 +23,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -30,7 +34,7 @@ import frc.robot.Constants.ModuleConstants;
 import frc.robot.Util.PIDDisplay;
 
 public class Drivetrain extends SubsystemBase {
-  Pigeon2 IMU;
+  Pigeon2 IMU = new Pigeon2(20);
 
   private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
     new Translation2d(Constants.ROBOT_WHEEL_BASE/2 , Constants.ROBOT_WHEEL_BASE/2), 
@@ -49,11 +53,17 @@ public class Drivetrain extends SubsystemBase {
     poseEstimator = new SwerveDrivePoseEstimator(
       kinematics, 
       new Rotation2d(), 
-      MODULES.collectProperty(SwerveModule::getPosition),
+      MODULES.collectProperty(SwerveModule::getPosition, SwerveModulePosition.class),
       new Pose2d(0,0, new Rotation2d()),
       MatBuilder.fill(Nat.N3(), Nat.N1(),0.05,0.05,0.05), //Standard deviations for state estimate, (m,m,rad). Increase to trust less
       MatBuilder.fill(Nat.N3(), Nat.N1(),0.9,0.9,0.9) //Standard deviations for vision estimate, (m,m,rad). Increase to trust less
     );
+
+    Pigeon2Configuration IMUconfig = new Pigeon2Configuration();
+    IMUconfig.MountPose.MountPoseYaw = 0;
+    IMUconfig.MountPose.MountPosePitch = 0;
+    IMUconfig.MountPose.MountPoseRoll = 90;
+    IMU.getConfigurator().apply(IMUconfig);
 
     setPose(new Pose2d()); //autonomous will reset this when starting 
     PIDDisplay.PIDList.addOption("Swerve Drive Motors", SwerveModule.driveSetters);
@@ -76,6 +86,8 @@ public class Drivetrain extends SubsystemBase {
         moduleID % 2 == 0 ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive,
         moduleID
       );
+
+      System.out.println("Created swerve module with id " + moduleID);
     }
 
     /**
@@ -85,9 +97,9 @@ public class Drivetrain extends SubsystemBase {
      * @return The resulting list
      */
     @SuppressWarnings("unchecked")
-    public static <T> T[] collectProperty(Function<SwerveModule, T> map) {
+    public static <T> T[] collectProperty(Function<SwerveModule, T> map, Class<T> returnType) {
       List<T> result = List.of(MODULES.values()).stream().map(m -> map.apply(m.base)).collect(Collectors.toList());
-      return result.toArray((T[]) new Object[result.size()]);
+      return result.toArray((T[]) Array.newInstance(returnType, result.size()));
     }
 
     public static void forAll(Consumer<SwerveModule> lambda) {
@@ -116,7 +128,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public boolean allModulesHomed() {
-    return !Arrays.asList(MODULES.collectProperty(m -> m.homed)).contains(false);
+    return !Arrays.asList(MODULES.collectProperty(m -> m.homed, Boolean.class)).contains(false);
   }
   //#endregion
 
@@ -124,7 +136,7 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     headingEntry.setDouble(getPose().getRotation().getDegrees());
 
-    poseEstimator.update(getHeadingRaw(), MODULES.collectProperty(SwerveModule::getPosition));
+    poseEstimator.update(getHeadingRaw(), MODULES.collectProperty(SwerveModule::getPosition, SwerveModulePosition.class));
   }
 
   /**
@@ -148,7 +160,7 @@ public class Drivetrain extends SubsystemBase {
    * @param newPose new pose
    */
   public void setPose(Pose2d newPose){
-    poseEstimator.resetPosition(getHeadingRaw(), MODULES.collectProperty(SwerveModule::getPosition), newPose);
+    poseEstimator.resetPosition(getHeadingRaw(), MODULES.collectProperty(SwerveModule::getPosition, SwerveModulePosition.class), newPose);
   }
 
   /**
@@ -166,7 +178,7 @@ public class Drivetrain extends SubsystemBase {
    * @return The heading directly from the gyroscope
    */
   public Rotation2d getHeadingRaw() {
-    return new Rotation2d(IMU.getYaw().getValueAsDouble());
+    return new Rotation2d(/*IMU.getYaw().getValueAsDouble()*/0);
   }
 
   public static void addVisionMeasurement(Pose2d visionPose, double timestamp){
