@@ -86,20 +86,9 @@ public class Drivetrain extends SubsystemBase {
         moduleID % 2 == 0 ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive,
         moduleID
       );
+
+      System.out.println("Created swerve module with id " + moduleID);
     }
-
-    // //The entire purpose of this subclass is to convert a List to an Array because Java has a mental breakdown trying to do it with reflection
-    // public static class CommonArrays {
-    //   private static final SwerveModulePosition swerveDrivePositions[] = new SwerveModulePosition[MODULES.values().length];
-
-    //   private static void init() {
-    //     for (MODULES module : MODULES.values()) {
-    //       int i = module.ordinal();
-    //       swerveDrivePositions[i] = 
-    //       module.base.getPosition();
-    //     }
-    //   }
-    // }
 
     /**
      * Iterates through the list of swerve modules and returns an array containing the result of executing a function on each module
@@ -189,7 +178,7 @@ public class Drivetrain extends SubsystemBase {
    * @return The heading directly from the gyroscope
    */
   public Rotation2d getHeadingRaw() {
-    return new Rotation2d(IMU.getYaw().getValueAsDouble());
+    return new Rotation2d(/*IMU.getYaw().getValueAsDouble()*/0);
   }
 
   public static void addVisionMeasurement(Pose2d visionPose, double timestamp){
