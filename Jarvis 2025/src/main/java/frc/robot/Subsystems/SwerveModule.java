@@ -135,7 +135,7 @@ public class SwerveModule {
         driveOutputEntry = swerveTab.add("Drive Output " + moduleID, 0).withPosition(6, moduleID).getEntry();
         turnOutputEntry = swerveTab.add("Turn Output " + moduleID, 0).withPosition(7, moduleID).getEntry();
     
-        sensorEntry = swerveTab.add("Home Sensor " + moduleID, 0).withPosition(9, moduleID).getEntry();
+        sensorEntry = swerveTab.add("Home Sensor " + moduleID, false).withPosition(9, moduleID).getEntry();
         //#endregion
     }
 

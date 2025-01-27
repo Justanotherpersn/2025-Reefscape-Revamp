@@ -17,7 +17,7 @@ public class Constants {
     public static final double ROBOT_WHEEL_BASE = Units.inchesToMeters(21.5);
     public static final double MAX_DRIVE_SPEED = 1;
     public static final double MAX_ANGULAR_SPEED = 3;
-    public static final double DRIVE_TOLERANCE_PERCENT = 0.03;
+    public static final double DRIVE_TOLERANCE_PERCENT = 0.05;
 
     public static class ModuleConstants{
         /** Overall max speed of the module in m/s */
@@ -43,28 +43,32 @@ public class Constants {
     }
 
     public static class PhotonConstants {
-        //Camera position relative to the bot to translate vision data to the center of the robot instead of based around the camera's reference
-        public final static double CAM_PITCH = 15; //degrees
+        public final static double CAM_PITCH = Math.toRadians(15);
 
-        public static final Transform3d[] CAMERAS_TO_ROBOT = {
+        public static final Transform3d[] ROBOT_TO_CAMERAS = {
             new Transform3d(
                 new Translation3d(0, Units.inchesToMeters(5.5), -Units.inchesToMeters(11.75)), 
-                new Rotation3d(Units.degreesToRadians(CAM_PITCH),0,0)
+                new Rotation3d(CAM_PITCH, 0, 0)
             ),
             new Transform3d(
                 new Translation3d(0, Units.inchesToMeters(5.5), -Units.inchesToMeters(11.75)), 
-                new Rotation3d(Units.degreesToRadians(CAM_PITCH),0,0)
+                new Rotation3d(CAM_PITCH, 0, 0)
             ),
             new Transform3d(
                 new Translation3d(0, Units.inchesToMeters(5.5), -Units.inchesToMeters(11.75)), 
-                new Rotation3d(Units.degreesToRadians(CAM_PITCH),0,0)
+                new Rotation3d(CAM_PITCH, 0, 0)
+            ),
+            new Transform3d(
+                new Translation3d(0, Units.inchesToMeters(5.5), -Units.inchesToMeters(11.75)), 
+                new Rotation3d(CAM_PITCH, 0, 0)
             )
         };
 
-        public static final Transform3d[] ROBOT_TO_CAMERAS = {
-            CAMERAS_TO_ROBOT[0].inverse(),
-            CAMERAS_TO_ROBOT[1].inverse(),
-            CAMERAS_TO_ROBOT[2].inverse()
+        public static final Transform3d[] CAMERAS_TO_ROBOT = {
+            ROBOT_TO_CAMERAS[0].inverse(),
+            ROBOT_TO_CAMERAS[1].inverse(),
+            ROBOT_TO_CAMERAS[2].inverse(),
+            ROBOT_TO_CAMERAS[3].inverse()
         };
 
         //Index = ID - 1

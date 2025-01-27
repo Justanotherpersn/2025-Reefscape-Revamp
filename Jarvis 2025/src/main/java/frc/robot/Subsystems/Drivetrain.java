@@ -28,6 +28,13 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ModuleConstants;
@@ -47,7 +54,8 @@ public class Drivetrain extends SubsystemBase {
 
   private static final ShuffleboardTab telemTab = Shuffleboard.getTab("Telemetry");
 
-  private static GenericEntry headingEntry = telemTab.add("Robot Heading", 0).withPosition(9, 0).getEntry();
+  private static GenericEntry headingEntry = telemTab.add("Robot Heading", 0).withPosition(5, 0).getEntry();
+  private static Field2d fieldEntry = new Field2d();
 
   public Drivetrain() {
     poseEstimator = new SwerveDrivePoseEstimator(
@@ -60,14 +68,14 @@ public class Drivetrain extends SubsystemBase {
     );
 
     Pigeon2Configuration IMUconfig = new Pigeon2Configuration();
-    IMUconfig.MountPose.MountPoseYaw = 0;
-    IMUconfig.MountPose.MountPosePitch = 0;
-    IMUconfig.MountPose.MountPoseRoll = 90;
     IMU.getConfigurator().apply(IMUconfig);
+    resetIMU();
 
     setPose(new Pose2d()); //autonomous will reset this when starting 
     PIDDisplay.PIDList.addOption("Swerve Drive Motors", SwerveModule.driveSetters);
     PIDDisplay.PIDList.addOption("Swerve Turn Motors", SwerveModule.turnSetters);
+
+    telemTab.add("Robot Pose", fieldEntry).withSize(5, 3);
   }
 
   enum MODULES {
@@ -86,8 +94,6 @@ public class Drivetrain extends SubsystemBase {
         moduleID % 2 == 0 ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive,
         moduleID
       );
-
-      System.out.println("Created swerve module with id " + moduleID);
     }
 
     /**
@@ -120,7 +126,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void homeAllModules() {
-    MODULES.forAll(m -> m.home());
+    MODULES.forAll(SwerveModule::home);
   }
 
   public void resetHomeStatus() {
@@ -135,7 +141,7 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     headingEntry.setDouble(getPose().getRotation().getDegrees());
-
+    fieldEntry.setRobotPose(getPose());
     poseEstimator.update(getHeadingRaw(), MODULES.collectProperty(SwerveModule::getPosition, SwerveModulePosition.class));
   }
 
@@ -178,10 +184,16 @@ public class Drivetrain extends SubsystemBase {
    * @return The heading directly from the gyroscope
    */
   public Rotation2d getHeadingRaw() {
-    return new Rotation2d(/*IMU.getYaw().getValueAsDouble()*/0);
+    return Rotation2d.fromDegrees(IMU.getYaw().getValueAsDouble());
   }
 
   public static void addVisionMeasurement(Pose2d visionPose, double timestamp){
     poseEstimator.addVisionMeasurement(visionPose, timestamp);
+  }
+
+  public Command RunHomeCommand() {
+    return new InstantCommand(() -> resetHomeStatus(), this)
+      .andThen(() -> MODULES.forAll(SwerveModule::home))
+      .until(this::allModulesHomed);
   }
 }

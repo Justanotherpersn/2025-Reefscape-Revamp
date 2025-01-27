@@ -30,8 +30,8 @@ public class JoystickDrive extends Command {
     double xInputRight = -applyDeadband(controller.getRawAxis(4), Constants.DRIVE_TOLERANCE_PERCENT);
     double yInputRight = -applyDeadband(controller.getRawAxis(5), Constants.DRIVE_TOLERANCE_PERCENT);
 
-    xInputRight = Math.signum(xInputRight) * xInputRight * xInputRight;
-    yInputRight = Math.signum(yInputRight) * yInputRight * yInputRight;
+    //xInputRight = Math.signum(xInputRight) * xInputRight * xInputRight;
+    //yInputRight = Math.signum(yInputRight) * yInputRight * yInputRight;
 
     double xSpeed = yInputRight * Constants.MAX_DRIVE_SPEED;
     double ySpeed = xInputRight * Constants.MAX_DRIVE_SPEED;

@@ -5,48 +5,62 @@
 package frc.robot.Subsystems;
 
 import org.photonvision.PhotonCamera;
-import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PhotonConstants;
 
 public class ChassisVisionLocalizer extends SubsystemBase {
-  private double previousPipelineTimestamp = 0;
+  private static final ShuffleboardTab visionTab = Shuffleboard.getTab("Vision Localizer");
+
+  private static final Field2d[] fields = new Field2d[4];
 
   private static final PhotonCamera[] photonCameras = new PhotonCamera[] {
     new PhotonCamera("navCam0"),
     new PhotonCamera("navCam1"),
-    new PhotonCamera("navCam2")
+    new PhotonCamera("navCam2"),
+    new PhotonCamera("navCam3")
   };
 
-  public ChassisVisionLocalizer() {}
+  public ChassisVisionLocalizer() {
+    PortForwarder.add(5800, "navCams01.local", 5800);
+    PortForwarder.add(5800, "navCams23.local", 5800);
+
+    for (int i = 0; i < fields.length; i++) {
+      fields[i] = new Field2d();
+      visionTab.add(photonCameras[i].getName(), fields[i]).withSize(4, 2).withPosition((i % 2) * 4, (i / 2) * 2);
+    }
+  }
 
   @Override
   public void periodic() {
-    for (int i = 0; i < photonCameras.length; i++) {
-      PhotonCamera camera = photonCameras[i];
-      PhotonPipelineResult pipelineResult = camera.getLatestResult();
-      double resultTimestamp = pipelineResult.getTimestampSeconds();
+    // for (int i = 0; i < photonCameras.length; i++) {
+    //   PhotonCamera camera = photonCameras[i];
+    //   final Transform3d cameraToRobot = PhotonConstants.CAMERAS_TO_ROBOT[i];
+    //   final Field2d camField = fields[i];
 
-      if (resultTimestamp != previousPipelineTimestamp && pipelineResult.hasTargets()) {
-        previousPipelineTimestamp = resultTimestamp;
-        var target = pipelineResult.getBestTarget();
+    //   camera.getAllUnreadResults().forEach(pipelineResult -> {
+    //     PhotonTrackedTarget target = pipelineResult.getBestTarget();
 
-        if (target.getPoseAmbiguity() <= .05) {
-          Transform3d camToTarget = target.getBestCameraToTarget();
-          Transform3d targetToCamera = camToTarget.inverse();
+    //     if (target.getPoseAmbiguity() <= .05) {
+    //       Transform3d camToTarget = target.getBestCameraToTarget();
+    //       Transform3d targetToCamera = camToTarget.inverse();
 
-          Pose3d targetPose = PhotonConstants.APRILTAG_LOCATIONS[target.getFiducialId()];
-          Pose3d camPose = targetPose.transformBy(targetToCamera);
+    //       Pose3d targetPose = PhotonConstants.APRILTAG_LOCATIONS[target.getFiducialId()];
+    //       Pose3d camPose = targetPose.transformBy(targetToCamera);
 
-          Pose2d visionMeasurement = camPose.transformBy(PhotonConstants.CAMERAS_TO_ROBOT[i]).toPose2d();
-
-          Drivetrain.addVisionMeasurement(visionMeasurement, resultTimestamp);
-        }
-      }
-    }
+    //       Pose2d visionMeasurement = camPose.transformBy(cameraToRobot).toPose2d();
+    //       camField.setRobotPose(visionMeasurement);
+    //       Drivetrain.addVisionMeasurement(visionMeasurement, pipelineResult.getTimestampSeconds());
+    //     }
+    //   });
+    // }
   }
 }

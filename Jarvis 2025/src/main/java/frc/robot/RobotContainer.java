@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Commands.HomeCommand;
 import frc.robot.Commands.JoystickDrive;
+import frc.robot.Subsystems.ChassisVisionLocalizer;
 import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Util.PIDDisplay;
 
@@ -18,6 +19,7 @@ public class RobotContainer {
   private static final Joystick controller = new Joystick(0);
 
   private static final Drivetrain drivetrain = new Drivetrain();
+  private static final ChassisVisionLocalizer localizer = new ChassisVisionLocalizer();
   private static final JoystickDrive joystickDrive = new JoystickDrive(drivetrain, controller);
   private static final HomeCommand homeCommand = new HomeCommand(drivetrain);
 
