@@ -9,24 +9,16 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Subsystems.Drivetrain;
-import frc.robot.Subsystems.ElevatorDrive;
 
 public class JoystickDrive extends Command {
   Drivetrain drivetrain;
-  ElevatorDrive elevatorDrive;
   Joystick controller;
-  Joystick controller2;
+  
 
   public JoystickDrive(Drivetrain drivetrain, Joystick controller) {
     this.drivetrain = drivetrain;
     this.controller = controller;
     addRequirements(drivetrain);
-  }
-
-  public void JoystickElevator(ElevatorDrive elevatorDrive, Joystick controller2){
-    this.elevatorDrive = elevatorDrive;
-    this.controller2 = controller2;
-    addRequirements(elevatorDrive);
   }
 
 
@@ -50,12 +42,6 @@ public class JoystickDrive extends Command {
     double rotationSpeed = -xInputLeft * Math.abs(xInputLeft) * Constants.MAX_ANGULAR_SPEED;
 
     drivetrain.drive(new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed), true);
-
-
-
-    //code below is for elevator
-    double yValue = controller2.getRawAxis(5);
-    elevatorDrive.move(yValue);
   }
 
   // Called once the command ends or is interrupted.
