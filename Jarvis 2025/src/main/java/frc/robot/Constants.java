@@ -52,6 +52,35 @@ public class Constants {
 
     }
 
+    public static class ElevatorConstants{
+
+        //Max extension of the elevator relative to itself in meters
+        public static final double MAX_ELEVATOR_EXTENSION = Units.inchesToMeters(5);
+
+        //Diameter of the elevator drive sprocket in meters
+        public static final double SPROCKET_DIA = Units.inchesToMeters(5);
+
+        public static final double SPROKET_CIRCUMFERENCE = (2 * Math.PI) * SPROCKET_DIA;
+
+        //Gear ratio of the elevator drive motor
+        public static final double ELEVATOR_GEARING = 1;
+
+        //Distance from floor to bottom of elevator
+        public static final double FLOOR_OFFSET = Units.inchesToMeters(1.25);
+
+        //Offset of manipulator
+        public static final double HEAD_OFFSET = Units.inchesToMeters(3);
+
+        public static final double[] levelHeight = {
+            Units.inchesToMeters(17.88) - FLOOR_OFFSET - HEAD_OFFSET, //L1
+            Units.inchesToMeters(31.72) - FLOOR_OFFSET - HEAD_OFFSET, //L2
+            Units.inchesToMeters(47.59) - FLOOR_OFFSET - HEAD_OFFSET, //L3
+            Units.inchesToMeters(71.87) - FLOOR_OFFSET - HEAD_OFFSET  //L4
+        };
+
+        
+    }
+
     public static class PhotonConstants {
         public final static double CAM_PITCH = Math.toRadians(15);
 
