@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.path.PathConstraints;
+
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -18,6 +20,14 @@ public class Constants {
     public static final double MAX_DRIVE_SPEED = 1;
     public static final double MAX_ANGULAR_SPEED = 3;
     public static final double DRIVE_TOLERANCE_PERCENT = 0.05;
+    public static final double MAX_POSE_TARGET_DISTANCE = 0.1;
+    public static final PathConstraints NAV_PATHING_CONSTRAINTS = new PathConstraints(
+        MAX_DRIVE_SPEED,
+        10,
+        MAX_ANGULAR_SPEED,
+        10,
+        12
+    );
 
     public static class ModuleConstants{
         /** Overall max speed of the module in m/s */

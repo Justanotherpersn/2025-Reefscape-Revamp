@@ -4,11 +4,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Commands.HomeCommand;
 import frc.robot.Commands.JoystickDrive;
 import frc.robot.Subsystems.ChassisVisionLocalizer;
 import frc.robot.Subsystems.Drivetrain;
@@ -21,7 +22,6 @@ public class RobotContainer {
   private static final Drivetrain drivetrain = new Drivetrain();
   private static final ChassisVisionLocalizer localizer = new ChassisVisionLocalizer();
   private static final JoystickDrive joystickDrive = new JoystickDrive(drivetrain, controller);
-  private static final HomeCommand homeCommand = new HomeCommand(drivetrain);
 
   public RobotContainer() {
     configureBindings();
@@ -30,7 +30,8 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    new JoystickButton(controller, 1).whileTrue(homeCommand);
+    new JoystickButton(controller, 1).whileTrue(drivetrain.homeCommand());
+    new JoystickButton(controller, 2).whileTrue(drivetrain.pathingCommand(drivetrain.getPose().plus(new Transform2d(1, 1, new Rotation2d())), 0));
   }
 
   public Command getAutonomousCommand() {

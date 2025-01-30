@@ -14,7 +14,11 @@ import java.util.stream.Collectors;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.signals.InvertedValue;
-
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -25,16 +29,15 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ModuleConstants;
@@ -53,7 +56,6 @@ public class Drivetrain extends SubsystemBase {
   private static SwerveDrivePoseEstimator poseEstimator;
 
   private static final ShuffleboardTab telemTab = Shuffleboard.getTab("Telemetry");
-
   private static GenericEntry headingEntry = telemTab.add("Robot Heading", 0).withPosition(5, 0).getEntry();
   private static Field2d fieldEntry = new Field2d();
 
@@ -65,6 +67,33 @@ public class Drivetrain extends SubsystemBase {
       new Pose2d(0,0, new Rotation2d()),
       MatBuilder.fill(Nat.N3(), Nat.N1(),0.05,0.05,0.05), //Standard deviations for state estimate, (m,m,rad). Increase to trust less
       MatBuilder.fill(Nat.N3(), Nat.N1(),0.9,0.9,0.9) //Standard deviations for vision estimate, (m,m,rad). Increase to trust less
+    );
+
+    RobotConfig config;
+    try {
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      System.out.println("PathPlanner failed to read robot config from GUI");
+      e.printStackTrace();
+      config = new RobotConfig(60, 7, new ModuleConfig(
+        Constants.ModuleConstants.WHEEL_DIA, 
+        Constants.MAX_DRIVE_SPEED, 
+        1, 
+        DCMotor.getKrakenX60(1), 
+        1, 
+        1), 
+        kinematics.getModules());
+    }
+
+    AutoBuilder.configure(
+      this::getPose,
+      this::setPose,
+      () -> {return kinematics.toChassisSpeeds(MODULES.collectProperty(SwerveModule::getState, SwerveModuleState.class));},
+      (speeds, feedforwards) -> drive(speeds, false),
+      new PPHolonomicDriveController(new PIDConstants(4), new PIDConstants(4)),
+      config,
+      () -> {return DriverStation.getAlliance().get().equals(Alliance.Red);},
+      this
     );
 
     Pigeon2Configuration IMUconfig = new Pigeon2Configuration();
@@ -115,7 +144,6 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
-  //#region Module Interface
   /**
    * Sets the desired module states for all of the modules - desaturates the max speeds first
    * @param moduleStates array of target module states
@@ -124,19 +152,6 @@ public class Drivetrain extends SubsystemBase {
     SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, ModuleConstants.MAX_SPEED);
     MODULES.forAll(m -> m.setDesiredState(moduleStates[m.moduleID]));
   }
-
-  public void homeAllModules() {
-    MODULES.forAll(SwerveModule::home);
-  }
-
-  public void resetHomeStatus() {
-    MODULES.forAll(m -> m.setHomed(false));
-  }
-
-  public boolean allModulesHomed() {
-    return !Arrays.asList(MODULES.collectProperty(m -> m.homed, Boolean.class)).contains(false);
-  }
-  //#endregion
 
   @Override
   public void periodic() {
@@ -191,9 +206,18 @@ public class Drivetrain extends SubsystemBase {
     poseEstimator.addVisionMeasurement(visionPose, timestamp);
   }
 
-  public Command RunHomeCommand() {
-    return new InstantCommand(() -> resetHomeStatus(), this)
-      .andThen(() -> MODULES.forAll(SwerveModule::home))
-      .until(this::allModulesHomed);
+  public Command homeCommand() {
+    return new 
+      InstantCommand(() -> MODULES.forAll(m -> m.setHomed(false)), this)
+      .andThen(() -> MODULES.forAll(SwerveModule::home), this)
+      .until(() -> !Arrays.asList(MODULES.collectProperty(m -> m.homed, Boolean.class)).contains(false));
+  }
+
+  public Command pathingCommand(Pose2d destination, double endSpeed) {
+    return AutoBuilder.pathfindToPose(
+      destination,
+      Constants.NAV_PATHING_CONSTRAINTS,
+      endSpeed
+    );
   }
 }
