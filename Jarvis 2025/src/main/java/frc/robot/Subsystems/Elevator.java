@@ -17,6 +17,7 @@ import frc.robot.Util.SparkFlexSetter;
 
 public class Elevator extends SubsystemBase {
   private SparkFlex elevatorMotor;
+  private SparkFlex elevatorMotorFollow;
   private SparkClosedLoopController elevatorPIDController;
   private SparkFlexConfig motorConfig;
 
@@ -32,7 +33,17 @@ public class Elevator extends SubsystemBase {
     .inverted(false)
     .idleMode(IdleMode.kCoast);
 
-    SparkFlexSetter motorClosedLoopSetter = new SparkFlexSetter(motorConfig);
+    elevatorMotor = new SparkFlex(Constants.CAN_DEVICES.ELEVATOR_MOTOR_FOLLOW.id, MotorType.kBrushless);
+    elevatorPIDController = elevatorMotor.getClosedLoopController();
+    
+    motorConfigFollow = new SparkFlexConfig();
+
+    motorConfigFollow
+    .inverted(false)
+    .idleMode(IdleMode.kCoast);
+
+
+    SparkFlexSetter motorClosedLoopSetter = new SparkFlexSetter(motorConfig, motorConfigFollow);
     motorClosedLoopSetter.setPID(Constants.GAINS.ELEVATOR);
     PIDDisplay.PIDList.addOption("Elevator Motors", motorClosedLoopSetter);
   }
