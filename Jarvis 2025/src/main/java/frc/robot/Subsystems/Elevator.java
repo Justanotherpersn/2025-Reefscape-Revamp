@@ -7,7 +7,6 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -16,10 +15,9 @@ import frc.robot.Util.SparkFlexSetter;
 
 
 public class Elevator extends SubsystemBase {
-  private SparkFlex elevatorMotor;
-  private SparkFlex elevatorMotorFollow;
-  private SparkClosedLoopController elevatorPIDController;
-  private SparkFlexConfig motorConfig;
+  private SparkFlex elevatorMotor, elevatorMotorFollow;
+  private SparkClosedLoopController elevatorPIDController, elevatorFollowPIDController;
+  private SparkFlexConfig motorConfig, motorConfigFollow;
 
   private double angularSetpoint;
   
@@ -33,8 +31,8 @@ public class Elevator extends SubsystemBase {
     .inverted(false)
     .idleMode(IdleMode.kCoast);
 
-    elevatorMotor = new SparkFlex(Constants.CAN_DEVICES.ELEVATOR_MOTOR_FOLLOW.id, MotorType.kBrushless);
-    elevatorPIDController = elevatorMotor.getClosedLoopController();
+    elevatorMotorFollow = new SparkFlex(Constants.CAN_DEVICES.ELEVATOR_MOTOR_FOLLOW.id, MotorType.kBrushless);
+    elevatorFollowPIDController = elevatorMotorFollow.getClosedLoopController();
     
     motorConfigFollow = new SparkFlexConfig();
 
@@ -52,6 +50,7 @@ public class Elevator extends SubsystemBase {
     //double maxRotations = Constants.ElevatorConstants.MAX_ELEVATOR_EXTENSION/Constants.ElevatorConstants.SPROKET_CIRCUMFERENCE;
     angularSetpoint = Constants.ElevatorConstants.levelHeight[targetPosition]/Constants.ElevatorConstants.SPROKET_CIRCUMFERENCE;
     elevatorPIDController.setReference(angularSetpoint, SparkFlex.ControlType.kPosition);
+    elevatorFollowPIDController.setReference(angularSetpoint, SparkFlex.ControlType.kPosition);
   }
 
   public Command elevatorHeight(int targetPosition){

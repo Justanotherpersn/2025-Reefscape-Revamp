@@ -30,6 +30,7 @@ public class Constants {
 
         ROBORIO(0),
         ELEVATOR_MOTOR(9),
+        ELEVATOR_MOTOR_FOLLOW(10),
         PIGEON_2(20);
 
         public int id;
