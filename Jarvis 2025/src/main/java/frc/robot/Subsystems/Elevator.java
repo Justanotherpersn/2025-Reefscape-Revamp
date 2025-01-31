@@ -8,6 +8,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Util.PIDDisplay;
@@ -18,6 +19,8 @@ public class Elevator extends SubsystemBase {
   private SparkFlex elevatorMotor;
   private SparkClosedLoopController elevatorPIDController;
   private SparkFlexConfig motorConfig;
+
+  private double angularSetpoint;
   
   public Elevator(){
     elevatorMotor = new SparkFlex(Constants.CAN_DEVICES.ELEVATOR_MOTOR.id, MotorType.kBrushless);
@@ -36,13 +39,13 @@ public class Elevator extends SubsystemBase {
   
   public void move(int targetPosition){
     //double maxRotations = Constants.ElevatorConstants.MAX_ELEVATOR_EXTENSION/Constants.ElevatorConstants.SPROKET_CIRCUMFERENCE;
-    double setPoint = Constants.ElevatorConstants.levelHeight[targetPosition]/Constants.ElevatorConstants.SPROKET_CIRCUMFERENCE;
-    elevatorPIDController.setReference(setPoint, SparkFlex.ControlType.kPosition);
+    angularSetpoint = Constants.ElevatorConstants.levelHeight[targetPosition]/Constants.ElevatorConstants.SPROKET_CIRCUMFERENCE;
+    elevatorPIDController.setReference(angularSetpoint, SparkFlex.ControlType.kPosition);
   }
 
-  public Command elevatorHeight(int position){
-      return new InstantCommand(() -> {
-          move(position);
-      }, this);
+  public Command elevatorHeight(int targetPosition){
+      return new RunCommand(() -> {
+          move(targetPosition);
+      }, this).until(() -> Math.abs(elevatorMotor.getEncoder().getPosition() - angularSetpoint) < 0.1);
   }
 }

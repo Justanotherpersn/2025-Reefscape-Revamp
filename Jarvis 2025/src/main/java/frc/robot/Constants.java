@@ -95,7 +95,7 @@ public class Constants {
         //Diameter of the elevator drive sprocket in meters
         public static final double SPROCKET_DIA = Units.inchesToMeters(5);
 
-        public static final double SPROKET_CIRCUMFERENCE = (2 * Math.PI) * SPROCKET_DIA;
+        public static final double SPROKET_CIRCUMFERENCE = Math.PI * SPROCKET_DIA;
 
         //Gear ratio of the elevator drive motor
         public static final double ELEVATOR_GEARING = 1;
