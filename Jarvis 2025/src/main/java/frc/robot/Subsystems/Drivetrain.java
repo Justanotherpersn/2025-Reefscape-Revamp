@@ -203,7 +203,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public Command homeCommand() {
-    return new 
+    return new
       InstantCommand(() -> MODULES.forAll(m -> m.setHomed(false)), this)
       .andThen(() -> MODULES.forAll(SwerveModule::home), this)
       .until(() -> !Arrays.asList(MODULES.collectProperty(m -> m.homed, Boolean.class)).contains(false));

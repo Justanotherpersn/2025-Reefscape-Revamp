@@ -4,11 +4,16 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Commands.JoystickDrive;
 import frc.robot.Subsystems.ChassisVisionLocalizer;
@@ -25,11 +30,16 @@ public class RobotContainer {
   private static final Elevator elevator = new Elevator();
   private static final JoystickDrive joystickDrive = new JoystickDrive(drivetrain, controller);
 
+  ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
+  SendableChooser<Command> autoChooser;
+
   public RobotContainer() {
     new PIDDisplay();
     new ChassisVisionLocalizer();
 
     configureBindings();
+    configureAuto();
+
     drivetrain.setDefaultCommand(joystickDrive);
     PIDDisplay.Init();
   }
@@ -44,7 +54,19 @@ public class RobotContainer {
     new JoystickButton(controller2, 4).onTrue(elevator.elevatorHeight(3)); //"Y" Button
   }
 
+  private void configureAuto() {
+    NamedCommands.registerCommand("Elevator Height 0", elevator.elevatorHeight(0));
+    NamedCommands.registerCommand("Elevator Height 1", elevator.elevatorHeight(1));
+    NamedCommands.registerCommand("Elevator Height 2", elevator.elevatorHeight(2));
+    NamedCommands.registerCommand("Elevator Height 3", elevator.elevatorHeight(3));
+
+    autoChooser = AutoBuilder.buildAutoChooser();
+    autoTab.add("Auto Chooser", autoChooser).withPosition(0, 0).withPosition(5, 1);
+  }
+
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return
+      drivetrain.homeCommand()
+      .andThen(autoChooser.getSelected());
   }
 }

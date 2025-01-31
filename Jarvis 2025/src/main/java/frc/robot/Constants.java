@@ -78,7 +78,7 @@ public class Constants {
         public static final double TURN_GEARING = 2.89 * 2.89 * 6;
 
         /**Diameter of the billet wheel */
-        public static final double WHEEL_DIA = 3.875;
+        public static final double WHEEL_DIA = Units.inchesToMeters(3.875);
 
         public static final Translation2d[] MODULE_POSITIONS = {
             new Translation2d(Constants.ROBOT_WHEEL_BASE/2 , Constants.ROBOT_WHEEL_BASE/2),
@@ -124,19 +124,19 @@ public class Constants {
         public static final Transform3d[] ROBOT_TO_CAMERAS = {
             new Transform3d(
                 new Translation3d(ModuleConstants.MODULE_POSITIONS[0].getX(), ModuleConstants.MODULE_POSITIONS[0].getY(), CAMS_HEIGHT), 
-                new Rotation3d(CAMS_PITCH, 0, Math.PI / 4)
+                new Rotation3d(0, CAMS_PITCH, Math.PI / 4)
             ),
             new Transform3d(
                 new Translation3d(ModuleConstants.MODULE_POSITIONS[1].getX(), ModuleConstants.MODULE_POSITIONS[1].getY(), CAMS_HEIGHT), 
-                new Rotation3d(CAMS_PITCH, 0, 3 * Math.PI / 4)
+                new Rotation3d(0, CAMS_PITCH, 3 * Math.PI / 4)
             ),
             new Transform3d(
                 new Translation3d(ModuleConstants.MODULE_POSITIONS[2].getX(), ModuleConstants.MODULE_POSITIONS[2].getY(), CAMS_HEIGHT), 
-                new Rotation3d(CAMS_PITCH, 0, -3 * Math.PI / 4)
+                new Rotation3d(0, CAMS_PITCH, -3 * Math.PI / 4)
             ),
             new Transform3d(
                 new Translation3d(ModuleConstants.MODULE_POSITIONS[3].getX(), ModuleConstants.MODULE_POSITIONS[3].getY(), CAMS_HEIGHT), 
-                new Rotation3d(CAMS_PITCH, 0, -Math.PI / 4)
+                new Rotation3d(0, CAMS_PITCH, -Math.PI / 4)
             )
         };
 

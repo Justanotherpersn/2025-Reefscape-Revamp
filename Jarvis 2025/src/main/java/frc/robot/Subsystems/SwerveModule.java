@@ -24,7 +24,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -84,7 +83,7 @@ public class SwerveModule {
         driveConfiguration.Voltage.PeakForwardVoltage = Constants.GAINS.DRIVE.peakOutput;
         driveConfiguration.Voltage.PeakReverseVoltage = -Constants.GAINS.DRIVE.peakOutput;
 
-        driveConfiguration.Feedback.SensorToMechanismRatio = ModuleConstants.DRIVE_GEARING / Units.inchesToMeters(ModuleConstants.WHEEL_DIA * Math.PI);
+        driveConfiguration.Feedback.SensorToMechanismRatio = ModuleConstants.DRIVE_GEARING / (ModuleConstants.WHEEL_DIA * Math.PI);
         driveConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
 
         driveMotor.getConfigurator().apply(driveConfiguration);
