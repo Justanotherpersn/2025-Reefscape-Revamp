@@ -24,7 +24,6 @@ import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -44,14 +43,9 @@ import frc.robot.Constants.ModuleConstants;
 import frc.robot.Util.PIDDisplay;
 
 public class Drivetrain extends SubsystemBase {
-  Pigeon2 IMU = new Pigeon2(20);
+  Pigeon2 IMU = new Pigeon2(Constants.CAN_DEVICES.PIGEON_2.id);
 
-  private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
-    new Translation2d(Constants.ROBOT_WHEEL_BASE/2 , Constants.ROBOT_WHEEL_BASE/2), 
-    new Translation2d(Constants.ROBOT_WHEEL_BASE/2, -Constants.ROBOT_WHEEL_BASE/2), 
-    new Translation2d(-Constants.ROBOT_WHEEL_BASE/2,Constants.ROBOT_WHEEL_BASE/2),
-    new Translation2d(-Constants.ROBOT_WHEEL_BASE/2, -Constants.ROBOT_WHEEL_BASE/2)
-  );
+  private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Constants.ModuleConstants.MODULE_POSITIONS);
 
   private static SwerveDrivePoseEstimator poseEstimator;
 
@@ -101,6 +95,8 @@ public class Drivetrain extends SubsystemBase {
     resetIMU();
 
     setPose(new Pose2d()); //autonomous will reset this when starting 
+    SwerveModule.driveSetters.setPID(Constants.GAINS.DRIVE);
+    SwerveModule.turnSetters.setPID(Constants.GAINS.TURN);
     PIDDisplay.PIDList.addOption("Swerve Drive Motors", SwerveModule.driveSetters);
     PIDDisplay.PIDList.addOption("Swerve Turn Motors", SwerveModule.turnSetters);
 

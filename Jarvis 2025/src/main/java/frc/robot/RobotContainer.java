@@ -23,10 +23,12 @@ public class RobotContainer {
 
   private static final Drivetrain drivetrain = new Drivetrain();
   private static final Elevator elevator = new Elevator();
-  private static final ChassisVisionLocalizer localizer = new ChassisVisionLocalizer();
   private static final JoystickDrive joystickDrive = new JoystickDrive(drivetrain, controller);
 
   public RobotContainer() {
+    new PIDDisplay();
+    new ChassisVisionLocalizer();
+
     configureBindings();
     drivetrain.setDefaultCommand(joystickDrive);
     PIDDisplay.Init();

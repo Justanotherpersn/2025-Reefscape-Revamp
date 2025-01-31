@@ -48,7 +48,10 @@ public class PIDDisplay extends SubsystemBase{
     public void periodic(){
         //Check if the selected PID config is different. If so update the Dashboard with new numbers
         selectedPID = PIDList.getSelected();
+        if (selectedPID == null) return;
         Gains codeCurrentPID = selectedPID.getPID();
+        if (codeCurrentPID == null) return;
+        
         if(selectedPID != lastSelected){
             PEntry.setDouble(codeCurrentPID.P);
             IEntry.setDouble(codeCurrentPID.I);

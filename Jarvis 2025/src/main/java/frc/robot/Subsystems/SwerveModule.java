@@ -29,8 +29,8 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import frc.robot.Constants;
 import frc.robot.Constants.ModuleConstants;
-import frc.robot.Util.Gains;
 import frc.robot.Util.SparkMaxSetter;
 import frc.robot.Util.TalonFXSetter;
 
@@ -43,9 +43,6 @@ public class SwerveModule {
     private double moduleOffset;
     private DigitalInput hallEffectSensor;
     public int moduleID;
-
-    private Gains turnGains = new Gains(.6, 1);
-    private Gains driveGains = new Gains(5, 0, 0.15, 2.65, 12);
 
     public boolean homed = false;
     private boolean wasHomed;
@@ -83,15 +80,9 @@ public class SwerveModule {
         driveConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         driveConfiguration.MotorOutput.Inverted = inverted;
         driveConfiguration.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.25;
-        
-        driveConfiguration.Slot0.kP = driveGains.P;
-        driveConfiguration.Slot0.kI = driveGains.I;
-        driveConfiguration.Slot0.kD = driveGains.D;
-        driveConfiguration.Slot0.kS = driveGains.S;
-        driveConfiguration.Slot0.kV = driveGains.V;
 
-        driveConfiguration.Voltage.PeakForwardVoltage = driveGains.peakOutput;
-        driveConfiguration.Voltage.PeakReverseVoltage = -driveGains.peakOutput;
+        driveConfiguration.Voltage.PeakForwardVoltage = Constants.GAINS.DRIVE.peakOutput;
+        driveConfiguration.Voltage.PeakReverseVoltage = -Constants.GAINS.DRIVE.peakOutput;
 
         driveConfiguration.Feedback.SensorToMechanismRatio = ModuleConstants.DRIVE_GEARING / Units.inchesToMeters(ModuleConstants.WHEEL_DIA * Math.PI);
         driveConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
@@ -114,11 +105,10 @@ public class SwerveModule {
             .velocityConversionFactor(2 * Math.PI / ModuleConstants.TURN_GEARING);
         turnConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pid(turnGains.P, 0, 0)
             .positionWrappingEnabled(true)
             .positionWrappingMaxInput(Math.PI)
             .positionWrappingMinInput(-Math.PI)
-            .outputRange(-turnGains.peakOutput, turnGains.peakOutput);
+            .outputRange(-Constants.GAINS.TURN.peakOutput, Constants.GAINS.TURN.peakOutput);
 
         turnMotor.configure(turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         turnSetters.addConfigurator(turnConfig);

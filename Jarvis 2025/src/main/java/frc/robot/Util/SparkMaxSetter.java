@@ -10,7 +10,6 @@ import frc.robot.Util.PIDDisplay.PIDSetter;
 
 /** Add your docs here. */
 public class SparkMaxSetter implements PIDSetter {
-
     private List<SparkMaxConfig> configs = new ArrayList<SparkMaxConfig>();
     private Gains gains;
     

@@ -10,11 +10,40 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.Util.Gains;
 
 /** Add your docs here. */
 public class Constants {
+    public enum CAN_DEVICES {
+        // These are assigned algorithmically in Drivetrain; do not use for anything else
+        // DRIVE_FRONT_LEFT(1),
+        // DRIVE_FRONT_RIGHT(2),
+        // DRIVE_BACK_LEFT(3),
+        // DRIVE_BACK_RIGHT(4),
+        // TURN_FRONT_LEFT(5),
+        // TURN_FRONT_RIGHT(6),
+        // TURN_BACK_LEFT(7),
+        // TURN_BACK_RIGHT(8),
+
+        ROBORIO(0),
+        ELEVATOR_MOTOR(9),
+        PIGEON_2(20);
+
+        public int id;
+        private CAN_DEVICES(int id) {
+            this.id = id;
+        }
+    }
+
+    public static class GAINS {
+        public static Gains DRIVE = new Gains(5, 0, 0.15, 2.65, 12);
+        public static Gains TURN = new Gains(.6, 1);
+        public static Gains ELEVATOR = new Gains(20, 0, 0, 0, 0, 12);
+    }
+
     /** Width between robot wheels in meters */ 
     public static final double ROBOT_WHEEL_BASE = Units.inchesToMeters(21.5);
     public static final double MAX_DRIVE_SPEED = 1;
@@ -50,6 +79,12 @@ public class Constants {
         /**Diameter of the billet wheel */
         public static final double WHEEL_DIA = 3.875;
 
+        public static final Translation2d[] MODULE_POSITIONS = {
+            new Translation2d(Constants.ROBOT_WHEEL_BASE/2 , Constants.ROBOT_WHEEL_BASE/2),
+            new Translation2d(Constants.ROBOT_WHEEL_BASE/2 , -Constants.ROBOT_WHEEL_BASE/2),
+            new Translation2d(-Constants.ROBOT_WHEEL_BASE/2 , Constants.ROBOT_WHEEL_BASE/2),
+            new Translation2d(-Constants.ROBOT_WHEEL_BASE/2 , -Constants.ROBOT_WHEEL_BASE/2)
+        };
     }
 
     public static class ElevatorConstants{
@@ -82,24 +117,25 @@ public class Constants {
     }
 
     public static class PhotonConstants {
-        public final static double CAM_PITCH = Math.toRadians(15);
+        public final static double CAMS_PITCH = Math.toRadians(15);
+        public final static double CAMS_HEIGHT = 0.1;
 
         public static final Transform3d[] ROBOT_TO_CAMERAS = {
             new Transform3d(
-                new Translation3d(0, Units.inchesToMeters(5.5), -Units.inchesToMeters(11.75)), 
-                new Rotation3d(CAM_PITCH, 0, 0)
+                new Translation3d(ModuleConstants.MODULE_POSITIONS[0].getX(), ModuleConstants.MODULE_POSITIONS[0].getY(), CAMS_HEIGHT), 
+                new Rotation3d(CAMS_PITCH, 0, Math.PI / 4)
             ),
             new Transform3d(
-                new Translation3d(0, Units.inchesToMeters(5.5), -Units.inchesToMeters(11.75)), 
-                new Rotation3d(CAM_PITCH, 0, 0)
+                new Translation3d(ModuleConstants.MODULE_POSITIONS[1].getX(), ModuleConstants.MODULE_POSITIONS[1].getY(), CAMS_HEIGHT), 
+                new Rotation3d(CAMS_PITCH, 0, 3 * Math.PI / 4)
             ),
             new Transform3d(
-                new Translation3d(0, Units.inchesToMeters(5.5), -Units.inchesToMeters(11.75)), 
-                new Rotation3d(CAM_PITCH, 0, 0)
+                new Translation3d(ModuleConstants.MODULE_POSITIONS[2].getX(), ModuleConstants.MODULE_POSITIONS[2].getY(), CAMS_HEIGHT), 
+                new Rotation3d(CAMS_PITCH, 0, -3 * Math.PI / 4)
             ),
             new Transform3d(
-                new Translation3d(0, Units.inchesToMeters(5.5), -Units.inchesToMeters(11.75)), 
-                new Rotation3d(CAM_PITCH, 0, 0)
+                new Translation3d(ModuleConstants.MODULE_POSITIONS[3].getX(), ModuleConstants.MODULE_POSITIONS[3].getY(), CAMS_HEIGHT), 
+                new Rotation3d(CAMS_PITCH, 0, -Math.PI / 4)
             )
         };
 
