@@ -6,6 +6,8 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -15,6 +17,9 @@ import frc.robot.Util.SparkFlexSetter;
 
 
 public class Elevator extends SubsystemBase {
+  private final DigitalInput topLimit = new DigitalInput(1);
+  private final DigitalInput bottomLimit = new DigitalInput(1);
+
   private SparkFlex elevatorMotor, elevatorMotorFollow;
   private SparkClosedLoopController elevatorPIDController, elevatorFollowPIDController;
   private SparkFlexConfig motorConfig, motorConfigFollow;
@@ -37,7 +42,7 @@ public class Elevator extends SubsystemBase {
     motorConfigFollow = new SparkFlexConfig();
 
     motorConfigFollow
-    .inverted(false)
+    .inverted(true)
     .idleMode(IdleMode.kCoast);
 
 
@@ -56,6 +61,6 @@ public class Elevator extends SubsystemBase {
   public Command elevatorHeight(int targetPosition){
       return new RunCommand(() -> {
           move(targetPosition);
-      }, this).until(() -> Math.abs(elevatorMotor.getEncoder().getPosition() - angularSetpoint) < 0.1);
+      }, this).until(() -> Math.abs(elevatorMotor.getEncoder().getPosition() - angularSetpoint) < 0.1 || topLimit.get() || bottomLimit.get());
   }
 }

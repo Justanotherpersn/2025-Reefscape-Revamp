@@ -14,6 +14,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import frc.robot.Constants;
 import frc.robot.Util.PIDDisplay;
 import frc.robot.Util.SparkMaxSetter;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Manipulator extends SubsystemBase {
@@ -22,6 +23,7 @@ public class Manipulator extends SubsystemBase {
   private SparkMaxConfig neoConfig, neoFollowConfig;
   
   private double targetRPM;
+
 
   public Manipulator() {
     coralNeo = new SparkMax(Constants.CAN_DEVICES.MANIPULATOR_NEO.id, MotorType.kBrushless);
@@ -46,8 +48,10 @@ public class Manipulator extends SubsystemBase {
     PIDDisplay.PIDList.addOption("Manipulator Motors", neoClosedLoopSetter);
   }
 
-  public void setRPM(double value){
-    targetRPM = value;
+  public void setRPM(double neoSpeed){
+    SmartDashboard.putNumber("neoSpeed", 0);
+    targetRPM = SmartDashboard.getNumber("neoSpeed", 0);
+    targetRPM = neoSpeed;
     neoClosedLoopController.setReference(targetRPM, ControlType.kVelocity);
     neoFollowClosedLoopController.setReference(targetRPM, ControlType.kVelocity);
   }
