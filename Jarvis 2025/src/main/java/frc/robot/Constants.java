@@ -42,7 +42,7 @@ public class Constants {
     public static class GAINS {
         public static Gains DRIVE = new Gains(5, 0, 0.15, 2.65, 12);
         public static Gains TURN = new Gains(.6, 1);
-        public static Gains ELEVATOR = new Gains(20, 0, 0, 0, 0, 12);
+        public static Gains ELEVATOR = new Gains(3, 0, 0, 0, 0, 12);
     }
 
     /** Width between robot wheels in meters */ 
@@ -107,7 +107,7 @@ public class Constants {
         //Offset of manipulator
         public static final double HEAD_OFFSET = Units.inchesToMeters(3);
 
-        public static final double[] levelHeight = {
+        public static final double[] LEVEL_HEIGHT = {
             Units.inchesToMeters(17.88) - FLOOR_OFFSET - HEAD_OFFSET, //L1
             Units.inchesToMeters(31.72) - FLOOR_OFFSET - HEAD_OFFSET, //L2
             Units.inchesToMeters(47.59) - FLOOR_OFFSET - HEAD_OFFSET, //L3
