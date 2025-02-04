@@ -11,8 +11,6 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -30,7 +28,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants;
 import frc.robot.Constants.ModuleConstants;
-import frc.robot.Util.SparkMaxSetter;
+import frc.robot.Util.SparkBaseSetter;
+import frc.robot.Util.SparkBaseSetter.SparkConfiguration;
 import frc.robot.Util.TalonFXSetter;
 
 public class SwerveModule {
@@ -51,7 +50,7 @@ public class SwerveModule {
 
     private static final ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
     public static final TalonFXSetter driveSetters = new TalonFXSetter();
-    public static final SparkMaxSetter turnSetters = new SparkMaxSetter();
+    public static final SparkBaseSetter turnSetters = new SparkBaseSetter();
 
 
     GenericEntry desiredSpeedEntry, actualSpeedEntry, desiredAngleEntry, actualAngleEntry, turnOutputEntry, driveOutputEntry, sensorEntry;
@@ -109,8 +108,7 @@ public class SwerveModule {
             .positionWrappingMinInput(-Math.PI)
             .outputRange(-Constants.GAINS.TURN.peakOutput, Constants.GAINS.TURN.peakOutput);
 
-        turnMotor.configure(turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        turnSetters.addConfigurator(turnConfig);
+        turnSetters.addConfigurator(new SparkConfiguration(turnMotor, turnConfig));
         turnEncoder = turnMotor.getEncoder();
         //#endregion
 
