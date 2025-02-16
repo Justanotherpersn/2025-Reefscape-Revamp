@@ -6,13 +6,24 @@ package frc.robot;
 
 import com.pathplanner.lib.path.PathConstraints;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Quaternion;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.Subsystems.Drivetrain;
+import frc.robot.Subsystems.Elevator;
+import frc.robot.Subsystems.Manipulator;
 import frc.robot.Util.Gains;
 
 /** Add your docs here. */
@@ -50,14 +61,6 @@ public class Constants {
     public static final double MAX_DRIVE_SPEED = 1;
     public static final double MAX_ANGULAR_SPEED = 3;
     public static final double DRIVE_TOLERANCE_PERCENT = 0.05;
-    public static final double MAX_POSE_TARGET_DISTANCE = 0.1;
-    public static final PathConstraints NAV_PATHING_CONSTRAINTS = new PathConstraints(
-        MAX_DRIVE_SPEED,
-        10,
-        MAX_ANGULAR_SPEED,
-        10,
-        12
-    );
 
     public static class ModuleConstants{
         /** Overall max speed of the module in m/s */
@@ -174,5 +177,45 @@ public class Constants {
             new Pose3d(5.321046, 4.0259, 0.308102, new Rotation3d(new Quaternion(1.0, 0.0, 0.0, 0.0))),
             new Pose3d(4.904739999999999, 3.3063179999999996, 0.308102, new Rotation3d(new Quaternion(-0.8660254037844387, -0.0, 0.0, 0.49999999999999994))),
         };
+    }
+
+    public static class NavigationConstants {
+        public static final PathConstraints PATHING_CONSTRAINTS = new PathConstraints(
+            MAX_DRIVE_SPEED,
+            10,
+            MAX_ANGULAR_SPEED,
+            10,
+            12
+        );
+
+        //TODO Add actual locations
+        public static final Pose2d[] REEF_LOCATIONS = {
+            new Pose2d(0, 0, new Rotation2d())
+        };
+        public static final Pose2d CORAL_STATION = new Pose2d();
+
+        public static final double OPERATION_RADIUS = 0.5;
+
+        public static final Command REEF_CYCLE(Drivetrain drivetrain, Elevator elevator, Manipulator manipulator) {
+            //TODO Read from the button box (driver 2)
+            int targetCoralLocation = 0;
+
+            boolean hasCoral = false;//should be read from manipulator in every reference
+            
+            boolean state;
+            return new InstantCommand(() -> state = hasCoral).andThen(new RepeatCommand(
+                new ParallelCommandGroup(
+                    drivetrain.pathingCommand(hasCoral ? REEF_LOCATIONS[targetCoralLocation] : CORAL_STATION, 0),
+                    new WaitUntilCommand(() -> true/*outside certain radius of target location*/).andThen(null), //move pivot to default
+                    new WaitUntilCommand(() -> true/*outside certain radius of target location*/).andThen(null), //move elevator to default
+                    new WaitUntilCommand(() -> true/*within certain radius of target location*/).andThen(null), //move pivot to target
+                    new WaitUntilCommand(() -> true/*within certain radius of target location*/).andThen(null) //move elevator to target
+                ).andThen(
+                    new InstantCommand(hasCoral ? null/*deposit*/ : null/*intake*/)
+                ).until(
+                    () -> false //hasCoral changes
+                ).andThen(new WaitCommand(1))
+            ));
+        }
     }
 }

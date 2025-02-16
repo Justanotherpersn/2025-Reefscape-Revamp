@@ -124,9 +124,7 @@ public class SwerveModule {
     
         sensorEntry = swerveTab.add("Home Sensor " + moduleID, false).withPosition(9, moduleID).getEntry();
         //#endregion
-    }
-
-    
+    }    
 
     /**
      * Set the desired state for the module. Drive speeds of 0 will result in no azimuth movement.

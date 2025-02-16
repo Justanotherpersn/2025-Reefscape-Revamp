@@ -59,21 +59,20 @@ public class Elevator extends SubsystemBase {
   public void move(int targetPosition){
     setPoint = Constants.ElevatorConstants.LEVEL_HEIGHT[targetPosition];
     elevatorPIDController.setReference(setPoint, SparkFlex.ControlType.kPosition);
-    System.out.println(elevatorMotor.get());
   }
 
   public Command elevatorHeight(int targetPosition){
-      return new RunCommand(() -> {
-          move(targetPosition);
-      }, this)
-      .until(() -> {
-        return Math.abs(elevatorMotor.getEncoder().getPosition()) < 0.1;
-        // || topLimit.get() || bottomLimit.get())
-      })
-      .andThen(() -> {
-        elevatorPIDController.setReference(elevatorMotor.getEncoder().getPosition(), SparkFlex.ControlType.kPosition);
-        if (topLimit.get()) elevatorMotor.getEncoder().setPosition(Constants.ElevatorConstants.LEVEL_HEIGHT.length - 1);
-        if (bottomLimit.get()) elevatorMotor.getEncoder().setPosition(0);
-      });
+    return new RunCommand(() -> {
+        move(targetPosition);
+    }, this)
+    .until(() -> {
+      return Math.abs(elevatorMotor.getEncoder().getPosition()) < 0.1;
+      // || topLimit.get() || bottomLimit.get())
+    })
+    .andThen(() -> {
+      elevatorPIDController.setReference(elevatorMotor.getEncoder().getPosition(), SparkFlex.ControlType.kPosition);
+      if (topLimit.get()) elevatorMotor.getEncoder().setPosition(Constants.ElevatorConstants.LEVEL_HEIGHT.length - 1);
+      if (bottomLimit.get()) elevatorMotor.getEncoder().setPosition(0);
+    });
   }
 }

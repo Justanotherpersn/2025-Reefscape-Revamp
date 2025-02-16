@@ -213,7 +213,7 @@ public class Drivetrain extends SubsystemBase {
   public Command pathingCommand(Pose2d destination, double endSpeed) {
     return AutoBuilder.pathfindToPose(
       destination,
-      Constants.NAV_PATHING_CONSTRAINTS,
+      Constants.NavigationConstants.PATHING_CONSTRAINTS,
       endSpeed
     );
   }
