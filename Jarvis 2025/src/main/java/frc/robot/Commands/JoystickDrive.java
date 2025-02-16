@@ -27,17 +27,17 @@ public class JoystickDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double xInputRight = -applyDeadband(controller.getRawAxis(4), Constants.DRIVE_TOLERANCE_PERCENT);
-    double yInputRight = -applyDeadband(controller.getRawAxis(5), Constants.DRIVE_TOLERANCE_PERCENT);
+    double xInputRight = -applyDeadband(controller.getRawAxis(4), Constants.DrivetrainConstants.DRIVE_TOLERANCE_PERCENT);
+    double yInputRight = -applyDeadband(controller.getRawAxis(5), Constants.DrivetrainConstants.DRIVE_TOLERANCE_PERCENT);
 
     //xInputRight = Math.signum(xInputRight) * xInputRight * xInputRight;
     //yInputRight = Math.signum(yInputRight) * yInputRight * yInputRight;
 
-    double xSpeed = yInputRight * Constants.MAX_DRIVE_SPEED;
-    double ySpeed = xInputRight * Constants.MAX_DRIVE_SPEED;
+    double xSpeed = yInputRight * Constants.DrivetrainConstants.MAX_DRIVE_SPEED;
+    double ySpeed = xInputRight * Constants.DrivetrainConstants.MAX_DRIVE_SPEED;
 
-    double xInputLeft = applyDeadband(controller.getRawAxis(0), Constants.DRIVE_TOLERANCE_PERCENT);
-    double rotationSpeed = -xInputLeft * Math.abs(xInputLeft) * Constants.MAX_ANGULAR_SPEED;
+    double xInputLeft = applyDeadband(controller.getRawAxis(0), Constants.DrivetrainConstants.DRIVE_TOLERANCE_PERCENT);
+    double rotationSpeed = -xInputLeft * Math.abs(xInputLeft) * Constants.DrivetrainConstants.MAX_ANGULAR_SPEED;
 
     drivetrain.drive(new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed), true);
   }

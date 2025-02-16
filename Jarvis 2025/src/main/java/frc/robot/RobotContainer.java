@@ -19,7 +19,9 @@ import frc.robot.Commands.JoystickDrive;
 import frc.robot.Subsystems.ChassisVisionLocalizer;
 import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.Elevator;
+import frc.robot.Subsystems.Manipulator;
 import frc.robot.Util.PIDDisplay;
+import frc.robot.Util.UniversalCommandFactory;
 
 public class RobotContainer {
   /**PS4-ish Controller */
@@ -28,6 +30,7 @@ public class RobotContainer {
 
   private static final Drivetrain drivetrain = new Drivetrain();
   private static final Elevator elevator = new Elevator();
+  private static final Manipulator manipulator = new Manipulator();
   private static final JoystickDrive joystickDrive = new JoystickDrive(drivetrain, controller);
 
   ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
@@ -47,6 +50,7 @@ public class RobotContainer {
   private void configureBindings() {
     new JoystickButton(controller, 1).whileTrue(drivetrain.homeCommand());
     new JoystickButton(controller, 2).whileTrue(drivetrain.pathingCommand(drivetrain.getPose().plus(new Transform2d(1, 1, new Rotation2d())), 0));
+    new JoystickButton(controller, 3).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, manipulator));
 
     new JoystickButton(controller2, 1).onTrue(elevator.elevatorHeight(0)); //"A" Button
     new JoystickButton(controller2, 3).onTrue(elevator.elevatorHeight(1)); //"X" Button

@@ -21,44 +21,37 @@ public class Elevator extends SubsystemBase {
   private final DigitalInput topLimit = new DigitalInput(4);
   private final DigitalInput bottomLimit = new DigitalInput(5);
 
-  private SparkFlex elevatorMotor, elevatorMotorFollow;
-  private SparkClosedLoopController elevatorPIDController;
-  private SparkFlexConfig motorConfig, motorConfigFollow;
+  private SparkFlex elevator;
+  private SparkFlexConfig elevatorConfig;
+  private SparkClosedLoopController elevatorController;
 
   private double setPoint;
   
   public Elevator(){
-    elevatorMotor = new SparkFlex(Constants.CAN_DEVICES.ELEVATOR_MOTOR.id, MotorType.kBrushless);
-    elevatorPIDController = elevatorMotor.getClosedLoopController();
-    motorConfig = new SparkFlexConfig();
-    motorConfig
+    elevator = new SparkFlex(Constants.CAN_DEVICES.ELEVATOR_MOTOR.id, MotorType.kBrushless);
+    elevatorController = elevator.getClosedLoopController();
+
+    elevatorConfig = new SparkFlexConfig();
+    elevatorConfig
       .inverted(false)
       .idleMode(IdleMode.kBrake)
       .voltageCompensation(12);
-    motorConfig.encoder
+    elevatorConfig.encoder
       .positionConversionFactor(Constants.ElevatorConstants.SPROKET_CIRCUMFERENCE)
       .velocityConversionFactor(Constants.ElevatorConstants.SPROKET_CIRCUMFERENCE);
-    motorConfig.closedLoop
+    elevatorConfig.closedLoop
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       .positionWrappingEnabled(false)
       .outputRange(-Constants.GAINS.ELEVATOR.peakOutput, Constants.GAINS.ELEVATOR.peakOutput);
 
-    elevatorMotorFollow = new SparkFlex(Constants.CAN_DEVICES.ELEVATOR_MOTOR_FOLLOW.id, MotorType.kBrushless);
-    motorConfigFollow = new SparkFlexConfig();
-    motorConfigFollow
-      .follow(Constants.CAN_DEVICES.ELEVATOR_MOTOR.id, true);
-
-    SparkBaseSetter motorClosedLoopSetter = new SparkBaseSetter(
-      new SparkConfiguration(elevatorMotor, motorConfig),
-      new SparkConfiguration(elevatorMotorFollow, motorConfigFollow)
-    );
+    SparkBaseSetter motorClosedLoopSetter = new SparkBaseSetter(new SparkConfiguration(elevator, elevatorConfig));
     motorClosedLoopSetter.setPID(Constants.GAINS.ELEVATOR);
     PIDDisplay.PIDList.addOption("Elevator Motors", motorClosedLoopSetter);
   }
   
   public void move(int targetPosition){
     setPoint = Constants.ElevatorConstants.LEVEL_HEIGHT[targetPosition];
-    elevatorPIDController.setReference(setPoint, SparkFlex.ControlType.kPosition);
+    elevatorController.setReference(setPoint, SparkFlex.ControlType.kPosition);
   }
 
   public Command elevatorHeight(int targetPosition){
@@ -66,13 +59,13 @@ public class Elevator extends SubsystemBase {
         move(targetPosition);
     }, this)
     .until(() -> {
-      return Math.abs(elevatorMotor.getEncoder().getPosition()) < 0.1;
+      return Math.abs(elevator.getEncoder().getPosition()) < 0.1;
       // || topLimit.get() || bottomLimit.get())
     })
     .andThen(() -> {
-      elevatorPIDController.setReference(elevatorMotor.getEncoder().getPosition(), SparkFlex.ControlType.kPosition);
-      if (topLimit.get()) elevatorMotor.getEncoder().setPosition(Constants.ElevatorConstants.LEVEL_HEIGHT.length - 1);
-      if (bottomLimit.get()) elevatorMotor.getEncoder().setPosition(0);
+      elevatorController.setReference(elevator.getEncoder().getPosition(), SparkFlex.ControlType.kPosition);
+      if (topLimit.get()) elevator.getEncoder().setPosition(Constants.ElevatorConstants.LEVEL_HEIGHT.length - 1);
+      if (bottomLimit.get()) elevator.getEncoder().setPosition(0);
     });
   }
 }

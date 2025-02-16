@@ -15,15 +15,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.Subsystems.Drivetrain;
-import frc.robot.Subsystems.Elevator;
-import frc.robot.Subsystems.Manipulator;
 import frc.robot.Util.Gains;
 
 /** Add your docs here. */
@@ -41,7 +32,7 @@ public class Constants {
 
         ROBORIO(0),
         ELEVATOR_MOTOR(9),
-        ELEVATOR_MOTOR_FOLLOW(10),
+        MANIPULATOR(10),
         PIGEON_2(20);
 
         public int id;
@@ -54,13 +45,15 @@ public class Constants {
         public static Gains DRIVE = new Gains(5, 0, 0.15, 2.65, 12);
         public static Gains TURN = new Gains(.6, 1);
         public static Gains ELEVATOR = new Gains(3, 0, 0, 0, 0, 12);
+        public static Gains MANIPULATOR = new Gains(3, 0, 0, 0, 12);
     }
 
-    /** Width between robot wheels in meters */ 
-    public static final double ROBOT_WHEEL_BASE = Units.inchesToMeters(21.5);
-    public static final double MAX_DRIVE_SPEED = 1;
-    public static final double MAX_ANGULAR_SPEED = 3;
-    public static final double DRIVE_TOLERANCE_PERCENT = 0.05;
+    public static class DrivetrainConstants {
+        public static final double WHEEL_BASE = Units.inchesToMeters(21.5);
+        public static final double MAX_DRIVE_SPEED = 1;
+        public static final double MAX_ANGULAR_SPEED = 3;
+        public static final double DRIVE_TOLERANCE_PERCENT = 0.05;
+    }
 
     public static class ModuleConstants{
         /** Overall max speed of the module in m/s */
@@ -84,10 +77,10 @@ public class Constants {
         public static final double WHEEL_DIA = Units.inchesToMeters(3.875);
 
         public static final Translation2d[] MODULE_POSITIONS = {
-            new Translation2d(Constants.ROBOT_WHEEL_BASE/2 , Constants.ROBOT_WHEEL_BASE/2),
-            new Translation2d(Constants.ROBOT_WHEEL_BASE/2 , -Constants.ROBOT_WHEEL_BASE/2),
-            new Translation2d(-Constants.ROBOT_WHEEL_BASE/2 , Constants.ROBOT_WHEEL_BASE/2),
-            new Translation2d(-Constants.ROBOT_WHEEL_BASE/2 , -Constants.ROBOT_WHEEL_BASE/2)
+            new Translation2d(DrivetrainConstants.WHEEL_BASE/2 , DrivetrainConstants.WHEEL_BASE/2),
+            new Translation2d(DrivetrainConstants.WHEEL_BASE/2 , -DrivetrainConstants.WHEEL_BASE/2),
+            new Translation2d(-DrivetrainConstants.WHEEL_BASE/2 , DrivetrainConstants.WHEEL_BASE/2),
+            new Translation2d(-DrivetrainConstants.WHEEL_BASE/2 , -DrivetrainConstants.WHEEL_BASE/2)
         };
     }
 
@@ -117,7 +110,11 @@ public class Constants {
             Units.inchesToMeters(71.87) - FLOOR_OFFSET - HEAD_OFFSET  //L4
         };
 
-        
+        public static final double LINEAR_SPEED = 1;
+    }
+
+    public static class ManipulatorConstants {
+        public static final double GEARING = 1;
     }
 
     public static class PhotonConstants {
@@ -181,41 +178,19 @@ public class Constants {
 
     public static class NavigationConstants {
         public static final PathConstraints PATHING_CONSTRAINTS = new PathConstraints(
-            MAX_DRIVE_SPEED,
+            DrivetrainConstants.MAX_DRIVE_SPEED,
             10,
-            MAX_ANGULAR_SPEED,
+            DrivetrainConstants.MAX_ANGULAR_SPEED,
             10,
             12
         );
 
-        //TODO Add actual locations
+        //TODO Add actual locations (these represent target poses for the robot)
         public static final Pose2d[] REEF_LOCATIONS = {
             new Pose2d(0, 0, new Rotation2d())
         };
         public static final Pose2d CORAL_STATION = new Pose2d();
 
         public static final double OPERATION_RADIUS = 0.5;
-
-        public static final Command REEF_CYCLE(Drivetrain drivetrain, Elevator elevator, Manipulator manipulator) {
-            //TODO Read from the button box (driver 2)
-            int targetCoralLocation = 0;
-
-            boolean hasCoral = false;//should be read from manipulator in every reference
-            
-            boolean state;
-            return new InstantCommand(() -> state = hasCoral).andThen(new RepeatCommand(
-                new ParallelCommandGroup(
-                    drivetrain.pathingCommand(hasCoral ? REEF_LOCATIONS[targetCoralLocation] : CORAL_STATION, 0),
-                    new WaitUntilCommand(() -> true/*outside certain radius of target location*/).andThen(null), //move pivot to default
-                    new WaitUntilCommand(() -> true/*outside certain radius of target location*/).andThen(null), //move elevator to default
-                    new WaitUntilCommand(() -> true/*within certain radius of target location*/).andThen(null), //move pivot to target
-                    new WaitUntilCommand(() -> true/*within certain radius of target location*/).andThen(null) //move elevator to target
-                ).andThen(
-                    new InstantCommand(hasCoral ? null/*deposit*/ : null/*intake*/)
-                ).until(
-                    () -> false //hasCoral changes
-                ).andThen(new WaitCommand(1))
-            ));
-        }
     }
 }

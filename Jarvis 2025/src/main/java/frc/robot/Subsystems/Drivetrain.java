@@ -24,6 +24,7 @@ import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -54,6 +55,8 @@ public class Drivetrain extends SubsystemBase {
   private static GenericEntry headingEntry = telemTab.add("Robot Heading", 0).withPosition(5, 0).getEntry();
   private static Field2d fieldEntry = new Field2d();
 
+  private int targetReefLocation;
+
   public Drivetrain() {
     poseEstimator = new SwerveDrivePoseEstimator(
       kinematics, 
@@ -72,7 +75,7 @@ public class Drivetrain extends SubsystemBase {
       e.printStackTrace();
       config = new RobotConfig(60, 7, new ModuleConfig(
         Constants.ModuleConstants.WHEEL_DIA, 
-        Constants.MAX_DRIVE_SPEED, 
+        Constants.DrivetrainConstants.MAX_DRIVE_SPEED, 
         1, 
         DCMotor.getKrakenX60(1), 
         1, 
@@ -203,6 +206,19 @@ public class Drivetrain extends SubsystemBase {
     poseEstimator.addVisionMeasurement(visionPose, timestamp);
   }
 
+  public void setReefLocation(int locationIndex) {
+    targetReefLocation = locationIndex;
+  }
+
+  public Pose2d getReefCycleDestination(boolean coralPresent) {
+    return coralPresent ? Constants.NavigationConstants.REEF_LOCATIONS[targetReefLocation] : Constants.NavigationConstants.CORAL_STATION;
+  }
+
+  public double timeToReach(Pose2d pose) {
+    return Math.max(getPose().getTranslation().getDistance(pose.getTranslation()) * Constants.DrivetrainConstants.MAX_DRIVE_SPEED, 
+      getPose().getRotation().plus(pose.getRotation().unaryMinus()).getRadians() * Constants.DrivetrainConstants.MAX_ANGULAR_SPEED);
+  }
+ 
   public Command homeCommand() {
     return new
       InstantCommand(() -> MODULES.forAll(m -> m.setHomed(false)))

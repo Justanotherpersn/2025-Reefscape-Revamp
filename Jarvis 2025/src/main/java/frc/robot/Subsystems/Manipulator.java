@@ -4,60 +4,67 @@
 
 package frc.robot.Subsystems;
 
-// import com.revrobotics.spark.SparkClosedLoopController;
-// import com.revrobotics.spark.SparkMax;
-// import com.revrobotics.spark.SparkBase.ControlType;
-// import com.revrobotics.spark.SparkLowLevel.MotorType;
-// import com.revrobotics.spark.config.SparkMaxConfig;
-// import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-// import frc.robot.Constants;
-// import frc.robot.Util.PIDDisplay;
-// import frc.robot.Util.SparkMaxSetter;
-// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
+import frc.robot.Util.PIDDisplay;
+import frc.robot.Util.SparkBaseSetter;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class Manipulator extends SubsystemBase {
-//   private SparkMax coralNeo, coralNeoFollow;
-//   private SparkClosedLoopController neoClosedLoopController, neoFollowClosedLoopController;
-//   private SparkMaxConfig neoConfig, neoFollowConfig;
+  private final SparkMax coral;
+  private final SparkMaxConfig coralConfig;
+  private final SparkClosedLoopController coralController;
+  private final DigitalInput sensor = new DigitalInput(6);
   
-//   private double targetRPM;
+  public Manipulator() {
+    coral = new SparkMax(Constants.CAN_DEVICES.MANIPULATOR.id, MotorType.kBrushless);
 
+    coralController = coral.getClosedLoopController();
 
-//   public Manipulator() {
-//     coralNeo = new SparkMax(Constants.CAN_DEVICES.MANIPULATOR_NEO.id, MotorType.kBrushless);
-//     coralNeoFollow = new SparkMax(Constants.CAN_DEVICES.MANIPULATOR_NEO_FOLLOW.id, MotorType.kBrushless);
+    coralConfig = new SparkMaxConfig();
+    coralConfig
+        .inverted(false)
+        .idleMode(IdleMode.kCoast)
+        .voltageCompensation(12);
+    coralConfig.encoder
+        .velocityConversionFactor(Constants.ManipulatorConstants.GEARING);
+    coralConfig.closedLoop
+        .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
+        .positionWrappingEnabled(false)
+        .outputRange(-Constants.GAINS.MANIPULATOR.peakOutput, Constants.GAINS.MANIPULATOR.peakOutput);
 
-//     neoClosedLoopController = coralNeo.getClosedLoopController();
-//     neoFollowClosedLoopController = coralNeoFollow.getClosedLoopController();
+    SparkBaseSetter closedLoopSetter = new SparkBaseSetter(new SparkBaseSetter.SparkConfiguration(coral, coralConfig));
+    closedLoopSetter.setPID(null);
+    PIDDisplay.PIDList.addOption("Manipulator Motors", closedLoopSetter);
+  }
 
-//     //coral manipulator neo550
-//     neoConfig = new SparkMaxConfig();
-//     neoConfig
-//     .inverted(false)
-//     .idleMode(IdleMode.kCoast);
-//     //second coral manipulator neo550
-//     neoFollowConfig = new SparkMaxConfig();
-//     neoFollowConfig
-//     .inverted(true)
-//     .idleMode(IdleMode.kCoast);
+  public void setRPM(double speed){
+    coralController.setReference(speed, ControlType.kVelocity);
+  }
 
-//     SparkMaxSetter neoClosedLoopSetter = new SparkMaxSetter(neoConfig, neoFollowConfig);
-//     neoClosedLoopSetter.setPID(null);
-//     PIDDisplay.PIDList.addOption("Manipulator Motors", neoClosedLoopSetter);
-//   }
+  public boolean coralPresent() {
+    return sensor.get();
+  }
 
-//   public void setRPM(double neoSpeed){
-//     SmartDashboard.putNumber("neoSpeed", 0);
-//     targetRPM = SmartDashboard.getNumber("neoSpeed", 0);
-//     targetRPM = neoSpeed;
-//     neoClosedLoopController.setReference(targetRPM, ControlType.kVelocity);
-//     neoFollowClosedLoopController.setReference(targetRPM, ControlType.kVelocity);
-//   }
-
-//   @Override
-//   public void periodic() {
-//     // This method will be called once per scheduler run
-//   }
+  public Command moveCoralCommand(boolean intake) {
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> setRPM(intake ? 1 : -1)),
+        new WaitUntilCommand(() -> coralPresent()),
+        new WaitCommand(0.5),
+        new InstantCommand(() -> setRPM(0))
+    );
+  }
 }
