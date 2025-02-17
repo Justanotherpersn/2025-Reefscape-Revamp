@@ -47,6 +47,8 @@ public class Pivot extends SubsystemBase {
       .positionWrappingEnabled(true)
       .outputRange(-Constants.GAINS.PIVOT.peakOutput, Constants.GAINS.PIVOT.peakOutput);
 
+    pivot.getEncoder().setPosition(-Math.PI / 2);
+
     SparkBaseSetter closedLoopSetter = new SparkBaseSetter(new SparkConfiguration(pivot, pivotConfig));
     closedLoopSetter.setPID(Constants.GAINS.PIVOT);
     PIDDisplay.PIDList.addOption("Pivot", closedLoopSetter);

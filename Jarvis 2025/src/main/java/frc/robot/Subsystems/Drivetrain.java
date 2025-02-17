@@ -40,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.ControlPanel;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Util.PIDDisplay;
 
@@ -53,8 +54,6 @@ public class Drivetrain extends SubsystemBase {
   private static final ShuffleboardTab telemTab = Shuffleboard.getTab("Telemetry");
   private static GenericEntry headingEntry = telemTab.add("Robot Heading", 0).withPosition(5, 0).getEntry();
   private static Field2d fieldEntry = new Field2d();
-
-  private int targetReefLocation;
 
   public Drivetrain() {
     poseEstimator = new SwerveDrivePoseEstimator(
@@ -206,12 +205,8 @@ public class Drivetrain extends SubsystemBase {
     poseEstimator.addVisionMeasurement(visionPose, timestamp);
   }
 
-  public void setReefLocation(int locationIndex) {
-    targetReefLocation = locationIndex;
-  }
-
   public Pose2d getReefCycleDestination(boolean coralPresent) {
-    return coralPresent ? Constants.NavigationConstants.REEF_LOCATIONS[targetReefLocation] : Constants.NavigationConstants.CORAL_STATION;
+    return coralPresent ? ControlPanel.getReefLocation() : Constants.NavigationConstants.CORAL_STATION;
   }
 
   public double timeToReach(Pose2d pose) {

@@ -120,6 +120,13 @@ public class Constants {
         /**The angle between the arm and a loaded coral, with positive x pointing radially outwards*/
         public static final Rotation2d END_MOUNT_ANGLE = Rotation2d.fromDegrees(-35);
         public static final Rotation2d POSITION_TOLERANCE = Rotation2d.fromDegrees(5);
+        public static final Rotation2d CORAL_DEPOSIT_ANGLES[] = {
+            Rotation2d.fromDegrees(-35),
+            Rotation2d.fromDegrees(-35),
+            Rotation2d.fromDegrees(-35),
+            Rotation2d.fromDegrees(-90),
+        };
+        public static final Rotation2d CORAL_INTAKE_ANGLE = Rotation2d.fromDegrees(-215);
     }
 
     public static class EndEffectorConstants {
