@@ -32,7 +32,8 @@ public class Constants {
 
         ROBORIO(0),
         ELEVATOR_MOTOR(9),
-        MANIPULATOR(10),
+        END_EFFECTOR(10),
+        PIVOT(11),
         PIGEON_2(20);
 
         public int id;
@@ -45,7 +46,8 @@ public class Constants {
         public static Gains DRIVE = new Gains(5, 0, 0.15, 2.65, 12);
         public static Gains TURN = new Gains(.6, 1);
         public static Gains ELEVATOR = new Gains(3, 0, 0, 0, 0, 12);
-        public static Gains MANIPULATOR = new Gains(3, 0, 0, 0, 12);
+        public static Gains END_EFFECTOR = new Gains(3, 0, 0, 0, 12);
+        public static Gains PIVOT = new Gains(3, 0, 0, 0, 12);
     }
 
     public static class DrivetrainConstants {
@@ -100,7 +102,7 @@ public class Constants {
         //Distance from floor to bottom of elevator
         public static final double FLOOR_OFFSET = Units.inchesToMeters(1.25);
 
-        //Offset of manipulator
+        //Offset of end effector
         public static final double HEAD_OFFSET = Units.inchesToMeters(3);
 
         public static final double[] LEVEL_HEIGHT = {
@@ -113,7 +115,14 @@ public class Constants {
         public static final double LINEAR_SPEED = 1;
     }
 
-    public static class ManipulatorConstants {
+    public static class PivotConstants {
+        public static final double GEARING = 1;
+        /**The angle between the arm and a loaded coral, with positive x pointing radially outwards*/
+        public static final Rotation2d END_MOUNT_ANGLE = Rotation2d.fromDegrees(-35);
+        public static final Rotation2d POSITION_TOLERANCE = Rotation2d.fromDegrees(5);
+    }
+
+    public static class EndEffectorConstants {
         public static final double GEARING = 1;
     }
 

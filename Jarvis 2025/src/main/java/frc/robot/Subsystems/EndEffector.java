@@ -23,32 +23,32 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
-public class Manipulator extends SubsystemBase {
+public class EndEffector extends SubsystemBase {
   private final SparkMax coral;
   private final SparkMaxConfig coralConfig;
   private final SparkClosedLoopController coralController;
   private final DigitalInput sensor = new DigitalInput(6);
   
-  public Manipulator() {
-    coral = new SparkMax(Constants.CAN_DEVICES.MANIPULATOR.id, MotorType.kBrushless);
+  public EndEffector() {
+    coral = new SparkMax(Constants.CAN_DEVICES.END_EFFECTOR.id, MotorType.kBrushless);
 
     coralController = coral.getClosedLoopController();
 
     coralConfig = new SparkMaxConfig();
     coralConfig
-        .inverted(false)
-        .idleMode(IdleMode.kCoast)
-        .voltageCompensation(12);
+      .inverted(false)
+      .idleMode(IdleMode.kCoast)
+      .voltageCompensation(12);
     coralConfig.encoder
-        .velocityConversionFactor(Constants.ManipulatorConstants.GEARING);
+      .velocityConversionFactor(1 / Constants.EndEffectorConstants.GEARING);
     coralConfig.closedLoop
-        .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
-        .positionWrappingEnabled(false)
-        .outputRange(-Constants.GAINS.MANIPULATOR.peakOutput, Constants.GAINS.MANIPULATOR.peakOutput);
+      .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
+      .positionWrappingEnabled(false)
+      .outputRange(-Constants.GAINS.END_EFFECTOR.peakOutput, Constants.GAINS.END_EFFECTOR.peakOutput);
 
     SparkBaseSetter closedLoopSetter = new SparkBaseSetter(new SparkBaseSetter.SparkConfiguration(coral, coralConfig));
     closedLoopSetter.setPID(null);
-    PIDDisplay.PIDList.addOption("Manipulator Motors", closedLoopSetter);
+    PIDDisplay.PIDList.addOption("End Effector", closedLoopSetter);
   }
 
   public void setRPM(double speed){
