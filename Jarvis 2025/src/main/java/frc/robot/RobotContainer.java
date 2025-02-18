@@ -5,8 +5,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -38,11 +36,6 @@ public class RobotContainer {
   }
 
   private void configureAuto() {
-    NamedCommands.registerCommand("Elevator Height 0", elevator.elevatorHeight(0));
-    NamedCommands.registerCommand("Elevator Height 1", elevator.elevatorHeight(1));
-    NamedCommands.registerCommand("Elevator Height 2", elevator.elevatorHeight(2));
-    NamedCommands.registerCommand("Elevator Height 3", elevator.elevatorHeight(3));
-
     autoChooser = AutoBuilder.buildAutoChooser();
     autoTab.add("Auto Chooser", autoChooser).withPosition(0, 0).withPosition(5, 1);
   }
