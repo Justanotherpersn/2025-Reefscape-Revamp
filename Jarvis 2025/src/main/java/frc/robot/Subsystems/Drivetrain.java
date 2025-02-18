@@ -40,7 +40,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.ControlPanel;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Util.PIDDisplay;
 
@@ -205,13 +204,9 @@ public class Drivetrain extends SubsystemBase {
     poseEstimator.addVisionMeasurement(visionPose, timestamp);
   }
 
-  public Pose2d getReefCycleDestination(boolean coralPresent) {
-    return coralPresent ? ControlPanel.getReefLocation() : Constants.NavigationConstants.CORAL_STATION;
-  }
-
   public double timeToReach(Pose2d pose) {
-    return Math.max(getPose().getTranslation().getDistance(pose.getTranslation()) * Constants.DrivetrainConstants.MAX_DRIVE_SPEED, 
-      getPose().getRotation().plus(pose.getRotation().unaryMinus()).getRadians() * Constants.DrivetrainConstants.MAX_ANGULAR_SPEED);
+    return Math.max(getPose().getTranslation().getDistance(pose.getTranslation()) / Constants.DrivetrainConstants.MAX_DRIVE_SPEED, 
+      getPose().getRotation().plus(pose.getRotation().unaryMinus()).getRadians() / Constants.DrivetrainConstants.MAX_ANGULAR_SPEED);
   }
  
   public Command homeCommand() {

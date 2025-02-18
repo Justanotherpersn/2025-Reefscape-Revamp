@@ -19,9 +19,6 @@ public class ControlPanel {
     private static final Joystick controller = new Joystick(0);
     private static final Joystick controller2 = new Joystick(1);
 
-    private static int targetReefPosition;
-    private static int targetReefHeight;
-
     public static void configureBinding(Drivetrain drivetrain, Elevator elevator, Pivot pivot, EndEffector endEffector) {
         drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, controller));
 
@@ -30,33 +27,55 @@ public class ControlPanel {
         new JoystickButton(controller, 3).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
 
         for (int i = 0; i < 16; i++) {
-            new JoystickButton(controller2, i).onTrue(i < 4 ? setTargetReefHeight(i) : setTargetReefPosition(i));
+            new JoystickButton(controller2, i).onTrue(i < 4 ? ReefCycle.setHeight(i) : ReefCycle.setPosition(i));
         }
     }
 
-    private static Command setTargetReefPosition(int positionIndex) {
-        return new SequentialCommandGroup(
-            new InstantCommand(() -> targetReefPosition = positionIndex)
-            //update display
-        );
-    }
+    public static class ReefCycle {
+        private static int targetPosition;
+        private static int targetHeight;
 
-    private static Command setTargetReefHeight(int heightIndex) {
-        return new SequentialCommandGroup(
-            new InstantCommand(() -> targetReefHeight = heightIndex)
-            //update display
-        );
-    }
+        private static boolean depositing;
+        private static Pose2d previousLocation;
 
-    public static Pose2d getReefLocation() {
-        return Constants.NavigationConstants.REEF_LOCATIONS[targetReefPosition];
-    }
+        private static Command setPosition(int positionIndex) {
+            return new SequentialCommandGroup(
+                new InstantCommand(() -> targetPosition = positionIndex)
+                //update display
+            );
+        }
+    
+        private static Command setHeight(int heightIndex) {
+            return new SequentialCommandGroup(
+                new InstantCommand(() -> targetHeight = heightIndex)
+                //update display
+            );
+        }
+    
+        public static void setTravelState(boolean _depositing) {
+            previousLocation = getLocation();
+            depositing = _depositing;
+            //update display?
+        }
 
-    public static double getReefHeight() {
-        return Constants.ElevatorConstants.LEVEL_HEIGHT[targetReefHeight];
-    }
-
-    public static Rotation2d getReefAngle() {
-        return Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[targetReefHeight];
+        public static boolean getTravelState() {
+            return depositing;
+        }
+    
+        public static Pose2d getLocation() {
+            return depositing ? Constants.NavigationConstants.REEF_LOCATIONS[targetPosition] : Constants.NavigationConstants.CORAL_STATION;
+        }
+    
+        public static Pose2d getPreviousLocation() {
+            return previousLocation;
+        }
+    
+        public static double getHeight() {
+            return depositing ? Constants.ElevatorConstants.LEVEL_HEIGHT[targetHeight] : 0;
+        }
+    
+        public static Rotation2d getAngle() {
+            return depositing ? Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[targetHeight] : Constants.PivotConstants.CORAL_INTAKE_ANGLE;
+        }
     }
 }

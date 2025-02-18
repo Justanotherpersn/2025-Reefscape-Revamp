@@ -62,7 +62,7 @@ public class EndEffector extends SubsystemBase {
   public Command moveCoralCommand(boolean intake) {
     return new SequentialCommandGroup(
         new InstantCommand(() -> setRPM(intake ? 1 : -1)),
-        new WaitUntilCommand(() -> coralPresent()),
+        new WaitUntilCommand(() -> intake == coralPresent()),
         new WaitCommand(0.5),
         new InstantCommand(() -> setRPM(0))
     );

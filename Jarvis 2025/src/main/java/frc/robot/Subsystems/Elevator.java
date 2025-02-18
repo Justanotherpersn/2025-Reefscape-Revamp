@@ -49,12 +49,12 @@ public class Elevator extends SubsystemBase {
     PIDDisplay.PIDList.addOption("Elevator Motors", motorClosedLoopSetter);
   }
   
-  public void move(int targetPosition){
-    setPoint = Constants.ElevatorConstants.LEVEL_HEIGHT[targetPosition];
+  public void move(double targetPosition){
+    setPoint = targetPosition;
     elevatorController.setReference(setPoint, SparkFlex.ControlType.kPosition);
   }
 
-  public Command elevatorHeight(int targetPosition){
+  public Command elevatorHeight(double targetPosition) {
     return new RunCommand(() -> {
         move(targetPosition);
     }, this)

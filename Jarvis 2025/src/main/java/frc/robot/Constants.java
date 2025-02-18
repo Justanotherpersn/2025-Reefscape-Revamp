@@ -118,7 +118,7 @@ public class Constants {
     public static class PivotConstants {
         public static final double GEARING = 1;
         /**The angle between the arm and a loaded coral, with positive x pointing radially outwards*/
-        public static final Rotation2d END_MOUNT_ANGLE = Rotation2d.fromDegrees(-35);
+        public static final Rotation2d END_MOUNT_ANGLE = Rotation2d.fromDegrees(-55);
         public static final Rotation2d POSITION_TOLERANCE = Rotation2d.fromDegrees(5);
         public static final Rotation2d CORAL_DEPOSIT_ANGLES[] = {
             Rotation2d.fromDegrees(-35),
@@ -127,9 +127,14 @@ public class Constants {
             Rotation2d.fromDegrees(-90),
         };
         public static final Rotation2d CORAL_INTAKE_ANGLE = Rotation2d.fromDegrees(-215);
+        public static final Rotation2d ANGULAR_SPEED = Rotation2d.fromDegrees(45);
+        /**Length from pivot axis to center of coral when loaded*/
+        public static final double LENGHT = 1;
     }
 
     public static class EndEffectorConstants {
+        public static final double CORAL_PROTRUSION_LENGTH = 0.5;
+        public static final Rotation2d ACCEPTABLE_SCORING_RANGE = Rotation2d.fromDegrees(45);
         public static final double GEARING = 1;
     }
 

@@ -63,6 +63,10 @@ public class Pivot extends SubsystemBase {
     return Rotation2d.fromRotations(pivot.getEncoder().getPosition());
   }
 
+  public double timeToReach(Rotation2d angle) {
+    return Math.abs(pivot.getEncoder().getPosition() - angle.getRadians()) / Constants.PivotConstants.ANGULAR_SPEED.getRadians();
+  }
+
   /**Set angle to be made along the x axis, which faces radially outwards along the forward direction of the robot
    * @param angle The angle the coral inside the manipulator should make with this x-axis. 0 Would face straight forward.
    */
