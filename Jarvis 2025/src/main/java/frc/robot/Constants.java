@@ -34,6 +34,7 @@ public class Constants {
         ELEVATOR_MOTOR(9),
         END_EFFECTOR(10),
         PIVOT(11),
+        CLIMBER(12),
         PIGEON_2(20);
 
         public int id;
@@ -48,6 +49,7 @@ public class Constants {
         public static Gains ELEVATOR = new Gains(3, 0, 0, 0, 0, 12);
         public static Gains END_EFFECTOR = new Gains(3, 0, 0, 0, 12);
         public static Gains PIVOT = new Gains(3, 0, 0, 0, 12);
+        public static Gains CLIMBER = new Gains(3, 0, 0, 0, 12);
     }
 
     public static class DrivetrainConstants {
@@ -136,6 +138,12 @@ public class Constants {
         public static final double CORAL_PROTRUSION_LENGTH = 0.5;
         public static final Rotation2d ACCEPTABLE_SCORING_RANGE = Rotation2d.fromDegrees(45);
         public static final double GEARING = 1;
+    }
+
+    public static class ClimberConstants {
+        public static final Rotation2d MAX_ROTATION = Rotation2d.fromDegrees(180);
+        public static final Rotation2d MIN_ROTATION = Rotation2d.fromDegrees(0);
+        public static final Rotation2d SETPOINT_RANGE = Rotation2d.fromDegrees(1);
     }
 
     public static class PhotonConstants {
