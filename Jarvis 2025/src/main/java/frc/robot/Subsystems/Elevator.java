@@ -9,8 +9,11 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Util.PIDDisplay;
 import frc.robot.Util.SparkBaseSetter;
@@ -55,17 +58,19 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command elevatorHeight(double targetPosition) {
-    return new RunCommand(() -> {
-        move(targetPosition);
-    }, this)
-    .until(() -> {
-      return Math.abs(elevator.getEncoder().getPosition()) < 0.1;
-      // || topLimit.get() || bottomLimit.get())
-    })
-    .andThen(() -> {
-      elevatorController.setReference(elevator.getEncoder().getPosition(), SparkFlex.ControlType.kPosition);
-      if (topLimit.get()) elevator.getEncoder().setPosition(Constants.ElevatorConstants.LEVEL_HEIGHT.length - 1);
-      if (bottomLimit.get()) elevator.getEncoder().setPosition(0);
-    });
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> move(targetPosition)),
+      new WaitUntilCommand(() -> Math.abs(elevator.getEncoder().getPosition() - targetPosition) < Constants.ElevatorConstants.SETPOINT_RANGE)
+    );
+  }
+
+  @Override
+  public void periodic() {
+    // boolean top = topLimit.get();
+    // if (top || bottomLimit.get()) {
+    //   setPoint = top ? Constants.ElevatorConstants.MAX_ELEVATOR_EXTENSION : 0;
+    //   climber.getAlternateEncoder().setPosition(targetPosition.getRotations());
+    //   setPosition(targetPosition.plus(positive ? Constants.ClimberConstants.SETPOINT_RANGE.unaryMinus() : Constants.ClimberConstants.SETPOINT_RANGE));
+    // }
   }
 }
