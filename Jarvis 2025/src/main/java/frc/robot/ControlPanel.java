@@ -70,6 +70,7 @@ public class ControlPanel {
             return previousLocation;
         }
     
+        //TODO FIX
         public static double getHeight() {
             return depositing ? targetHeight : 0;
         }
