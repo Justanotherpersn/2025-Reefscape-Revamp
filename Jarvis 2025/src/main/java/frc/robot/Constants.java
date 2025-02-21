@@ -216,11 +216,23 @@ public class Constants {
             12
         );
 
-        //TODO Add actual locations (these represent target poses for the robot)
         public static final Pose2d[] REEF_LOCATIONS = {
-            new Pose2d(0, 0, new Rotation2d())
+            new Pose2d(5.9, 4.2, Rotation2d.fromDegrees(180)),
+            new Pose2d(5.335, 5.152, Rotation2d.fromDegrees(-120)),
+            new Pose2d(5.071, 5.320, Rotation2d.fromDegrees(-120)),
+            new Pose2d(3.920, 5.320, Rotation2d.fromDegrees(-60)),
+            new Pose2d(3.644, 5.140, Rotation2d.fromDegrees(-60)),
+            new Pose2d(3.093, 4.181, Rotation2d.fromDegrees(0)),
+            new Pose2d(3.093, 3.881, Rotation2d.fromDegrees(0)),
+            new Pose2d(3.656, 2.934, Rotation2d.fromDegrees(60)),
+            new Pose2d(3.932, 2.754, Rotation2d.fromDegrees(60)),
+            new Pose2d(5.023, 2.778, Rotation2d.fromDegrees(120)),
+            new Pose2d(5.862, 3.869, Rotation2d.fromDegrees(120)),
         };
-        public static final Pose2d CORAL_STATION = new Pose2d();
+        public static final Pose2d CORAL_STATIONS[] = {
+            new Pose2d(1.199, 1.028, Rotation2d.fromDegrees(55)),
+            new Pose2d(1.199, 7.000, Rotation2d.fromDegrees(-55)),
+        };
 
         public static final double OPERATION_RADIUS = 0.5;
     }

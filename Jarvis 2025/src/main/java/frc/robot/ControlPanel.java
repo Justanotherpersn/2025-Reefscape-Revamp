@@ -19,16 +19,19 @@ public class ControlPanel {
     private static final Joystick controller = new Joystick(0);
     private static final Joystick controller2 = new Joystick(1);
 
-    public static void configureBinding(Drivetrain drivetrain, Elevator elevator, Pivot pivot, EndEffector endEffector) {
+    private static Drivetrain drivetrain;
+
+    public static void configureBinding(Drivetrain drivetrain/*, Elevator elevator, Pivot pivot, EndEffector endEffector*/) {
         drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, controller));
 
         new JoystickButton(controller, 1).whileTrue(drivetrain.homeCommand());
         new JoystickButton(controller, 2).whileTrue(drivetrain.pathingCommand(drivetrain.getPose().plus(new Transform2d(1, 1, new Rotation2d())), 0));
-        new JoystickButton(controller, 3).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
+        //new JoystickButton(controller, 3).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
 
-        for (int i = 0; i < 16; i++) {
-            new JoystickButton(controller2, i).onTrue(i < 4 ? ReefCycle.setHeight(i) : ReefCycle.setPosition(i));
-        }
+        // for (int i = 0; i < 16; i++) {
+        //     new JoystickButton(controller2, i).onTrue(i < 4 ? ReefCycle.setHeight(i) : ReefCycle.setPosition(i));
+        // }
+        ControlPanel.drivetrain = drivetrain;
     }
 
     public static class ReefCycle {
@@ -63,7 +66,11 @@ public class ControlPanel {
         }
     
         public static Pose2d getLocation() {
-            return depositing ? Constants.NavigationConstants.REEF_LOCATIONS[targetPosition] : Constants.NavigationConstants.CORAL_STATION;
+            return depositing ? Constants.NavigationConstants.REEF_LOCATIONS[targetPosition] :  
+                Constants.NavigationConstants.CORAL_STATIONS[
+                    Math.abs(drivetrain.getPose().getY() - Constants.NavigationConstants.CORAL_STATIONS[0].getY()) 
+                    < Math.abs(drivetrain.getPose().getY() - Constants.NavigationConstants.CORAL_STATIONS[1].getY()) ? 0 : 1
+                ];
         }
     
         public static Pose2d getPreviousLocation() {
