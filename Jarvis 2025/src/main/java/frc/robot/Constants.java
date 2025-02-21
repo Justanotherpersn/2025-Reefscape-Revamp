@@ -115,6 +115,8 @@ public class Constants {
         };
 
         public static final double LINEAR_SPEED = 1;
+
+        public static final double SETPOINT_RANGE = 1;
     }
 
     public static class PivotConstants {
@@ -147,8 +149,8 @@ public class Constants {
     }
 
     public static class PhotonConstants {
-        public final static double CAMS_PITCH = Math.toRadians(15);
-        public final static Translation3d CAM_OFFSET = new Translation3d(0, 0, 0.1);
+        public final static double CAMS_PITCH = Math.toRadians(31);
+        public final static Translation3d CAM_OFFSET = new Translation3d(0.054, 0.054, 0.217);
 
         public static final Transform3d[] ROBOT_TO_CAMERAS = {
             new Transform3d(
@@ -157,15 +159,15 @@ public class Constants {
             ),
             new Transform3d(
                 new Translation3d(ModuleConstants.MODULE_POSITIONS[1].getX() + CAM_OFFSET.getX(), ModuleConstants.MODULE_POSITIONS[1].getY() - CAM_OFFSET.getY(), CAM_OFFSET.getZ()), 
-                new Rotation3d(0, CAMS_PITCH, 3 * Math.PI / 4)
+                new Rotation3d(0, CAMS_PITCH, -Math.PI / 4)
             ),
             new Transform3d(
                 new Translation3d(ModuleConstants.MODULE_POSITIONS[2].getX() - CAM_OFFSET.getX(), ModuleConstants.MODULE_POSITIONS[2].getY() + CAM_OFFSET.getY(), CAM_OFFSET.getZ()), 
-                new Rotation3d(0, CAMS_PITCH, -3 * Math.PI / 4)
+                new Rotation3d(0, CAMS_PITCH, 3 * Math.PI / 4)
             ),
             new Transform3d(
-                new Translation3d(ModuleConstants.MODULE_POSITIONS[3].getX() - CAM_OFFSET.getX(), ModuleConstants.MODULE_POSITIONS[3].getY() - CAM_OFFSET.getX(), CAM_OFFSET.getZ()), 
-                new Rotation3d(0, CAMS_PITCH, -Math.PI / 4)
+                new Translation3d(ModuleConstants.MODULE_POSITIONS[3].getX() - CAM_OFFSET.getX(), ModuleConstants.MODULE_POSITIONS[3].getY() - CAM_OFFSET.getY(), CAM_OFFSET.getZ()), 
+                new Rotation3d(0, CAMS_PITCH, -3 * Math.PI / 4)
             )
         };
 

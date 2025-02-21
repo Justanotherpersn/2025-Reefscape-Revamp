@@ -172,6 +172,7 @@ public class SwerveModule {
             turnMotor.set(0.25);
 
         wasHomed = getSwitch();
+        sensorEntry.setBoolean(getSwitch());
     }
 
     /**

@@ -5,11 +5,17 @@
 package frc.robot.Subsystems;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.PhotonConstants;
 
 public class ChassisVisionLocalizer extends SubsystemBase {
   private static final ShuffleboardTab visionTab = Shuffleboard.getTab("Vision Localizer");
@@ -35,26 +41,26 @@ public class ChassisVisionLocalizer extends SubsystemBase {
 
   @Override
   public void periodic() {
-  //   for (int i = 0; i < photonCameras.length; i++) {
-  //     PhotonCamera camera = photonCameras[i];
-  //     final Transform3d cameraToRobot = PhotonConstants.CAMERAS_TO_ROBOT[i];
-  //     final Field2d camField = fields[i];
+    for (int i = 0; i < photonCameras.length; i++) {
+      PhotonCamera camera = photonCameras[i];
+      final Transform3d cameraToRobot = PhotonConstants.CAMERAS_TO_ROBOT[i];
+      final Field2d camField = fields[i];
 
-  //     camera.getAllUnreadResults().forEach(pipelineResult -> {
-  //       PhotonTrackedTarget target = pipelineResult.getBestTarget();
+      camera.getAllUnreadResults().forEach(pipelineResult -> {
+        PhotonTrackedTarget target = pipelineResult.getBestTarget();
 
-  //       if (target.getPoseAmbiguity() <= .05) {
-  //         Transform3d camToTarget = target.getBestCameraToTarget();
-  //         Transform3d targetToCamera = camToTarget.inverse();
+        if (target != null && target.getPoseAmbiguity() <= .05) {
+          Transform3d camToTarget = target.getBestCameraToTarget();
+          Transform3d targetToCamera = camToTarget.inverse();
 
-  //         Pose3d targetPose = PhotonConstants.APRILTAG_LOCATIONS[target.getFiducialId()];
-  //         Pose3d camPose = targetPose.transformBy(targetToCamera);
+          Pose3d targetPose = PhotonConstants.APRILTAG_LOCATIONS[target.getFiducialId()];
+          Pose3d camPose = targetPose.transformBy(targetToCamera);
 
-  //         Pose2d visionMeasurement = camPose.transformBy(cameraToRobot).toPose2d();
-  //         camField.setRobotPose(visionMeasurement);
-  //         Drivetrain.addVisionMeasurement(visionMeasurement, pipelineResult.getTimestampSeconds());
-  //       }
-  //     });
-  //   }
+          Pose2d visionMeasurement = camPose.transformBy(cameraToRobot).toPose2d();
+          camField.setRobotPose(visionMeasurement);
+          Drivetrain.addVisionMeasurement(visionMeasurement, pipelineResult.getTimestampSeconds());
+        }
+      });
+    }
   }
 }
