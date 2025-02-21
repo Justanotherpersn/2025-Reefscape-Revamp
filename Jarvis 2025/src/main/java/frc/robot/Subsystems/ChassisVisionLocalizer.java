@@ -53,7 +53,7 @@ public class ChassisVisionLocalizer extends SubsystemBase {
           Transform3d camToTarget = target.getBestCameraToTarget();
           Transform3d targetToCamera = camToTarget.inverse();
 
-          Pose3d targetPose = PhotonConstants.APRILTAG_LOCATIONS[target.getFiducialId()];
+          Pose3d targetPose = PhotonConstants.APRILTAG_LOCATIONS[target.getFiducialId() - 1];
           Pose3d camPose = targetPose.transformBy(targetToCamera);
 
           Pose2d visionMeasurement = camPose.transformBy(cameraToRobot).toPose2d();
