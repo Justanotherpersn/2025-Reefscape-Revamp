@@ -71,7 +71,7 @@ public class ControlPanel {
         }
     
         public static double getHeight() {
-            return depositing ? Constants.ElevatorConstants.LEVEL_HEIGHT[targetHeight] : 0;
+            return depositing ? targetHeight : 0;
         }
     
         public static Rotation2d getAngle() {
