@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.80970491359046,
-        "y": 1.8701455249844086
+        "x": 1.8097049135904597,
+        "y": 1.8701455249844083
       },
       "isLocked": false,
       "linkedName": null
@@ -66,7 +66,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Cycles Paths",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 55.0
