@@ -18,18 +18,18 @@ import frc.robot.Util.PIDDisplay;
 
 public class RobotContainer {
   private static final Drivetrain drivetrain = new Drivetrain();
-  private static final Elevator elevator = new Elevator();
-  private static final Pivot pivot = new Pivot();
-  private static final EndEffector endEffector = new EndEffector();
+  // private static final Elevator elevator = new Elevator();
+  // private static final Pivot pivot = new Pivot();
+  // private static final EndEffector endEffector = new EndEffector();
 
   ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
   SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
     new PIDDisplay();
-    new ChassisVisionLocalizer();
+    //new ChassisVisionLocalizer();
 
-    ControlPanel.configureBinding(drivetrain, elevator, pivot, endEffector);
+    ControlPanel.configureBinding(drivetrain/*, elevator, pivot, endEffector*/);
     configureAuto();
 
     PIDDisplay.Init();
