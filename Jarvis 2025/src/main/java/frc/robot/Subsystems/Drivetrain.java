@@ -19,6 +19,7 @@ import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -29,12 +30,12 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -50,9 +51,7 @@ public class Drivetrain extends SubsystemBase {
 
   private static SwerveDrivePoseEstimator poseEstimator;
 
-  private static final ShuffleboardTab telemTab = Shuffleboard.getTab("Telemetry");
-  private static GenericEntry headingEntry = telemTab.add("Robot Heading", 0).withPosition(5, 0).getEntry();
-  private static Field2d fieldEntry = new Field2d();
+  private static Field2d field = new Field2d();
 
   public Drivetrain() {
     poseEstimator = new SwerveDrivePoseEstimator(
@@ -101,7 +100,26 @@ public class Drivetrain extends SubsystemBase {
     PIDDisplay.PIDList.addOption("Swerve Drive Motors", SwerveModule.driveSetters);
     PIDDisplay.PIDList.addOption("Swerve Turn Motors", SwerveModule.turnSetters);
 
-    telemTab.add("Robot Pose", fieldEntry).withSize(5, 3);
+    SmartDashboard.putData("Swerve Drive", new Sendable() {
+      @Override
+      public void initSendable(SendableBuilder builder) {
+          builder.setSmartDashboardType("SwerveDrive");
+
+          builder.addDoubleProperty("Front Left Angle", () -> MODULES.FRONT_LEFT.base.getAngle().getRadians(), null);
+          builder.addDoubleProperty("Front Left Velocity", () -> MODULES.FRONT_LEFT.base.getSpeed(), null);
+          
+          builder.addDoubleProperty("Front Right Angle", () -> MODULES.FRONT_RIGHT.base.getAngle().getRadians(), null);
+          builder.addDoubleProperty("Front Right Velocity", () -> MODULES.FRONT_RIGHT.base.getSpeed(), null);
+
+          builder.addDoubleProperty("Back Left Angle", () -> MODULES.BACK_LEFT.base.getAngle().getRadians(), null);
+          builder.addDoubleProperty("Back Left Velocity", () -> MODULES.BACK_LEFT.base.getSpeed(), null);
+
+          builder.addDoubleProperty("Back Right Angle", () -> MODULES.BACK_RIGHT.base.getAngle().getRadians(), null);
+          builder.addDoubleProperty("Back Right Velocity", () -> MODULES.BACK_RIGHT.base.getSpeed(), null);
+
+          builder.addDoubleProperty("Robot Angle", () -> getPose().getRotation().getRadians(), null);
+      }
+    });
   }
 
   enum MODULES {
@@ -153,8 +171,9 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    headingEntry.setDouble(getPose().getRotation().getDegrees());
-    fieldEntry.setRobotPose(getPose());
+    SmartDashboard.putNumber("Robot Heading", getPose().getRotation().getDegrees());
+    field.setRobotPose(getPose());
+    SmartDashboard.putData("Robot Pose", field);
     poseEstimator.update(getHeadingRaw(), MODULES.collectProperty(SwerveModule::getPosition, SwerveModulePosition.class));
   }
 

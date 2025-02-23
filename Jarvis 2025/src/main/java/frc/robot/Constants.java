@@ -106,7 +106,7 @@ public class Constants {
     }
 
     public static class PivotConstants {
-        public static final double GEARING = 1;
+        public static final double GEARING = 90;
         /**The angle between the arm and a loaded coral, with positive x pointing radially outwards*/
         public static final Rotation2d END_MOUNT_ANGLE = Rotation2d.fromDegrees(-55);
         public static final Rotation2d POSITION_TOLERANCE = Rotation2d.fromDegrees(5);

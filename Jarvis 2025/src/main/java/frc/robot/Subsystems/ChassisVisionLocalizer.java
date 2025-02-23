@@ -11,16 +11,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.net.PortForwarder;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PhotonConstants;
 
 public class ChassisVisionLocalizer extends SubsystemBase {
-  private static final ShuffleboardTab visionTab = Shuffleboard.getTab("Vision Localizer");
-
-  private static final Field2d[] fields = new Field2d[4];
+  private static final Field2d[] fields = {new Field2d(), new Field2d(), new Field2d(), new Field2d()};
 
   private static final PhotonCamera[] photonCameras = new PhotonCamera[] {
     new PhotonCamera("navCam0"),
@@ -32,11 +29,6 @@ public class ChassisVisionLocalizer extends SubsystemBase {
   public ChassisVisionLocalizer() {
     PortForwarder.add(5800, "navCams01.local", 5800);
     PortForwarder.add(5800, "navCams23.local", 5800);
-
-    for (int i = 0; i < fields.length; i++) {
-      fields[i] = new Field2d();
-      visionTab.add(photonCameras[i].getName(), fields[i]).withSize(4, 2).withPosition((i % 2) * 4, (i / 2) * 2);
-    }
   }
 
   @Override
@@ -57,8 +49,10 @@ public class ChassisVisionLocalizer extends SubsystemBase {
           Pose3d camPose = targetPose.transformBy(targetToCamera);
 
           Pose2d visionMeasurement = camPose.transformBy(cameraToRobot).toPose2d();
-          camField.setRobotPose(visionMeasurement);
           Drivetrain.addVisionMeasurement(visionMeasurement, pipelineResult.getTimestampSeconds());
+          
+          camField.setRobotPose(visionMeasurement);
+          SmartDashboard.putData(camera.getName(), camField);
         }
       });
     }

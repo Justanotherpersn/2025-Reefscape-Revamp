@@ -22,10 +22,10 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Util.SparkBaseSetter;
@@ -48,12 +48,8 @@ public class SwerveModule {
     private VelocityVoltage desiredVelocity = new VelocityVoltage(0);
     private TalonFXConfiguration driveConfiguration;
 
-    private static final ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
     public static final TalonFXSetter driveSetters = new TalonFXSetter();
     public static final SparkBaseSetter turnSetters = new SparkBaseSetter();
-
-
-    GenericEntry desiredSpeedEntry, actualSpeedEntry, desiredAngleEntry, actualAngleEntry, turnOutputEntry, driveOutputEntry, sensorEntry;
 
     /**
      * A single swerve module object
@@ -111,19 +107,6 @@ public class SwerveModule {
         turnSetters.addConfigurator(new SparkConfiguration(turnMotor, turnConfig));
         turnEncoder = turnMotor.getEncoder();
         //#endregion
-
-        //#region Debug
-        desiredSpeedEntry = swerveTab.add("Desired Speed " + moduleID, 0).withPosition(0, moduleID).getEntry();
-        actualSpeedEntry = swerveTab.add("Actual Speed " + moduleID, 0).withPosition(1, moduleID).getEntry();
-        
-        desiredAngleEntry = swerveTab.add("Desired Angle " + moduleID, 0).withPosition(3, moduleID).getEntry();
-        actualAngleEntry = swerveTab.add("Actual Angle " + moduleID, 0).withPosition(4, moduleID).getEntry();
-
-        driveOutputEntry = swerveTab.add("Drive Output " + moduleID, 0).withPosition(6, moduleID).getEntry();
-        turnOutputEntry = swerveTab.add("Turn Output " + moduleID, 0).withPosition(7, moduleID).getEntry();
-    
-        sensorEntry = swerveTab.add("Home Sensor " + moduleID, false).withPosition(9, moduleID).getEntry();
-        //#endregion
     }    
 
     /**
@@ -131,9 +114,6 @@ public class SwerveModule {
      * @param desiredState the desired state
      */
     public void setDesiredState(SwerveModuleState desiredState) {
-        desiredSpeedEntry.setDouble(desiredState.speedMetersPerSecond);
-        desiredAngleEntry.setDouble(desiredState.angle.getRadians());
-
         if(Math.abs(desiredState.speedMetersPerSecond) < .001){
             stop();
             return;
@@ -144,15 +124,6 @@ public class SwerveModule {
         driveMotor.setControl(desiredVelocity);
 
         turnPIDController.setReference(desiredState.angle.getRadians(), SparkMax.ControlType.kPosition);
-
-        desiredSpeedEntry.setDouble(desiredVelocity.Velocity);
-        actualSpeedEntry.setDouble(driveMotor.getVelocity().getValueAsDouble());
-        actualAngleEntry.setDouble(turnMotor.getEncoder().getPosition());
-
-        turnOutputEntry.setDouble(turnMotor.get());
-        driveOutputEntry.setDouble(driveMotor.get());
-
-        sensorEntry.setBoolean(getSwitch());
     }
 
     /**
@@ -172,7 +143,6 @@ public class SwerveModule {
             turnMotor.set(0.25);
 
         wasHomed = getSwitch();
-        sensorEntry.setBoolean(getSwitch());
     }
 
     /**

@@ -5,15 +5,10 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Subsystems.ChassisVisionLocalizer;
 import frc.robot.Subsystems.Drivetrain;
-import frc.robot.Subsystems.Elevator;
-import frc.robot.Subsystems.EndEffector;
-import frc.robot.Subsystems.Pivot;
 import frc.robot.Util.PIDDisplay;
 
 public class RobotContainer {
@@ -21,8 +16,6 @@ public class RobotContainer {
   // private static final Elevator elevator = new Elevator();
   // private static final Pivot pivot = new Pivot();
   // private static final EndEffector endEffector = new EndEffector();
-
-  ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
   SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
@@ -37,7 +30,7 @@ public class RobotContainer {
 
   private void configureAuto() {
     autoChooser = AutoBuilder.buildAutoChooser();
-    autoTab.add("Auto Chooser", autoChooser).withPosition(0, 0).withPosition(5, 1);
+    SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
   public Command getAutonomousCommand() {
