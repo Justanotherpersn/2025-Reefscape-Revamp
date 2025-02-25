@@ -247,7 +247,7 @@ public class Drivetrain extends SubsystemBase {
         new RunCommand(() -> MODULES.forAll(SwerveModule::home), this),
         new WaitUntilCommand(() -> !Arrays.asList(MODULES.collectProperty(m -> m.homed, Boolean.class)).contains(false))
           .andThen(() -> Elastic.sendNotification(Constants.Debug.SWERVE_HOME_SUCCESS)),
-        new WaitCommand(5)
+        new WaitCommand(3)
           .andThen(() -> Elastic.sendNotification(Constants.Debug.SWERVE_HOME_FAIL))
       )
     );

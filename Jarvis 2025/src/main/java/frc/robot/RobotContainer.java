@@ -10,11 +10,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Subsystems.Drivetrain;
+import frc.robot.Subsystems.Elevator;
 import frc.robot.Util.PIDDisplay;
 
 public class RobotContainer {
   private static final Drivetrain drivetrain = new Drivetrain();
-  // private static final Elevator elevator = new Elevator();
+  private static final Elevator elevator = new Elevator();
   // private static final Pivot pivot = new Pivot();
   // private static final EndEffector endEffector = new EndEffector();
   SendableChooser<Command> autoChooser;
@@ -23,7 +24,7 @@ public class RobotContainer {
     new PIDDisplay();
     //new ChassisVisionLocalizer();
 
-    ControlPanel.configureBinding(drivetrain/*, elevator, pivot, endEffector*/);
+    ControlPanel.configureBinding(drivetrain, elevator/*, pivot, endEffector*/);
     configureAuto();
 
     PIDDisplay.Init();

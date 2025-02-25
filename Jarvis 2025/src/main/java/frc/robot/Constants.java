@@ -100,7 +100,7 @@ public class Constants {
         public static final double SPROKET_CIRCUMFERENCE = Math.PI * SPROCKET_DIA;
 
         //Gear ratio of the elevator drive motor
-        public static final double ELEVATOR_GEARING = 1;
+        public static final double GEARING = 27 * 95f / 40f;
 
         //Distance from floor to bottom of elevator
         public static final double FLOOR_OFFSET = Units.inchesToMeters(1.25);
