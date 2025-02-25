@@ -41,8 +41,12 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Util.Elastic;
@@ -177,10 +181,12 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
+    poseEstimator.update(getHeadingRaw(), MODULES.collectProperty(SwerveModule::getPosition, SwerveModulePosition.class));
+    
+    MODULES.forAll(m -> m.periodicDebug());
     headingEntry.setDouble(getPose().getRotation().getDegrees());
     field.setRobotPose(getPose());
-    SmartDashboard.putData("Drivetrain/Robot Pose", field);
-    poseEstimator.update(getHeadingRaw(), MODULES.collectProperty(SwerveModule::getPosition, SwerveModulePosition.class));
+    SmartDashboard.putData("Drivetrain/Robot Pose", field); 
   }
 
   /**
@@ -235,18 +241,26 @@ public class Drivetrain extends SubsystemBase {
   }
  
   public Command homeCommand() {
-    return new
-      InstantCommand(() -> MODULES.forAll(m -> m.setHomed(false)))
-      .alongWith(new RunCommand(() -> MODULES.forAll(SwerveModule::home), this))
-      .until(() -> !Arrays.asList(MODULES.collectProperty(m -> m.homed, Boolean.class)).contains(false))
-      .andThen(() -> Elastic.sendNotification(Constants.Debug.DRIVETRAIN_HOMED));
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> MODULES.forAll(m -> m.setHomed(false))),
+      new ParallelRaceGroup(
+        new RunCommand(() -> MODULES.forAll(SwerveModule::home), this),
+        new WaitUntilCommand(() -> !Arrays.asList(MODULES.collectProperty(m -> m.homed, Boolean.class)).contains(false))
+          .andThen(() -> Elastic.sendNotification(Constants.Debug.SWERVE_HOME_SUCCESS)),
+        new WaitCommand(5)
+          .andThen(() -> Elastic.sendNotification(Constants.Debug.SWERVE_HOME_FAIL))
+      )
+    );
   }
 
   public Command pathingCommand(Pose2d destination, double endSpeed) {
-    return AutoBuilder.pathfindToPose(
-      destination,
-      Constants.NavigationConstants.PATHING_CONSTRAINTS,
-      endSpeed
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> Elastic.sendNotification(Constants.Debug.PATH_SCHEDULED(destination))),
+      AutoBuilder.pathfindToPose(
+        destination,
+        Constants.NavigationConstants.PATHING_CONSTRAINTS,
+        endSpeed
+      )
     );
   }
 }

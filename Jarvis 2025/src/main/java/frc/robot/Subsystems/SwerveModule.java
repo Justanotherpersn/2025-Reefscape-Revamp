@@ -22,6 +22,9 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
 import frc.robot.Constants.ModuleConstants;
@@ -47,6 +50,9 @@ public class SwerveModule {
 
     public static final TalonFXSetter driveSetters = new TalonFXSetter();
     public static final SparkBaseSetter turnSetters = new SparkBaseSetter();
+
+    private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("Drivetrain/Swerve/Modules");
+    private final GenericEntry homedEntry, switchEntry;
 
     /**
      * A single swerve module object
@@ -104,7 +110,15 @@ public class SwerveModule {
         turnSetters.addConfigurator(new SparkConfiguration(turnMotor, turnConfig));
         turnEncoder = turnMotor.getEncoder();
         //#endregion
+
+        homedEntry = nTable.getTopic("Homed [" + moduleID + "]").getGenericEntry();
+        switchEntry = nTable.getTopic("Switch [" + moduleID + "]").getGenericEntry();
     }    
+
+    public void periodicDebug() {
+        switchEntry.setBoolean(getSwitch());
+        homedEntry.setBoolean(homed);
+    }
 
     /**
      * Set the desired state for the module. Drive speeds of 0 will result in no azimuth movement.

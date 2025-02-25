@@ -8,6 +8,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Util.PIDDisplay;
 
@@ -34,8 +35,9 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return
-      drivetrain.homeCommand()
-      .andThen(autoChooser.getSelected());
+    return new SequentialCommandGroup(
+      drivetrain.homeCommand(),
+      autoChooser.getSelected()
+    );
   }
 }

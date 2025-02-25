@@ -226,11 +226,27 @@ public class Constants {
     }
 
     public static class Debug {
-        public static final Notification DRIVETRAIN_HOMED = new Notification(
+        public static final Notification SWERVE_HOME_SUCCESS = new Notification(
             NotificationLevel.INFO,
-            "Drivetrain",
+            "Swerve",
             "All swerve modules have been homed.",
             1000
         );
+
+        public static final Notification SWERVE_HOME_FAIL = new Notification(
+            NotificationLevel.ERROR,
+            "Swerve",
+            "Failed to home swerve modules; timed out after 5 seconds.",
+            5000
+        );
+
+        public static Notification PATH_SCHEDULED(Pose2d pose) {
+            return new Notification(
+                NotificationLevel.INFO,
+                "Navigation",
+                "Navigating to (" + pose.getX() + ", " + pose.getY() + "), heading: " + pose.getRotation().getDegrees() + " degrees.",
+                1000
+            );
+        }
     }
 }
