@@ -5,6 +5,8 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,6 +23,20 @@ public class RobotContainer {
   SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
+
+    NamedCommands.registerCommand("Set Elevator L1", elevator.elevatorHeight(-1));
+    NamedCommands.registerCommand("Set Elevator L2", elevator.elevatorHeight(-1));
+    NamedCommands.registerCommand("Set Elevator L3", elevator.elevatorHeight(-1));
+    NamedCommands.registerCommand("Set Elevator L4", elevator.elevatorHeight(-1));
+
+    NamedCommands.registerCommand("Set Pivot L1", null);
+    NamedCommands.registerCommand("Set Pivot L2", null);
+    NamedCommands.registerCommand("Set Pivot L3", null);
+    NamedCommands.registerCommand("Set Pivot L4", null);
+
+    NamedCommands.registerCommand("Deposit Coral", null);
+    NamedCommands.registerCommand("Load Coral", null);
+
     new PIDDisplay();
     //new ChassisVisionLocalizer();
 

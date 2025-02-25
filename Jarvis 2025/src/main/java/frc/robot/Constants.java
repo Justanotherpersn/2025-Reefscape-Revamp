@@ -95,8 +95,12 @@ public class Constants {
         //Max extension of the elevator relative to itself in meters
         public static final double MAX_ELEVATOR_EXTENSION = Units.inchesToMeters(24.75);
         public static final double MIN_ELEVATOR_EXTENSION = Units.inchesToMeters(.25);
+
+        public static final double TOP_LIMIT_POSITION = Units.inchesToMeters(25);
+        public static final double BOTTOM_LIMIT_POSITION = Units.inchesToMeters(0);
+
         //Diameter of the elevator drive sprocket in meters
-        public static final double SPROCKET_DIA = Units.inchesToMeters(5);
+        public static final double SPROCKET_DIA = Units.inchesToMeters(1.5);
         public static final double SPROKET_CIRCUMFERENCE = Math.PI * SPROCKET_DIA;
 
         //Gear ratio of the elevator drive motor
@@ -104,7 +108,8 @@ public class Constants {
 
         //Distance from floor to bottom of elevator
         public static final double FLOOR_OFFSET = Units.inchesToMeters(1.25);
-        public static final double SETPOINT_RANGE = 1;
+        //Tolerence for elevator height
+        public static final double SETPOINT_RANGE = .25;
     }
 
     public static class PivotConstants {
