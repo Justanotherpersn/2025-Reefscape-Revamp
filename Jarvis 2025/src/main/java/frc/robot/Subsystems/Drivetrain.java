@@ -30,6 +30,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -42,14 +45,17 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ModuleConstants;
+import frc.robot.Util.Elastic;
 import frc.robot.Util.PIDDisplay;
 
 public class Drivetrain extends SubsystemBase {
   Pigeon2 IMU = new Pigeon2(Constants.CAN_DEVICES.PIGEON_2.id);
 
   private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Constants.ModuleConstants.MODULE_POSITIONS);
-
   private static SwerveDrivePoseEstimator poseEstimator;
+  private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Drivetrain");
+
+  private final GenericEntry headingEntry = nTable.getTopic("Heading").getGenericEntry();
 
   private static Field2d field = new Field2d();
 
@@ -100,7 +106,7 @@ public class Drivetrain extends SubsystemBase {
     PIDDisplay.PIDList.addOption("Swerve Drive Motors", SwerveModule.driveSetters);
     PIDDisplay.PIDList.addOption("Swerve Turn Motors", SwerveModule.turnSetters);
 
-    SmartDashboard.putData("Swerve Drive", new Sendable() {
+    SmartDashboard.putData("Drivetrain/Swerve", new Sendable() {
       @Override
       public void initSendable(SendableBuilder builder) {
           builder.setSmartDashboardType("SwerveDrive");
@@ -171,9 +177,9 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Robot Heading", getPose().getRotation().getDegrees());
+    headingEntry.setDouble(getPose().getRotation().getDegrees());
     field.setRobotPose(getPose());
-    SmartDashboard.putData("Robot Pose", field);
+    SmartDashboard.putData("Drivetrain/Robot Pose", field);
     poseEstimator.update(getHeadingRaw(), MODULES.collectProperty(SwerveModule::getPosition, SwerveModulePosition.class));
   }
 
@@ -232,7 +238,8 @@ public class Drivetrain extends SubsystemBase {
     return new
       InstantCommand(() -> MODULES.forAll(m -> m.setHomed(false)))
       .alongWith(new RunCommand(() -> MODULES.forAll(SwerveModule::home), this))
-      .until(() -> !Arrays.asList(MODULES.collectProperty(m -> m.homed, Boolean.class)).contains(false));
+      .until(() -> !Arrays.asList(MODULES.collectProperty(m -> m.homed, Boolean.class)).contains(false))
+      .andThen(() -> Elastic.sendNotification(Constants.Debug.DRIVETRAIN_HOMED));
   }
 
   public Command pathingCommand(Pose2d destination, double endSpeed) {

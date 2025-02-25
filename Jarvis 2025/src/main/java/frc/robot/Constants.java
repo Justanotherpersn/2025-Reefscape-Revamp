@@ -16,6 +16,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Util.Gains;
+import frc.robot.Util.Elastic.Notification;
+import frc.robot.Util.Elastic.Notification.NotificationLevel;
 
 /** Add your docs here. */
 public class Constants {
@@ -221,5 +223,14 @@ public class Constants {
         };
 
         public static final double OPERATION_RADIUS = 0.5;
+    }
+
+    public static class Debug {
+        public static final Notification DRIVETRAIN_HOMED = new Notification(
+            NotificationLevel.INFO,
+            "Drivetrain",
+            "All swerve modules have been homed.",
+            1000
+        );
     }
 }

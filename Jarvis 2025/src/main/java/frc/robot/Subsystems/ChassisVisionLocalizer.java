@@ -52,7 +52,7 @@ public class ChassisVisionLocalizer extends SubsystemBase {
           Drivetrain.addVisionMeasurement(visionMeasurement, pipelineResult.getTimestampSeconds());
           
           camField.setRobotPose(visionMeasurement);
-          SmartDashboard.putData(camera.getName(), camField);
+          SmartDashboard.putData("Drivetrain/Vision" + camera.getName(), camField);
         }
       });
     }

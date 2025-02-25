@@ -8,9 +8,10 @@ import java.util.List;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /** Add your docs here. */
@@ -22,13 +23,13 @@ public class PIDDisplay extends SubsystemBase{
     public static final SendableChooser<PIDSetter> PIDList = new SendableChooser<>();
     public static final WPILibSetter defaultPID = new WPILibSetter(List.of(new PIDController(0, 0, 0)));
 
-    private static ShuffleboardTab PIDTab = Shuffleboard.getTab("PID");
+    private static NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/PID Display");
 
-    private static GenericEntry PEntry = PIDTab.add("P", 0).withPosition(0, 1).getEntry();
-    private static GenericEntry IEntry = PIDTab.add("I", 0).withPosition(1, 1).getEntry();
-    private static GenericEntry DEntry = PIDTab.add("D", 0).withPosition(2, 1).getEntry();
-    private static GenericEntry SEntry = PIDTab.add("S", 0).withPosition(3, 1).getEntry();
-    private static GenericEntry VEntry = PIDTab.add("V", 0).withPosition(4, 1).getEntry();
+    private static GenericEntry PEntry = nTable.getTopic("P").getGenericEntry();
+    private static GenericEntry IEntry = nTable.getTopic("I").getGenericEntry();
+    private static GenericEntry DEntry = nTable.getTopic("D").getGenericEntry();
+    private static GenericEntry SEntry = nTable.getTopic("S").getGenericEntry();
+    private static GenericEntry VEntry = nTable.getTopic("V").getGenericEntry();
 
     PIDSetter selectedPID;
     PIDSetter lastSelected;
@@ -40,8 +41,17 @@ public class PIDDisplay extends SubsystemBase{
     double VValue;
 
     public static void Init() {
-        PIDTab.add(PIDList).withPosition(0, 0).withSize(4, 1);
+        SmartDashboard.putData("PID Display/PID Selector", PIDList);
+        updatePID(new Gains(0, 0));
         PIDList.setDefaultOption("Default PID", defaultPID);
+    }
+
+    private static void updatePID(Gains gains) {
+        PEntry.setDouble(gains.P);
+        IEntry.setDouble(gains.I);
+        DEntry.setDouble(gains.D);
+        SEntry.setDouble(gains.S);
+        VEntry.setDouble(gains.V);
     }
 
     @Override
@@ -52,13 +62,8 @@ public class PIDDisplay extends SubsystemBase{
         Gains codeCurrentPID = selectedPID.getPID();
         if (codeCurrentPID == null) return;
         
-        if(selectedPID != lastSelected){
-            PEntry.setDouble(codeCurrentPID.P);
-            IEntry.setDouble(codeCurrentPID.I);
-            DEntry.setDouble(codeCurrentPID.D);
-            SEntry.setDouble(codeCurrentPID.S);
-            VEntry.setDouble(codeCurrentPID.V);
-        }
+        if(selectedPID != lastSelected)
+            updatePID(codeCurrentPID);
         lastSelected = selectedPID;
         
         PValue = PEntry.getDouble(codeCurrentPID.P);
