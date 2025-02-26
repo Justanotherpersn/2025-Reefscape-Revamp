@@ -1,5 +1,9 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Rotation;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -11,8 +15,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Commands.JoystickDrive;
+import frc.robot.Subsystems.Climber;
 import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.Elevator;
+import frc.robot.Subsystems.EndEffector;
+import frc.robot.Subsystems.Pivot;
+import frc.robot.Util.UniversalCommandFactory;
 
 public class ControlPanel {
     private static final Joystick controller = new Joystick(0);
@@ -33,15 +41,19 @@ public class ControlPanel {
 
     private static Drivetrain drivetrain;
 
-    public static void configureBinding(Drivetrain drivetrain, Elevator elevator/*, Pivot pivot, EndEffector endEffector*/) {
+    public static void configureBinding(Drivetrain drivetrain, Elevator elevator, Pivot pivot, EndEffector endEffector, Climber climber) {
         drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, controller));
 
         new JoystickButton(controller, 1).whileTrue(drivetrain.homeCommand());
-        new JoystickButton(controller, 2).whileTrue(drivetrain.pathingCommand(drivetrain.getPose().plus(new Transform2d(1, 1, new Rotation2d())), 0));
 
-        new JoystickButton(controller, 5).whileTrue(elevator.elevatorHeight(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION));
-        new JoystickButton(controller, 6).whileTrue(elevator.elevatorHeight(Constants.ElevatorConstants.MAX_ELEVATOR_EXTENSION));
-        // fnew JoystickButton(controller, 3).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
+        new JoystickButton(controller, 5).whileTrue(elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION));
+        new JoystickButton(controller, 6).whileTrue(elevator.moveCommand(Constants.ElevatorConstants.MAX_ELEVATOR_EXTENSION));
+        //new JoystickButton(controller, 5).whileTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(0), false, pivot, endEffector));
+        //new JoystickButton(controller, 6).whileTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-90), false, pivot, endEffector));
+        new JoystickButton(controller, 2).onTrue(elevator.homeCommand());
+
+        //new JoystickButton(controller, 3).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
+        //new JoystickButton(controller, 3).whileTrue(drivetrain.pathingCommand(new Pose2d(6, 6, Rotation2d.fromDegrees(90)), 0));
 
         for (int i = 0; i < 16; i++) {
             final int buttonID = buttonLookup[i];
@@ -51,6 +63,7 @@ public class ControlPanel {
                     .andThen(() -> displayReefLocation(ReefCycle.targetPosition, ReefCycle.targetHeight))
             );
         }
+
         displayReefLocation(0, 0);
         ControlPanel.drivetrain = drivetrain;
     }
@@ -121,7 +134,7 @@ public class ControlPanel {
     
         //TODO FIX
         public static double getHeight() {
-            return depositing ? targetHeight : 0;
+            return depositing ? Constants.ElevatorConstants.PRESET_HEIGHTS[targetHeight] : Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION;
         }
     
         public static Rotation2d getAngle() {

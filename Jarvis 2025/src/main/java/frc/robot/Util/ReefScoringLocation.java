@@ -44,7 +44,7 @@ public class ReefScoringLocation {
         return 
             Constants.EndEffectorConstants.CORAL_PROTRUSION_LENGTH
                 * Constants.PivotConstants.END_MOUNT_ANGLE.plus(pivotAngle).getCos()
-            + Constants.PivotConstants.LENGHT * pivotAngle.getCos();
+            + Constants.PivotConstants.LENGTH * pivotAngle.getCos();
     }
 
     public double[] computeAcceptableScoringRange() {
@@ -54,9 +54,9 @@ public class ReefScoringLocation {
             alpha.minus(Constants.PivotConstants.END_MOUNT_ANGLE).minus(Constants.EndEffectorConstants.ACCEPTABLE_SCORING_RANGE).getRadians(),
             -Math.atan2(
                 Constants.EndEffectorConstants.CORAL_PROTRUSION_LENGTH * alpha.getSin()
-                + Constants.PivotConstants.LENGHT * difference.getSin(),
+                + Constants.PivotConstants.LENGTH * difference.getSin(),
                 Constants.EndEffectorConstants.CORAL_PROTRUSION_LENGTH * alpha.getCos()
-                + Constants.PivotConstants.LENGHT * difference.getCos()
+                + Constants.PivotConstants.LENGTH * difference.getCos()
             )
         };
 
@@ -83,7 +83,7 @@ public class ReefScoringLocation {
     public SubsystemState getStateAt(Pose2d robot) {
         double A = 
             Constants.EndEffectorConstants.CORAL_PROTRUSION_LENGTH * Constants.PivotConstants.END_MOUNT_ANGLE.getCos()
-            + Constants.PivotConstants.LENGHT;
+            + Constants.PivotConstants.LENGTH;
         double B =
             -Constants.EndEffectorConstants.CORAL_PROTRUSION_LENGTH * Constants.PivotConstants.END_MOUNT_ANGLE.getSin();
 
@@ -107,7 +107,7 @@ public class ReefScoringLocation {
             position.getZ() 
                 - Constants.EndEffectorConstants.CORAL_PROTRUSION_LENGTH 
                     * Math.sin(Constants.PivotConstants.END_MOUNT_ANGLE.getRadians() + angle)
-                - Constants.PivotConstants.LENGHT * Math.sin(angle), 
+                - Constants.PivotConstants.LENGTH * Math.sin(angle), 
             Rotation2d.fromRadians(angle),
             new Pose2d(
                 robot.getTranslation(),

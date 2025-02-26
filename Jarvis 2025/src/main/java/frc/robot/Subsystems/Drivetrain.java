@@ -19,6 +19,7 @@ import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
@@ -130,6 +131,9 @@ public class Drivetrain extends SubsystemBase {
           builder.addDoubleProperty("Robot Angle", () -> getPose().getRotation().getRadians(), null);
       }
     });
+
+    PathPlannerLogging.setLogActivePathCallback(poses -> field.getObject("path").setPoses(poses));
+    PathPlannerLogging.setLogTargetPoseCallback(pose -> {field.getObject("target pose").setPose(pose); System.out.println(pose.getX());});
   }
 
   enum MODULES {

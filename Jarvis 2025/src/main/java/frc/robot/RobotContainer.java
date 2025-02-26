@@ -11,23 +11,28 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Subsystems.ChassisVisionLocalizer;
+import frc.robot.Subsystems.Climber;
 import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.Elevator;
+import frc.robot.Subsystems.EndEffector;
+import frc.robot.Subsystems.Pivot;
 import frc.robot.Util.PIDDisplay;
 
 public class RobotContainer {
   private static final Drivetrain drivetrain = new Drivetrain();
   private static final Elevator elevator = new Elevator();
-  // private static final Pivot pivot = new Pivot();
-  // private static final EndEffector endEffector = new EndEffector();
+  private static final Pivot pivot = new Pivot();
+  private static final Climber climber = new Climber();
+  private static final EndEffector endEffector = new EndEffector();
   SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
 
-    NamedCommands.registerCommand("Set Elevator L1", elevator.elevatorHeight(-1));
-    NamedCommands.registerCommand("Set Elevator L2", elevator.elevatorHeight(-1));
-    NamedCommands.registerCommand("Set Elevator L3", elevator.elevatorHeight(-1));
-    NamedCommands.registerCommand("Set Elevator L4", elevator.elevatorHeight(-1));
+    NamedCommands.registerCommand("Set Elevator L1", elevator.moveCommand(-1));
+    NamedCommands.registerCommand("Set Elevator L2", elevator.moveCommand(-1));
+    NamedCommands.registerCommand("Set Elevator L3", elevator.moveCommand(-1));
+    NamedCommands.registerCommand("Set Elevator L4", elevator.moveCommand(-1));
 
     NamedCommands.registerCommand("Set Pivot L1", null);
     NamedCommands.registerCommand("Set Pivot L2", null);
@@ -38,9 +43,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("Load Coral", null);
 
     new PIDDisplay();
-    //new ChassisVisionLocalizer();
+    new ChassisVisionLocalizer();
 
-    ControlPanel.configureBinding(drivetrain, elevator/*, pivot, endEffector*/);
+    ControlPanel.configureBinding(drivetrain, elevator, pivot, endEffector, climber);
     configureAuto();
 
     PIDDisplay.Init();
@@ -54,7 +59,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return new SequentialCommandGroup(
       drivetrain.homeCommand(),
-      autoChooser.getSelected()
+      AutoBuilder.buildAuto(autoChooser.getSelected().getName())
     );
   }
 }

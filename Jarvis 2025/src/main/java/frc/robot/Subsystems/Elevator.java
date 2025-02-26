@@ -13,18 +13,21 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
+import frc.robot.Util.Elastic;
 import frc.robot.Util.PIDDisplay;
 import frc.robot.Util.SparkBaseSetter;
 import frc.robot.Util.SparkBaseSetter.SparkConfiguration;
 
 
 public class Elevator extends SubsystemBase {
-  private final DigitalInput topLimit = new DigitalInput(4);
-  private final DigitalInput bottomLimit = new DigitalInput(5);
+  private final DigitalInput topLimit = new DigitalInput(5);
+  private final DigitalInput bottomLimit = new DigitalInput(4);
   private boolean previousTopLimit, previousBottomLimit;
 
   private SparkFlex elevator;
@@ -38,6 +41,7 @@ public class Elevator extends SubsystemBase {
   private final GenericEntry outputEntry = nTable.getTopic("Output").getGenericEntry();
   private final GenericEntry topSwitchEntry = nTable.getTopic("Top Switch").getGenericEntry();
   private final GenericEntry bottomSwitchEntry = nTable.getTopic("Bottom Switch").getGenericEntry();
+  private final GenericEntry encoderEntry = nTable.getTopic("Encoder").getGenericEntry();
   
   public Elevator(){
     elevator = new SparkFlex(Constants.CAN_DEVICES.ELEVATOR_MOTOR.id, MotorType.kBrushless);
@@ -60,12 +64,13 @@ public class Elevator extends SubsystemBase {
     targetPositionEntry.setDouble(0);
     topSwitchEntry.setBoolean(false);
     bottomSwitchEntry.setBoolean(false);
+    encoderEntry.setDouble(0);
 
+    elevator.getEncoder().setPosition(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION);
+    
     SparkBaseSetter motorClosedLoopSetter = new SparkBaseSetter(new SparkConfiguration(elevator, elevatorConfig));
     motorClosedLoopSetter.setPID(Constants.GAINS.ELEVATOR);
     PIDDisplay.PIDList.addOption("Elevator Motors", motorClosedLoopSetter);
-
-    elevator.getEncoder().setPosition(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION);
   }
   
   public void move(double targetPosition){
@@ -75,7 +80,30 @@ public class Elevator extends SubsystemBase {
     targetPositionEntry.setDouble(targetPosition);
   }
 
-  public Command elevatorHeight(double targetPosition) {
+  public double timeToReach(double position) {
+    return Math.abs(elevator.getEncoder().getPosition() - position) / Constants.ElevatorConstants.LINEAR_SPEED;
+  }
+
+  public Command homeCommand() {
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> elevator.set(-0.1)),
+      new ParallelRaceGroup(
+        new SequentialCommandGroup(
+          new WaitUntilCommand(() -> !bottomLimit.get()),
+          new InstantCommand(() -> elevator.getEncoder().setPosition(Constants.ElevatorConstants.BOTTOM_LIMIT_POSITION)),
+          moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION),
+          new InstantCommand(() -> Elastic.sendNotification(Constants.Debug.ELEVATOR_HOME_SUCCESS))
+        ),
+        new SequentialCommandGroup(
+          new WaitCommand(10),
+          new InstantCommand(() -> elevator.set(0)),
+          new InstantCommand(() -> Elastic.sendNotification(Constants.Debug.ELEVATOR_HOME_FAIL))
+        )
+      )
+    );
+  }
+
+  public Command moveCommand(double targetPosition) {
     return new SequentialCommandGroup(
       new InstantCommand(() -> move(targetPosition)),
       new WaitUntilCommand(() -> Math.abs(elevator.getEncoder().getPosition() - targetPosition) < Constants.ElevatorConstants.SETPOINT_RANGE)
@@ -84,13 +112,20 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (topLimit.get() && !previousTopLimit) elevator.getEncoder().setPosition(Constants.ElevatorConstants.MAX_ELEVATOR_EXTENSION);
-    if (bottomLimit.get() && !previousBottomLimit) elevator.getEncoder().setPosition(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION);
-    previousTopLimit = topLimit.get();
-    previousBottomLimit = bottomLimit.get();
+    if (!topLimit.get() && !previousTopLimit) {
+      elevator.getEncoder().setPosition(Constants.ElevatorConstants.TOP_LIMIT_POSITION);
+      move(Constants.ElevatorConstants.TOP_LIMIT_POSITION);
+    }
+    if (!bottomLimit.get() && !previousBottomLimit) {
+      elevator.getEncoder().setPosition(Constants.ElevatorConstants.BOTTOM_LIMIT_POSITION);
+      move(Constants.ElevatorConstants.BOTTOM_LIMIT_POSITION);
+    }
+    previousTopLimit = !topLimit.get();
+    previousBottomLimit = !bottomLimit.get();
 
     outputEntry.setDouble(elevator.get());
     topSwitchEntry.setBoolean(previousTopLimit);
     bottomSwitchEntry.setBoolean(previousBottomLimit);
+    encoderEntry.setDouble(elevator.getEncoder().getPosition());
   }
 }

@@ -15,6 +15,9 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import frc.robot.Constants;
 import frc.robot.Util.PIDDisplay;
 import frc.robot.Util.SparkBaseSetter;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -27,7 +30,13 @@ public class EndEffector extends SubsystemBase {
   private final SparkMax coral;
   private final SparkMaxConfig coralConfig;
   private final SparkClosedLoopController coralController;
-  private final DigitalInput sensor = new DigitalInput(6);
+  private final DigitalInput sensor = new DigitalInput(8);
+
+  private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/End Effector");
+  private final GenericEntry targetSpeedEntry = nTable.getTopic("Target").getGenericEntry();
+  private final GenericEntry encoderEntry = nTable.getTopic("Encoder").getGenericEntry();
+  private final GenericEntry outputEntry = nTable.getTopic("Output").getGenericEntry();
+  private final GenericEntry coralSwitchEntry = nTable.getTopic("Coral Switch").getGenericEntry();
   
   public EndEffector() {
     coral = new SparkMax(Constants.CAN_DEVICES.END_EFFECTOR.id, MotorType.kBrushless);
@@ -42,12 +51,17 @@ public class EndEffector extends SubsystemBase {
     coralConfig.encoder
       .velocityConversionFactor(1 / Constants.EndEffectorConstants.GEARING);
     coralConfig.closedLoop
-      .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
+      .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       .positionWrappingEnabled(false)
       .outputRange(-Constants.GAINS.END_EFFECTOR.peakOutput, Constants.GAINS.END_EFFECTOR.peakOutput);
 
+    targetSpeedEntry.setDouble(0);
+    encoderEntry.setDouble(0);
+    outputEntry.setDouble(0);
+    coralSwitchEntry.setBoolean(false);
+
     SparkBaseSetter closedLoopSetter = new SparkBaseSetter(new SparkBaseSetter.SparkConfiguration(coral, coralConfig));
-    closedLoopSetter.setPID(null);
+    closedLoopSetter.setPID(Constants.GAINS.END_EFFECTOR);
     PIDDisplay.PIDList.addOption("End Effector", closedLoopSetter);
   }
 
@@ -56,7 +70,7 @@ public class EndEffector extends SubsystemBase {
   }
 
   public boolean coralPresent() {
-    return sensor.get();
+    return !sensor.get();
   }
 
   public Command moveCoralCommand(boolean intake) {
@@ -66,5 +80,12 @@ public class EndEffector extends SubsystemBase {
         new WaitCommand(0.5),
         new InstantCommand(() -> setRPM(0))
     );
+  }
+
+  @Override
+  public void periodic() {
+    outputEntry.setDouble(coral.get());
+    encoderEntry.setDouble(coral.getEncoder().getVelocity());
+    coralSwitchEntry.setBoolean(coralPresent());
   }
 }

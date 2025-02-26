@@ -51,11 +51,11 @@ public class Constants {
         public static Gains ELEVATOR = new Gains(3, 0, 0, 0, 0, 12);
         public static Gains END_EFFECTOR = new Gains(3, 0, 0, 0, 12);
         public static Gains PIVOT = new Gains(3, 0, 0, 0, 12);
-        public static Gains CLIMBER = new Gains(3, 0, 0, 0, 12);
+        public static Gains CLIMBER = new Gains(100, 0, 0, 0, 12);
     }
 
     public static class DrivetrainConstants {
-        public static final double WHEEL_BASE = Units.inchesToMeters(21.5);
+        public static final double WHEEL_BASE = Units.inchesToMeters(22.5);
         public static final double MAX_DRIVE_SPEED = 1;
         public static final double MAX_ANGULAR_SPEED = 3;
         public static final double DRIVE_TOLERANCE_PERCENT = 0.05;
@@ -91,25 +91,32 @@ public class Constants {
     }
 
     public static class ElevatorConstants{
+        public static final double TOP_LIMIT_POSITION = Units.inchesToMeters(63.25);
+        public static final double BOTTOM_LIMIT_POSITION = Units.inchesToMeters(39.25);
 
-        //Max extension of the elevator relative to itself in meters
-        public static final double MAX_ELEVATOR_EXTENSION = Units.inchesToMeters(24.75);
-        public static final double MIN_ELEVATOR_EXTENSION = Units.inchesToMeters(.25);
-
-        public static final double TOP_LIMIT_POSITION = Units.inchesToMeters(25);
-        public static final double BOTTOM_LIMIT_POSITION = Units.inchesToMeters(0);
+        public static final double MAX_ELEVATOR_EXTENSION = TOP_LIMIT_POSITION;
+        public static final double MIN_ELEVATOR_EXTENSION = BOTTOM_LIMIT_POSITION;
 
         //Diameter of the elevator drive sprocket in meters
         public static final double SPROCKET_DIA = Units.inchesToMeters(1.5);
         public static final double SPROKET_CIRCUMFERENCE = Math.PI * SPROCKET_DIA;
 
         //Gear ratio of the elevator drive motor
-        public static final double GEARING = 27 * 95f / 40f;
+        public static final double GEARING = 9 * 3;
 
         //Distance from floor to bottom of elevator
         public static final double FLOOR_OFFSET = Units.inchesToMeters(1.25);
         //Tolerence for elevator height
         public static final double SETPOINT_RANGE = .25;
+        
+        public static final double LINEAR_SPEED = 1;
+
+        public static final double[] PRESET_HEIGHTS = {
+            MAX_ELEVATOR_EXTENSION,
+            MAX_ELEVATOR_EXTENSION,
+            MAX_ELEVATOR_EXTENSION,
+            MAX_ELEVATOR_EXTENSION
+        };
     }
 
     public static class PivotConstants {
@@ -126,19 +133,21 @@ public class Constants {
         public static final Rotation2d CORAL_INTAKE_ANGLE = Rotation2d.fromDegrees(-215);
         public static final Rotation2d ANGULAR_SPEED = Rotation2d.fromDegrees(45);
         /**Length from pivot axis to center of coral when loaded*/
-        public static final double LENGHT = 1;
+        public static final double LENGTH = 1;
     }
 
     public static class EndEffectorConstants {
         public static final double CORAL_PROTRUSION_LENGTH = 0.5;
         public static final Rotation2d ACCEPTABLE_SCORING_RANGE = Rotation2d.fromDegrees(45);
-        public static final double GEARING = 1;
+        public static final double GEARING = 5 * 3 * 3 * 3 * 16.0 / 42.0;
+        public static final double GEARING_TO_PIVOT = 42.0 / 16.0;
     }
 
     public static class ClimberConstants {
-        public static final Rotation2d MAX_ROTATION = Rotation2d.fromDegrees(180);
-        public static final Rotation2d MIN_ROTATION = Rotation2d.fromDegrees(0);
+        public static final Rotation2d MAX_ROTATION = Rotation2d.fromDegrees(0);
+        public static final Rotation2d MIN_ROTATION = Rotation2d.fromDegrees(170);
         public static final Rotation2d SETPOINT_RANGE = Rotation2d.fromDegrees(1);
+        public static final double GEARING = 9 * 5 * 4 * 4;
     }
 
     public static class PhotonConstants {
@@ -235,14 +244,14 @@ public class Constants {
             NotificationLevel.INFO,
             "Swerve",
             "All swerve modules have been homed.",
-            1000
+            5000
         );
 
         public static final Notification SWERVE_HOME_FAIL = new Notification(
             NotificationLevel.ERROR,
             "Swerve",
-            "Failed to home swerve modules; timed out after 5 seconds.",
-            5000
+            "Failed to home swerve modules; timed out after 3 seconds.",
+            10000
         );
 
         public static Notification PATH_SCHEDULED(Pose2d pose) {
@@ -250,8 +259,22 @@ public class Constants {
                 NotificationLevel.INFO,
                 "Navigation",
                 "Navigating to (" + pose.getX() + ", " + pose.getY() + "), heading: " + pose.getRotation().getDegrees() + " degrees.",
-                1000
+                5000
             );
         }
+
+        public static final Notification ELEVATOR_HOME_SUCCESS = new Notification(
+            NotificationLevel.INFO,
+            "Elevator",
+            "Elevator has been homed.",
+            5000
+        );
+
+        public static final Notification ELEVATOR_HOME_FAIL = new Notification(
+            NotificationLevel.ERROR,
+            "Elevator",
+            "Elevator failed to home.",
+            10000
+        );
     }
 }
