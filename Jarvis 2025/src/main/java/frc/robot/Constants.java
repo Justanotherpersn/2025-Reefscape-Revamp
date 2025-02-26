@@ -49,7 +49,7 @@ public class Constants {
         public static Gains DRIVE = new Gains(5, 0, 0.15, 2.65, 12);
         public static Gains TURN = new Gains(.6, 1);
         public static Gains ELEVATOR = new Gains(3, 0, 0, 0, 0, 12);
-        public static Gains END_EFFECTOR = new Gains(3, 0, 0, 0, 12);
+        public static Gains END_EFFECTOR = new Gains(0.05, 0, 0, 0, 12);
         public static Gains PIVOT = new Gains(3, 0, 0, 0, 12);
         public static Gains CLIMBER = new Gains(100, 0, 0, 0, 12);
     }
@@ -120,7 +120,7 @@ public class Constants {
     }
 
     public static class PivotConstants {
-        public static final double GEARING = 90;
+        public static final double GEARING = 90 * 5 / 1.5;
         /**The angle between the arm and a loaded coral, with positive x pointing radially outwards*/
         public static final Rotation2d END_MOUNT_ANGLE = Rotation2d.fromDegrees(-55);
         public static final Rotation2d POSITION_TOLERANCE = Rotation2d.fromDegrees(5);
@@ -139,13 +139,13 @@ public class Constants {
     public static class EndEffectorConstants {
         public static final double CORAL_PROTRUSION_LENGTH = 0.5;
         public static final Rotation2d ACCEPTABLE_SCORING_RANGE = Rotation2d.fromDegrees(45);
-        public static final double GEARING = 5 * 3 * 3 * 3 * 16.0 / 42.0;
+        public static final double GEARING = 5 * 3 * 3 * 1.5;
         public static final double GEARING_TO_PIVOT = 42.0 / 16.0;
     }
 
     public static class ClimberConstants {
-        public static final Rotation2d MAX_ROTATION = Rotation2d.fromDegrees(0);
-        public static final Rotation2d MIN_ROTATION = Rotation2d.fromDegrees(170);
+        public static final Rotation2d MAX_ROTATION = Rotation2d.fromDegrees(170);
+        public static final Rotation2d MIN_ROTATION = Rotation2d.fromDegrees(0);
         public static final Rotation2d SETPOINT_RANGE = Rotation2d.fromDegrees(1);
         public static final double GEARING = 9 * 5 * 4 * 4;
     }
@@ -161,15 +161,15 @@ public class Constants {
             ),
             new Transform3d(
                 new Translation3d(ModuleConstants.MODULE_POSITIONS[1].getX() + CAM_OFFSET.getX(), ModuleConstants.MODULE_POSITIONS[1].getY() - CAM_OFFSET.getY(), CAM_OFFSET.getZ()), 
-                new Rotation3d(0, CAMS_PITCH, 3 * Math.PI / 4)
+                new Rotation3d(0, CAMS_PITCH, - Math.PI / 4)
             ),
             new Transform3d(
                 new Translation3d(ModuleConstants.MODULE_POSITIONS[2].getX() - CAM_OFFSET.getX(), ModuleConstants.MODULE_POSITIONS[2].getY() + CAM_OFFSET.getY(), CAM_OFFSET.getZ()), 
-                new Rotation3d(0, CAMS_PITCH, -3 * Math.PI / 4)
+                new Rotation3d(0, CAMS_PITCH, 3  *Math.PI / 4)
             ),
             new Transform3d(
                 new Translation3d(ModuleConstants.MODULE_POSITIONS[3].getX() - CAM_OFFSET.getX(), ModuleConstants.MODULE_POSITIONS[3].getY() - CAM_OFFSET.getX(), CAM_OFFSET.getZ()), 
-                new Rotation3d(0, CAMS_PITCH, -Math.PI / 4)
+                new Rotation3d(0, CAMS_PITCH, -3 * Math.PI / 4)
             )
         };
 

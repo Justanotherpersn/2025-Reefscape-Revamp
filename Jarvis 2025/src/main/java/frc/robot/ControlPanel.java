@@ -13,6 +13,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Commands.JoystickDrive;
 import frc.robot.Subsystems.Climber;
@@ -46,10 +47,11 @@ public class ControlPanel {
 
         new JoystickButton(controller, 1).whileTrue(drivetrain.homeCommand());
 
-        new JoystickButton(controller, 5).whileTrue(elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION));
-        new JoystickButton(controller, 6).whileTrue(elevator.moveCommand(Constants.ElevatorConstants.MAX_ELEVATOR_EXTENSION));
+        //new JoystickButton(controller, 5).whileTrue(elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION));
+        //new JoystickButton(controller, 6).whileTrue(elevator.moveCommand(Constants.ElevatorConstants.MAX_ELEVATOR_EXTENSION));
         //new JoystickButton(controller, 5).whileTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(0), false, pivot, endEffector));
         //new JoystickButton(controller, 6).whileTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-90), false, pivot, endEffector));
+        new JoystickButton(controller, 5).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
         new JoystickButton(controller, 2).onTrue(elevator.homeCommand());
 
         //new JoystickButton(controller, 3).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));

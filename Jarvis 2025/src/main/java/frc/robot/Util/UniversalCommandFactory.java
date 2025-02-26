@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.ControlPanel;
@@ -25,7 +26,8 @@ public class UniversalCommandFactory {
             new SequentialCommandGroup(
                 new InstantCommand(() -> ControlPanel.ReefCycle.setTravelState(endEffector.coralPresent())),
                 new ParallelCommandGroup(
-                    new DeferredCommand(() -> drivetrain.pathingCommand(ControlPanel.ReefCycle.getLocation(), 0), Set.of(drivetrain)),
+                    new DeferredCommand(() -> drivetrain.pathingCommand(ControlPanel.ReefCycle.getLocation(), 0), Set.of(drivetrain))
+                    .withDeadline(new WaitCommand(10)),
                     
                     new WaitUntilCommand(() ->
                         drivetrain.getPose().getTranslation().getDistance(ControlPanel.ReefCycle.getPreviousLocation().getTranslation())
@@ -38,11 +40,13 @@ public class UniversalCommandFactory {
                     ),
 
                     //Potentially add time to traverse operation radius?
-                    new WaitUntilCommand(() -> pivot.timeToReach(ControlPanel.ReefCycle.getAngle()) < drivetrain.timeToReach(ControlPanel.ReefCycle.getLocation()))
-                    .andThen(new DeferredCommand(() -> UniversalCommandFactory.pivotAngleCommand(ControlPanel.ReefCycle.getAngle(), true, pivot, endEffector), Set.of(pivot, endEffector))),
-                    
-                    new WaitUntilCommand(() -> elevator.timeToReach(ControlPanel.ReefCycle.getHeight()) < drivetrain.timeToReach(ControlPanel.ReefCycle.getLocation()))
-                    .andThen(new DeferredCommand(() -> elevator.moveCommand(ControlPanel.ReefCycle.getHeight()), Set.of(elevator)))
+                    // new WaitUntilCommand(() -> pivot.timeToReach(ControlPanel.ReefCycle.getAngle()) < drivetrain.timeToReach(ControlPanel.ReefCycle.getLocation()))
+                    // .andThen(new DeferredCommand(() -> UniversalCommandFactory.pivotAngleCommand(ControlPanel.ReefCycle.getAngle(), true, pivot, endEffector), Set.of(pivot, endEffector))),
+                    new DeferredCommand(() -> UniversalCommandFactory.pivotAngleCommand(ControlPanel.ReefCycle.getAngle(), true, pivot, endEffector), Set.of(pivot, endEffector)),
+
+                    // new WaitUntilCommand(() -> elevator.timeToReach(ControlPanel.ReefCycle.getHeight()) < drivetrain.timeToReach(ControlPanel.ReefCycle.getLocation()))
+                    // .andThen(new DeferredCommand(() -> elevator.moveCommand(ControlPanel.ReefCycle.getHeight()), Set.of(elevator)))
+                    new DeferredCommand(() -> elevator.moveCommand(ControlPanel.ReefCycle.getHeight()), Set.of(elevator))
                 ),
                 new DeferredCommand(() -> endEffector.moveCoralCommand(ControlPanel.ReefCycle.getTravelState()), Set.of(endEffector))
             )
@@ -52,8 +56,8 @@ public class UniversalCommandFactory {
     public static final Command pivotAngleCommand(Rotation2d angle, boolean coralAngle, Pivot pivot, EndEffector endEffector) {
         return new ParallelDeadlineGroup(
             new WaitUntilCommand(() -> Math.abs(pivot.getAngle().minus(angle).getRadians()) < Constants.PivotConstants.POSITION_TOLERANCE.getRadians()),
-            new InstantCommand(coralAngle ? () -> pivot.setEndCoralAngle(angle) : () -> pivot.setAngle(angle)),
-            new RunCommand(() -> endEffector.setRPM(pivot.getSpeed() / Constants.EndEffectorConstants.GEARING_TO_PIVOT))
+            new InstantCommand(coralAngle ? () -> pivot.setEndCoralAngle(angle) : () -> pivot.setAngle(angle))
+            //new RunCommand(() -> endEffector.setRPM(pivot.getSpeed() / Constants.EndEffectorConstants.GEARING_TO_PIVOT))
         );
     }
 }

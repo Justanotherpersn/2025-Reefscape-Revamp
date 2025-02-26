@@ -41,7 +41,7 @@ public class Pivot extends SubsystemBase {
 
     pivotConfig = new SparkFlexConfig();
     pivotConfig
-      .inverted(false)
+      .inverted(true)
       .idleMode(IdleMode.kBrake)
       .voltageCompensation(12);
     pivotConfig.encoder
@@ -77,7 +77,7 @@ public class Pivot extends SubsystemBase {
   }
 
   public Rotation2d getAngle() {
-    return Rotation2d.fromRotations(pivot.getEncoder().getPosition());
+    return Rotation2d.fromRadians(pivot.getEncoder().getPosition());
   }
 
   public double getSpeed() {
