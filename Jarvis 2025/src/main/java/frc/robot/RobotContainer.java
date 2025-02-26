@@ -29,10 +29,10 @@ public class RobotContainer {
 
   public RobotContainer() {
 
-    NamedCommands.registerCommand("Set Elevator L1", elevator.elevatorHeight(-1));
-    NamedCommands.registerCommand("Set Elevator L2", elevator.elevatorHeight(-1));
-    NamedCommands.registerCommand("Set Elevator L3", elevator.elevatorHeight(-1));
-    NamedCommands.registerCommand("Set Elevator L4", elevator.elevatorHeight(-1));
+    NamedCommands.registerCommand("Set Elevator L1", elevator.moveCommand(-1));
+    NamedCommands.registerCommand("Set Elevator L2", elevator.moveCommand(-1));
+    NamedCommands.registerCommand("Set Elevator L3", elevator.moveCommand(-1));
+    NamedCommands.registerCommand("Set Elevator L4", elevator.moveCommand(-1));
 
     NamedCommands.registerCommand("Set Pivot L1", null);
     NamedCommands.registerCommand("Set Pivot L2", null);
