@@ -112,10 +112,10 @@ public class Constants {
         public static final double LINEAR_SPEED = 1;
 
         public static final double[] PRESET_HEIGHTS = {
-            MAX_ELEVATOR_EXTENSION,
-            MAX_ELEVATOR_EXTENSION,
-            MAX_ELEVATOR_EXTENSION,
-            MAX_ELEVATOR_EXTENSION
+            Units.inchesToMeters(17.875),
+            Units.inchesToMeters(31.75),
+            Units.inchesToMeters(47.875),
+            Units.inchesToMeters(71.875)
         };
     }
 
