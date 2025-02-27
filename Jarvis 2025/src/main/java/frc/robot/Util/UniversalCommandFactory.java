@@ -26,27 +26,25 @@ public class UniversalCommandFactory {
             new SequentialCommandGroup(
                 new InstantCommand(() -> ControlPanel.ReefCycle.setTravelState(endEffector.coralPresent())),
                 new ParallelCommandGroup(
-                    new DeferredCommand(() -> drivetrain.pathingCommand(ControlPanel.ReefCycle.getLocation(), 0), Set.of(drivetrain))
-                    .withDeadline(new WaitCommand(10)),
+                    new DeferredCommand(() -> drivetrain.pathingCommand(ControlPanel.ReefCycle.getLocation(), 0), Set.of(drivetrain)),
                     
-                    new WaitUntilCommand(() ->
-                        drivetrain.getPose().getTranslation().getDistance(ControlPanel.ReefCycle.getPreviousLocation().getTranslation())
-                        > Constants.NavigationConstants.OPERATION_RADIUS
-                    ).andThen(
+                    new SequentialCommandGroup(
+                        new WaitCommand(0.5),
                         new ParallelCommandGroup(
                             elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION),
                             UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-90), false, pivot, endEffector)
+                        ),
+                        new ParallelCommandGroup(
+                            new SequentialCommandGroup(
+                                new WaitUntilCommand(() -> pivot.timeToReach(ControlPanel.ReefCycle.getAngle()) > drivetrain.timeToReach(ControlPanel.ReefCycle.getLocation())),
+                                new DeferredCommand(() -> UniversalCommandFactory.pivotAngleCommand(ControlPanel.ReefCycle.getAngle(), true, pivot, endEffector), Set.of(pivot, endEffector))
+                            ),
+                            new SequentialCommandGroup(
+                                new WaitUntilCommand(() -> elevator.timeToReach(ControlPanel.ReefCycle.getHeight()) > drivetrain.timeToReach(ControlPanel.ReefCycle.getLocation())),
+                                new DeferredCommand(() -> elevator.moveCommand(ControlPanel.ReefCycle.getHeight()), Set.of(elevator))
+                            )
                         )
-                    ),
-
-                    //Potentially add time to traverse operation radius?
-                    // new WaitUntilCommand(() -> pivot.timeToReach(ControlPanel.ReefCycle.getAngle()) < drivetrain.timeToReach(ControlPanel.ReefCycle.getLocation()))
-                    // .andThen(new DeferredCommand(() -> UniversalCommandFactory.pivotAngleCommand(ControlPanel.ReefCycle.getAngle(), true, pivot, endEffector), Set.of(pivot, endEffector))),
-                    new DeferredCommand(() -> UniversalCommandFactory.pivotAngleCommand(ControlPanel.ReefCycle.getAngle(), true, pivot, endEffector), Set.of(pivot, endEffector)),
-
-                    // new WaitUntilCommand(() -> elevator.timeToReach(ControlPanel.ReefCycle.getHeight()) < drivetrain.timeToReach(ControlPanel.ReefCycle.getLocation()))
-                    // .andThen(new DeferredCommand(() -> elevator.moveCommand(ControlPanel.ReefCycle.getHeight()), Set.of(elevator)))
-                    new DeferredCommand(() -> elevator.moveCommand(ControlPanel.ReefCycle.getHeight()), Set.of(elevator))
+                    )
                 ),
                 new DeferredCommand(() -> endEffector.moveCoralCommand(ControlPanel.ReefCycle.getTravelState()), Set.of(endEffector))
             )
