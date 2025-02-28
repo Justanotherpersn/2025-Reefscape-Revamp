@@ -11,7 +11,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Commands.Notifications;
@@ -32,24 +34,39 @@ public class RobotContainer {
   private static final EndEffector endEffector = new EndEffector();
   SendableChooser<Command> autoChooser;
 
-  int elevatorHeight;
-  int pivotAngle;
+  double elevatorHeight;
+  Rotation2d pivotAngle;
 
   public RobotContainer() {
 
-    NamedCommands.registerCommand("Set Elevator Height", elevator.moveCommand(Constants.ElevatorConstants.PRESET_HEIGHTS[elevatorHeight]));
-  
+    NamedCommands.registerCommand("Set Elevator Height L1", new InstantCommand(() -> elevatorHeight = Constants.ElevatorConstants.PRESET_HEIGHTS[0] + Constants.PivotConstants.LENGTH));
+    NamedCommands.registerCommand("Set Elevator Height L2", new InstantCommand(() -> elevatorHeight = Constants.ElevatorConstants.PRESET_HEIGHTS[1] + Constants.PivotConstants.LENGTH));
+    NamedCommands.registerCommand("Set Elevator Height L3", new InstantCommand(() -> elevatorHeight = Constants.ElevatorConstants.PRESET_HEIGHTS[2] - Math.sin(Constants.PivotConstants.END_MOUNT_ANGLE.getRadians()) * Constants.PivotConstants.LENGTH));
+    NamedCommands.registerCommand("Set Elevator Height L4", new InstantCommand(() -> elevatorHeight = Constants.ElevatorConstants.PRESET_HEIGHTS[3] - Math.sin(Constants.PivotConstants.END_MOUNT_ANGLE.getRadians()) * Constants.PivotConstants.LENGTH));
+    
+    NamedCommands.registerCommand("Elevator Move", elevator.moveCommand(elevatorHeight));
 
-    NamedCommands.registerCommand("Set Pivot L1", null);
-    NamedCommands.registerCommand("Set Pivot L2", null);
-    NamedCommands.registerCommand("Set Pivot L3", UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(0), false, pivot, endEffector));
-    NamedCommands.registerCommand("Set Pivot L4", null);
+    NamedCommands.registerCommand("Set Pivot L1", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[0]));
+    NamedCommands.registerCommand("Set Pivot L2", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[1]));
+    NamedCommands.registerCommand("Set Pivot L3", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[2]));
+    NamedCommands.registerCommand("Set Pivot L4", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[3]));
 
-    NamedCommands.registerCommand("Deposit Coral", null);
-    NamedCommands.registerCommand("Load Coral", null);
+    NamedCommands.registerCommand("Elevator Pivot", new InstantCommand(() -> UniversalCommandFactory.pivotAngleCommand(pivotAngle, true, pivot, endEffector)));
 
-    NamedCommands.registerCommand("Home Swerve", drivetrain.homeCommand());
-    NamedCommands.registerCommand("Home Elevator", elevator.homeCommand());
+
+    NamedCommands.registerCommand("Deposit Coral", new SequentialCommandGroup(
+    new InstantCommand(() -> endEffector.velocityCoralCommand(5)),
+    new WaitCommand(1),
+    new InstantCommand(() -> endEffector.velocityCoralCommand(0))
+     )
+    );
+
+    NamedCommands.registerCommand("Intake Coral", new SequentialCommandGroup(
+      new InstantCommand(() -> endEffector.velocityCoralCommand(-5)),
+      new WaitCommand(1),
+      new InstantCommand(() -> endEffector.velocityCoralCommand(0))
+       )
+      );
 
     new PIDDisplay();
     new ChassisVisionLocalizer();
