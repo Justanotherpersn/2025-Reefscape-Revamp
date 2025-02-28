@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Move Path"
+            "pathName": "Leave Blue"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Leave Commands",
   "choreoAuto": false
 }

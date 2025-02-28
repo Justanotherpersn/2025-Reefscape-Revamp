@@ -32,12 +32,13 @@ public class RobotContainer {
   private static final EndEffector endEffector = new EndEffector();
   SendableChooser<Command> autoChooser;
 
+  int elevatorHeight;
+  int pivotAngle;
+
   public RobotContainer() {
 
-    NamedCommands.registerCommand("Set Elevator L1", elevator.moveCommand(Constants.ElevatorConstants.PRESET_HEIGHTS[0]));
-    NamedCommands.registerCommand("Set Elevator L2", elevator.moveCommand(Constants.ElevatorConstants.PRESET_HEIGHTS[1]));
-    NamedCommands.registerCommand("Set Elevator L3", elevator.moveCommand(Constants.ElevatorConstants.PRESET_HEIGHTS[2]));
-    NamedCommands.registerCommand("Set Elevator L4", elevator.moveCommand(Constants.ElevatorConstants.PRESET_HEIGHTS[3]));
+    NamedCommands.registerCommand("Set Elevator Height", elevator.moveCommand(Constants.ElevatorConstants.PRESET_HEIGHTS[elevatorHeight]));
+  
 
     NamedCommands.registerCommand("Set Pivot L1", null);
     NamedCommands.registerCommand("Set Pivot L2", null);
