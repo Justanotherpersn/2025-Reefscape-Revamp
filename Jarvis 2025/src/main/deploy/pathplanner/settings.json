@@ -3,12 +3,15 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
-    "Cycles Paths",
-    "Leave Paths",
-    "Start Positions"
+    "Intake Paths",
+    "Starting Blue",
+    "Starting Red",
+    "Leave Paths"
   ],
   "autoFolders": [
-    "Leave Commands"
+    "Leave Autos",
+    "Blue Autos",
+    "Red Autos"
   ],
   "defaultMaxVel": 5.0,
   "defaultMaxAccel": 5.0,
