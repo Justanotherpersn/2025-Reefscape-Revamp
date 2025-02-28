@@ -70,16 +70,29 @@ public class EndEffector extends SubsystemBase {
   }
 
   public boolean coralPresent() {
-    return !sensor.get();
+    //return !sensor.get();
+    return true;
   }
 
   public Command moveCoralCommand(boolean intake) {
     return new SequentialCommandGroup(
-        new InstantCommand(() -> setRPM(intake ? 1 : -1)),
+        new InstantCommand(() -> setRPM(intake ? 5 : -5)),
         new WaitUntilCommand(() -> intake == coralPresent()),
         new WaitCommand(0.5),
         new InstantCommand(() -> setRPM(0))
     );
+  }
+  public Command testDepositCoral() {
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> setRPM(-5))
+    );
+  }
+
+  public Command testIntakeCoral() {
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> setRPM(3))
+    );
+
   }
 
   @Override

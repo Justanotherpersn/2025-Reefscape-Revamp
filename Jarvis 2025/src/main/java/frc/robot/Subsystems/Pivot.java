@@ -80,7 +80,7 @@ public class Pivot extends SubsystemBase {
 
   public Command setPivotPosition(Rotation2d angle){
     return new 
-    InstantCommand(() -> setAngle(angle));
+    InstantCommand(() -> setEndCoralAngle(angle));
   }
 
   public Rotation2d getAngle() {

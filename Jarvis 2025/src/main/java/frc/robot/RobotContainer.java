@@ -7,6 +7,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,6 +19,7 @@ import frc.robot.Subsystems.Elevator;
 import frc.robot.Subsystems.EndEffector;
 import frc.robot.Subsystems.Pivot;
 import frc.robot.Util.PIDDisplay;
+import frc.robot.Util.UniversalCommandFactory;
 
 public class RobotContainer {
   private static final Drivetrain drivetrain = new Drivetrain();
@@ -29,18 +31,21 @@ public class RobotContainer {
 
   public RobotContainer() {
 
-    NamedCommands.registerCommand("Set Elevator L1", elevator.moveCommand(-1));
-    NamedCommands.registerCommand("Set Elevator L2", elevator.moveCommand(-1));
-    NamedCommands.registerCommand("Set Elevator L3", elevator.moveCommand(-1));
-    NamedCommands.registerCommand("Set Elevator L4", elevator.moveCommand(-1));
+    NamedCommands.registerCommand("Set Elevator L1", elevator.moveCommand(Constants.ElevatorConstants.PRESET_HEIGHTS[0]));
+    NamedCommands.registerCommand("Set Elevator L2", elevator.moveCommand(Constants.ElevatorConstants.PRESET_HEIGHTS[1]));
+    NamedCommands.registerCommand("Set Elevator L3", elevator.moveCommand(Constants.ElevatorConstants.PRESET_HEIGHTS[2]));
+    NamedCommands.registerCommand("Set Elevator L4", elevator.moveCommand(Constants.ElevatorConstants.PRESET_HEIGHTS[3]));
 
     NamedCommands.registerCommand("Set Pivot L1", null);
     NamedCommands.registerCommand("Set Pivot L2", null);
-    NamedCommands.registerCommand("Set Pivot L3", null);
+    NamedCommands.registerCommand("Set Pivot L3", UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(0), false, pivot, endEffector));
     NamedCommands.registerCommand("Set Pivot L4", null);
 
     NamedCommands.registerCommand("Deposit Coral", null);
     NamedCommands.registerCommand("Load Coral", null);
+
+    NamedCommands.registerCommand("Home Swerve", drivetrain.homeCommand());
+    NamedCommands.registerCommand("Home Elevator", elevator.homeCommand());
 
     new PIDDisplay();
     new ChassisVisionLocalizer();

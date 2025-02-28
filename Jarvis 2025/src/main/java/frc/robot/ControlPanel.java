@@ -1,22 +1,13 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Rotation;
-
-import org.opencv.core.Point;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Commands.JoystickDrive;
 import frc.robot.Subsystems.Climber;
@@ -48,46 +39,34 @@ public class ControlPanel {
     public static void configureBinding(Drivetrain drivetrain, Elevator elevator, Pivot pivot, EndEffector endEffector, Climber climber) {
         drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, controller));
 
-        // new JoystickButton(controller2, buttonLookup[11]).onTrue(pivot.setPivotPosition(Rotation2d.fromDegrees(0)));
-        // new JoystickButton(controller2, buttonLookup[12]).onTrue(pivot.setPivotPosition(Rotation2d.fromDegrees(-90)));
-
-
-        // new JoystickButton(controller2, buttonLookup[1]).onTrue(elevator.moveCommand(Constants.ElevatorConstants.PRESET_HEIGHTS[1] - Math.sin(pivot.getAngle().getDegrees())));
-        // new JoystickButton(controller2, buttonLookup[2]).onTrue(elevator.moveCommand(Constants.ElevatorConstants.PRESET_HEIGHTS[2] - Math.sin(pivot.getAngle().getDegrees())));
-        // new JoystickButton(controller2, buttonLookup[3]).onTrue(elevator.moveCommand(Constants.ElevatorConstants.PRESET_HEIGHTS[3] - Math.sin(pivot.getAngle().getDegrees())));
-        // new JoystickButton(controller2, buttonLookup[4]).onTrue(elevator.moveCommand(Constants.ElevatorConstants.PRESET_HEIGHTS[4] - Math.sin(pivot.getAngle().getDegrees())));
-
-
-
-        new JoystickButton(controller, 5).onTrue(pivot.setPivotPosition(Rotation2d.fromDegrees(0)));
-        new JoystickButton(controller, 6).onTrue(pivot.setPivotPosition(Rotation2d.fromDegrees(-90)));
-
-
-        new JoystickButton(controller, 1).onTrue(elevator.moveCommand(Constants.ElevatorConstants.PRESET_HEIGHTS[1] - Math.sin(pivot.getAngle().getDegrees())));
-        new JoystickButton(controller, 2).onTrue(elevator.moveCommand(Constants.ElevatorConstants.PRESET_HEIGHTS[2] - Math.sin(pivot.getAngle().getDegrees())));
-        new JoystickButton(controller, 3).onTrue(elevator.moveCommand(Constants.ElevatorConstants.PRESET_HEIGHTS[3] - Math.sin(pivot.getAngle().getDegrees())));
-        new JoystickButton(controller, 4).onTrue(elevator.moveCommand(Constants.ElevatorConstants.PRESET_HEIGHTS[4] - Math.sin(pivot.getAngle().getDegrees())));
-
+        new JoystickButton(controller, 1).whileTrue(drivetrain.homeCommand());
 
         new JoystickButton(controller, 3).onTrue(elevator.homeCommand());
 
+        new JoystickButton(controller, 6).whileTrue(climber.climbCommand(Rotation2d.fromDegrees(0)));
+        new JoystickButton(controller, 5).whileTrue(climber.climbCommand(Rotation2d.fromDegrees(-170)));
 
-        new JoystickButton(controller, 1).whileTrue(drivetrain.homeCommand());
+        new JoystickButton(controller, 2).onTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-90), false, pivot, endEffector));
+        new JoystickButton(controller, 4).onTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(0), true, pivot, endEffector));
+        new JoystickButton(controller, 8).onTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-160), false, pivot, endEffector));
+
+        //new JoystickButton(controller, 5).whileTrue(endEffector.testIntakeCoral());
+        //new JoystickButton(controller, 6).whileTrue(endEffector.testDepositCoral()); 
+
+        new JoystickButton(controller, 7).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
+
+        
+
+        
 
 
-        //new JoystickButton(controller, 5).onTrue(pivot.setPivotPosition(Rotation2d.fromDegrees(-90)));
-       // new JoystickButton(controller, 6).onTrue(pivot.setPivotPosition(Rotation2d.fromDegrees(0)));
 
-
-
-        //new JoystickButton(controller, 5).whileTrue(elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION));
-        //new JoystickButton(controller, 6).whileTrue(elevator.moveCommand(Constants.ElevatorConstants.MAX_ELEVATOR_EXTENSION));
         //new JoystickButton(controller, 5).whileTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(0), false, pivot, endEffector));
         //new JoystickButton(controller, 6).whileTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-90), false, pivot, endEffector));
         //new JoystickButton(controller, 5).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
 
-        //new JoystickButton(controller, 3).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
-        //new JoystickButton(controller, 3).whileTrue(drivetrain.pathingCommand(new Pose2d(6, 6, Rotation2d.fromDegrees(90)), 0));
+        // new JoystickButton(controller, 3).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
+        // new JoystickButton(controller, 3).whileTrue(drivetrain.pathingCommand(new Pose2d(6, 6, Rotation2d.fromDegrees(90)), 0));
 
         for (int i = 0; i < 16; i++) {
             final int buttonID = buttonLookup[i];

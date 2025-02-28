@@ -28,7 +28,6 @@ public class Climber extends SubsystemBase {
   private final SparkClosedLoopController climberController;
   private final DigitalInput positiveLimit = new DigitalInput(6);
   private final DigitalInput negativeLimit = new DigitalInput(7);
-  private Rotation2d targetPosition;
 
   private boolean previousPositiveLimit, previousNegativeLimit;
 
@@ -71,7 +70,6 @@ public class Climber extends SubsystemBase {
   }
 
   public void setPosition(Rotation2d target) {
-    targetPosition = target;
     targetPositionEntry.setDouble(target.getDegrees());
     climberController.setReference(target.getRotations(), ControlType.kPosition);
   }
@@ -79,7 +77,7 @@ public class Climber extends SubsystemBase {
   public Command climbCommand(Rotation2d target) {
     return new SequentialCommandGroup(
       new InstantCommand(() -> setPosition(target)),
-      new WaitUntilCommand(() -> Math.abs(climber.getEncoder().getPosition() - targetPosition.getRotations()) < Constants.ClimberConstants.SETPOINT_RANGE.getRotations())
+      new WaitUntilCommand(() -> Math.abs(climber.getEncoder().getPosition() - target.getRotations()) < Constants.ClimberConstants.SETPOINT_RANGE.getRotations())
     );
   }
 

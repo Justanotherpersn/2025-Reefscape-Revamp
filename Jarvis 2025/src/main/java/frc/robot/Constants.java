@@ -49,14 +49,14 @@ public class Constants {
         public static Gains DRIVE = new Gains(5, 0, 0.15, 2.65, 12);
         public static Gains TURN = new Gains(.6, 1);
         public static Gains ELEVATOR = new Gains(3, 0, 0, 0, 0, 12);
-        public static Gains END_EFFECTOR = new Gains(0.05, 0, 0, 0, 12);
+        public static Gains END_EFFECTOR = new Gains(0.03, 0, 0, 0, 12);
         public static Gains PIVOT = new Gains(3, 0, 0, 0, 12);
         public static Gains CLIMBER = new Gains(100, 0, 0, 0, 12);
     }
 
     public static class DrivetrainConstants {
         public static final double WHEEL_BASE = Units.inchesToMeters(22.5);
-        public static final double MAX_DRIVE_SPEED = 1;
+        public static final double MAX_DRIVE_SPEED = 5;
         public static final double MAX_ANGULAR_SPEED = 3;
         public static final double DRIVE_TOLERANCE_PERCENT = 0.05;
     }
@@ -127,6 +127,7 @@ public class Constants {
         public static final Rotation2d CORAL_DEPOSIT_ANGLES[] = {
             Rotation2d.fromDegrees(-35),
             Rotation2d.fromDegrees(-35),
+            
             Rotation2d.fromDegrees(-35),
             Rotation2d.fromDegrees(-90),
         };
