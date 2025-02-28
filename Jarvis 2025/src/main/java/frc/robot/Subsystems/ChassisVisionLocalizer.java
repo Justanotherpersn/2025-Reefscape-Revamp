@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PhotonConstants;
 
 public class ChassisVisionLocalizer extends SubsystemBase {
+  public boolean enabled = true;
+
   private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Drivetrain/Vision");
   private final GenericEntry[] trustEntries = new GenericEntry[] {
     nTable.getTopic("Trusting 0").getGenericEntry(),
@@ -49,6 +51,7 @@ public class ChassisVisionLocalizer extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if (!enabled) return;
     for (int i = 0; i < photonCameras.length; i++) {
       PhotonCamera camera = photonCameras[i];
       final Transform3d cameraToRobot = PhotonConstants.CAMERAS_TO_ROBOT[i];

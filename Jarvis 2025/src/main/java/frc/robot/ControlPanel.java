@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.util.Set;
+
 import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -9,12 +11,11 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Commands.JoystickDrive;
 import frc.robot.Commands.UniversalCommandFactory;
@@ -53,16 +54,25 @@ public class ControlPanel {
         new JoystickButton(controller, 5).whileTrue(climber.climbCommand(Rotation2d.fromDegrees(170)));
         new JoystickButton(controller, 6).whileTrue(climber.climbCommand(Rotation2d.fromDegrees(10)));
 
-        new JoystickButton(controller, 2).onTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-90), false, pivot, endEffector));
-        new JoystickButton(controller, 4).onTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-45), true, pivot, endEffector));
-        new JoystickButton(controller, 3).onTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(90), true, pivot, endEffector).alongWith(elevator.moveCommand(Constants.ElevatorConstants.MAX_ELEVATOR_EXTENSION)));
+        new JoystickButton(controller, 2).onTrue(new ParallelCommandGroup(
+            UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-90), false, pivot, endEffector),
+            elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION)
+        ));
 
-        new JoystickButton(controller, 8).whileTrue(elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION));
+        new JoystickButton(controller, 4).onTrue(new DeferredCommand(() -> new ParallelCommandGroup(
+            UniversalCommandFactory.pivotAngleCommand(ControlPanel.ReefCycle.getAngle(), true, pivot, endEffector),
+            elevator.moveCommand(ControlPanel.ReefCycle.getHeight())
+        ), Set.of(elevator, pivot)));
+
+        new JoystickButton(controller, 3).onTrue(new ParallelCommandGroup(
+            UniversalCommandFactory.pivotAngleCommand(Constants.PivotConstants.CORAL_INTAKE_ANGLE, true, pivot, endEffector),
+            elevator.moveCommand(Constants.ElevatorConstants.CORAL_INTAKE_HEIGHT)
+        ));
+
         new JoystickButton(controller, 5).whileTrue(endEffector.testIntakeCoral());
         new JoystickButton(controller, 6).whileTrue(endEffector.testDepositCoral()); 
 
         new JoystickButton(controller, 7).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
-
 
         //new JoystickButton(controller, 5).whileTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(0), false, pivot, endEffector));
         //new JoystickButton(controller, 6).whileTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-90), false, pivot, endEffector));
@@ -113,10 +123,10 @@ public class ControlPanel {
     }
 
     public static class ReefCycle {
-        private static int targetPosition = 6;
-        private static int targetHeight = 3;
+        private static int targetPosition = 0;
+        private static int targetHeight = 0;
 
-        private static boolean depositing;
+        private static boolean depositing = true;
         private static Pose2d previousLocation;
 
         private static Command setPosition(int positionIndex) {

@@ -190,7 +190,7 @@ public class Drivetrain extends SubsystemBase {
     MODULES.forAll(m -> m.periodicDebug());
     headingEntry.setDouble(getHeadingRaw().getDegrees());
     field.setRobotPose(getPose());
-    SmartDashboard.putData("Drivetrain/Robot Pose", field); 
+    SmartDashboard.putData("Drivetrain/Robot Pose", field);
   }
 
   /**

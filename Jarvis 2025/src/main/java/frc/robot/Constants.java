@@ -47,7 +47,7 @@ public class Constants {
         public static Gains DRIVE = new Gains(5, 0, 0.15, 2.65, 12);
         public static Gains TURN = new Gains(.6, 1);
         public static Gains ELEVATOR = new Gains(3, 0, 0, 0, 0, 12);
-        public static Gains END_EFFECTOR = new Gains(0.005, 0, 0, 0, 12);
+        public static Gains END_EFFECTOR = new Gains(0.01, 0, 0, 0, 12);
         public static Gains PIVOT = new Gains(3, 0, 0, 0, 12);
         public static Gains CLIMBER = new Gains(100, 0, 0, 0, 12);
     }
@@ -110,11 +110,13 @@ public class Constants {
         public static final double LINEAR_SPEED = 1;
 
         public static final double[] PRESET_HEIGHTS = {
-            Units.inchesToMeters(17.875),
-            Units.inchesToMeters(31.75),
-            Units.inchesToMeters(47.875),
-            Units.inchesToMeters(71.875)
+            Units.inchesToMeters(39.25),
+            Units.inchesToMeters(47.25),
+            Units.inchesToMeters(57.875),
+            Units.inchesToMeters(63.25)
         };
+
+        public static final double CORAL_INTAKE_HEIGHT = Units.inchesToMeters(47.25);
     }
 
     public static class PivotConstants {
@@ -126,9 +128,9 @@ public class Constants {
             Rotation2d.fromDegrees(-35),
             Rotation2d.fromDegrees(-35),
             Rotation2d.fromDegrees(-35),
-            Rotation2d.fromDegrees(-90),
+            Rotation2d.fromDegrees(100),
         };
-        public static final Rotation2d CORAL_INTAKE_ANGLE = Rotation2d.fromDegrees(-215);
+        public static final Rotation2d CORAL_INTAKE_ANGLE = Rotation2d.fromDegrees(-40);
         public static final Rotation2d ANGULAR_SPEED = Rotation2d.fromDegrees(45);
         /**Length from pivot axis to center of coral when loaded*/
         public static final double LENGTH = 1;
@@ -139,8 +141,8 @@ public class Constants {
         public static final Rotation2d ACCEPTABLE_SCORING_RANGE = Rotation2d.fromDegrees(45);
         public static final double GEARING = 5 * 3 * 3 * 1.5;
         public static final double GEARING_TO_PIVOT = 42.0 / 16.0;
-        public static final double INTAKE_RPM = 200;
-        public static final double OUTAKE_RPM = -200;
+        public static final double INTAKE_RPM = 1;
+        public static final double OUTAKE_RPM = -1;
     }
 
     public static class ClimberConstants {

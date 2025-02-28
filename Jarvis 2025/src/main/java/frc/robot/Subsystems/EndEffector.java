@@ -21,6 +21,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -68,6 +69,11 @@ public class EndEffector extends SubsystemBase {
     coralController.setReference(speed, ControlType.kVelocity);
   }
 
+  public void setSpeed(double speed) {
+    targetSpeedEntry.setDouble(speed);
+    coral.set(speed);
+  }
+
   public boolean coralPresent() {
     //return !sensor.get();
     return true;
@@ -83,15 +89,15 @@ public class EndEffector extends SubsystemBase {
   }
 
   public Command testDepositCoral() {
-    return new InstantCommand(() -> setRPM(Constants.EndEffectorConstants.OUTAKE_RPM));
+    return new RunCommand(() -> setSpeed(Constants.EndEffectorConstants.OUTAKE_RPM)).finallyDo(() -> setSpeed(0));
   }
 
   public Command testIntakeCoral() {
-    return new InstantCommand(() -> setRPM(Constants.EndEffectorConstants.INTAKE_RPM));
+    return new RunCommand(() -> setSpeed(Constants.EndEffectorConstants.INTAKE_RPM)).finallyDo(() -> setSpeed(0));
   }
 
   public Command velocityCoralCommand(double velocity) {
-    return new InstantCommand(() -> setRPM(velocity));
+    return new InstantCommand(() -> setSpeed(velocity));
   }
 
   @Override
