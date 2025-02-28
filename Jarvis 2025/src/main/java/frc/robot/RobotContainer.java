@@ -11,10 +11,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Commands.Notifications;
 import frc.robot.Commands.UniversalCommandFactory;
 import frc.robot.Subsystems.ChassisVisionLocalizer;
 import frc.robot.Subsystems.Climber;
@@ -38,7 +35,6 @@ public class RobotContainer {
   public RobotContainer() {
 
     NamedCommands.registerCommand("Set Elevator Height", elevator.moveCommand(Constants.ElevatorConstants.PRESET_HEIGHTS[elevatorHeight]));
-  
 
     NamedCommands.registerCommand("Set Pivot L1", null);
     NamedCommands.registerCommand("Set Pivot L2", null);

@@ -47,7 +47,7 @@ public class Constants {
         public static Gains DRIVE = new Gains(5, 0, 0.15, 2.65, 12);
         public static Gains TURN = new Gains(.6, 1);
         public static Gains ELEVATOR = new Gains(3, 0, 0, 0, 0, 12);
-        public static Gains END_EFFECTOR = new Gains(0.03, 0, 0, 0, 12);
+        public static Gains END_EFFECTOR = new Gains(0.005, 0, 0, 0, 12);
         public static Gains PIVOT = new Gains(3, 0, 0, 0, 12);
         public static Gains CLIMBER = new Gains(100, 0, 0, 0, 12);
     }
@@ -139,8 +139,8 @@ public class Constants {
         public static final Rotation2d ACCEPTABLE_SCORING_RANGE = Rotation2d.fromDegrees(45);
         public static final double GEARING = 5 * 3 * 3 * 1.5;
         public static final double GEARING_TO_PIVOT = 42.0 / 16.0;
-        public static final double INTAKE_RPM = 100;
-        public static final double OUTAKE_RPM = -100;
+        public static final double INTAKE_RPM = 500;
+        public static final double OUTAKE_RPM = -500;
     }
 
     public static class ClimberConstants {
@@ -152,7 +152,7 @@ public class Constants {
 
     public static class PhotonConstants {
         public final static double CAMS_PITCH = Math.toRadians(15.5);
-        public final static Translation3d CAM_OFFSET = new Translation3d(0, 0, 0.1);
+        public final static Translation3d CAM_OFFSET = new Translation3d(0.05, 0.05, 0.1);
 
         public static final Transform3d[] ROBOT_TO_CAMERAS = {
             new Transform3d(
@@ -165,7 +165,7 @@ public class Constants {
             ),
             new Transform3d(
                 new Translation3d(ModuleConstants.MODULE_POSITIONS[2].getX() - CAM_OFFSET.getX(), ModuleConstants.MODULE_POSITIONS[2].getY() + CAM_OFFSET.getY(), CAM_OFFSET.getZ()), 
-                new Rotation3d(0, CAMS_PITCH, 3  *Math.PI / 4)
+                new Rotation3d(0, CAMS_PITCH, 3 * Math.PI / 4)
             ),
             new Transform3d(
                 new Translation3d(ModuleConstants.MODULE_POSITIONS[3].getX() - CAM_OFFSET.getX(), ModuleConstants.MODULE_POSITIONS[3].getY() - CAM_OFFSET.getX(), CAM_OFFSET.getZ()), 
