@@ -11,7 +11,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Commands.Notifications;
+import frc.robot.Commands.UniversalCommandFactory;
 import frc.robot.Subsystems.ChassisVisionLocalizer;
 import frc.robot.Subsystems.Climber;
 import frc.robot.Subsystems.Drivetrain;
@@ -19,7 +23,6 @@ import frc.robot.Subsystems.Elevator;
 import frc.robot.Subsystems.EndEffector;
 import frc.robot.Subsystems.Pivot;
 import frc.robot.Util.PIDDisplay;
-import frc.robot.Util.UniversalCommandFactory;
 
 public class RobotContainer {
   private static final Drivetrain drivetrain = new Drivetrain();
@@ -54,6 +57,13 @@ public class RobotContainer {
     configureAuto();
 
     PIDDisplay.Init();
+  }
+
+  public void onTeleopEnabled() { 
+      // Notifications.GENERAL.send("Starting test sequence").andThen(new RepeatCommand(new SequentialCommandGroup(
+      //   new WaitCommand(1),
+      //   UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector)
+      // ))).schedule();
   }
 
   private void configureAuto() {

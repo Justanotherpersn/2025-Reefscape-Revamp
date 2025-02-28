@@ -49,8 +49,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
+import frc.robot.Commands.Notifications;
 import frc.robot.Constants.ModuleConstants;
-import frc.robot.Util.Elastic;
 import frc.robot.Util.PIDDisplay;
 
 public class Drivetrain extends SubsystemBase {
@@ -133,7 +133,7 @@ public class Drivetrain extends SubsystemBase {
     });
 
     PathPlannerLogging.setLogActivePathCallback(poses -> field.getObject("path").setPoses(poses));
-    PathPlannerLogging.setLogTargetPoseCallback(pose -> {field.getObject("target pose").setPose(pose); System.out.println(pose.getX());});
+    PathPlannerLogging.setLogTargetPoseCallback(pose -> field.getObject("target pose").setPose(pose));
   }
 
   enum MODULES {
@@ -188,7 +188,7 @@ public class Drivetrain extends SubsystemBase {
     poseEstimator.update(getHeadingRaw(), MODULES.collectProperty(SwerveModule::getPosition, SwerveModulePosition.class));
     
     MODULES.forAll(m -> m.periodicDebug());
-    headingEntry.setDouble(getPose().getRotation().getDegrees());
+    headingEntry.setDouble(getHeadingRaw().getDegrees());
     field.setRobotPose(getPose());
     SmartDashboard.putData("Drivetrain/Robot Pose", field); 
   }
@@ -250,16 +250,16 @@ public class Drivetrain extends SubsystemBase {
       new ParallelRaceGroup(
         new RunCommand(() -> MODULES.forAll(SwerveModule::home), this),
         new WaitUntilCommand(() -> !Arrays.asList(MODULES.collectProperty(m -> m.homed, Boolean.class)).contains(false))
-          .andThen(() -> Elastic.sendNotification(Constants.Debug.SWERVE_HOME_SUCCESS)),
+          .andThen(Notifications.SWERVE_HOME_SUCCESS.send()),
         new WaitCommand(3)
-          .andThen(() -> Elastic.sendNotification(Constants.Debug.SWERVE_HOME_FAIL))
+          .andThen(Notifications.SWERVE_HOME_FAIL.send())
       )
     );
   }
 
   public Command pathingCommand(Pose2d destination, double endSpeed) {
     return new SequentialCommandGroup(
-      new InstantCommand(() -> Elastic.sendNotification(Constants.Debug.PATH_SCHEDULED(destination))),
+      Notifications.PATH_SCHEDULED.send(destination.getX(), destination.getY(), destination.getRotation().getDegrees()),
       AutoBuilder.pathfindToPose(
         destination,
         Constants.NavigationConstants.PATHING_CONSTRAINTS,

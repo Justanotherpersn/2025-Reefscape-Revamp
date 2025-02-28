@@ -16,8 +16,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Util.PIDDisplay;
@@ -29,11 +27,8 @@ public class Pivot extends SubsystemBase {
   private final SparkFlexConfig pivotConfig;
   private final SparkClosedLoopController pivotController;
 
-  private Rotation2d target;
-
   private final NetworkTable nTables = NetworkTableInstance.getDefault().getTable("SmartDashboard/Pivot");
   private final GenericEntry targetPositionEntry = nTables.getTopic("Target").getGenericEntry();
-  private final GenericEntry outputEntry = nTables.getTopic("Output").getGenericEntry();
   private final GenericEntry encoderEntry = nTables.getTopic("Encoder").getGenericEntry();
 
   public Pivot() {
@@ -57,7 +52,6 @@ public class Pivot extends SubsystemBase {
     pivot.getEncoder().setPosition(-Math.PI / 2);
 
     targetPositionEntry.setDouble(0);
-    outputEntry.setDouble(0);
     encoderEntry.setDouble(0);
 
     SparkBaseSetter closedLoopSetter = new SparkBaseSetter(new SparkConfiguration(pivot, pivotConfig));
@@ -66,9 +60,8 @@ public class Pivot extends SubsystemBase {
   }
 
   public void setAngle(Rotation2d angle) {
-    target = angle;
     pivotController.setReference(angle.getRadians(), ControlType.kPosition);
-    targetPositionEntry.setDouble(target.getDegrees());
+    targetPositionEntry.setDouble(angle.getDegrees());
   }
 
   /**Set angle to be made along the x axis, which faces radially outwards along the forward direction of the robot
@@ -76,11 +69,6 @@ public class Pivot extends SubsystemBase {
    */
   public void setEndCoralAngle(Rotation2d angle) {
     setAngle(angle.minus(Constants.PivotConstants.END_MOUNT_ANGLE));
-  }
-
-  public Command setPivotPosition(Rotation2d angle){
-    return new 
-    InstantCommand(() -> setEndCoralAngle(angle));
   }
 
   public Rotation2d getAngle() {
@@ -91,8 +79,8 @@ public class Pivot extends SubsystemBase {
     return pivot.getEncoder().getVelocity();
   }
 
-  public double timeToReach(Rotation2d angle) {
-    return Math.abs(pivot.getEncoder().getPosition() - angle.getRadians()) / Constants.PivotConstants.ANGULAR_SPEED.getRadians();
+  public double timeToReach(Rotation2d endCoralAngle) {
+    return Math.abs(pivot.getEncoder().getPosition() - endCoralAngle.minus(Constants.PivotConstants.END_MOUNT_ANGLE).getRadians()) / Constants.PivotConstants.ANGULAR_SPEED.getRadians();
   }
 
   //Use the command in UniversalCommandFactory instead.
@@ -103,7 +91,6 @@ public class Pivot extends SubsystemBase {
 
   @Override
   public void periodic() {
-    outputEntry.setDouble(pivot.get());
     encoderEntry.setDouble(pivot.getEncoder().getPosition() * 180 / Math.PI);
   }
 }

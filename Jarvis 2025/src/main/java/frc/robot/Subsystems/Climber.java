@@ -26,14 +26,13 @@ public class Climber extends SubsystemBase {
   private final SparkMax climber;
   private final SparkMaxConfig climberConfig;
   private final SparkClosedLoopController climberController;
-  private final DigitalInput positiveLimit = new DigitalInput(6);
-  private final DigitalInput negativeLimit = new DigitalInput(7);
+  private final DigitalInput negativeLimit = new DigitalInput(6);
+  private final DigitalInput positiveLimit = new DigitalInput(7);
 
   private boolean previousPositiveLimit, previousNegativeLimit;
 
   private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Climber");
   private final GenericEntry targetPositionEntry = nTable.getTopic("Target").getGenericEntry();
-  private final GenericEntry outputEntry = nTable.getTopic("Output").getGenericEntry();
   private final GenericEntry positiveSwitchEntry = nTable.getTopic("Positive Switch").getGenericEntry();
   private final GenericEntry negativeSwitchEntry = nTable.getTopic("Negative Switch").getGenericEntry();
   private final GenericEntry encoderEntry = nTable.getTopic("Encoder").getGenericEntry();
@@ -45,7 +44,7 @@ public class Climber extends SubsystemBase {
 
     climberConfig = new SparkMaxConfig();
     climberConfig
-      .inverted(false)
+      .inverted(true)
       .idleMode(IdleMode.kBrake)
       .voltageCompensation(12);
     climberConfig.encoder
@@ -56,16 +55,15 @@ public class Climber extends SubsystemBase {
       .positionWrappingEnabled(false)
       .outputRange(-Constants.GAINS.CLIMBER.peakOutput, Constants.GAINS.CLIMBER.peakOutput);
 
-    outputEntry.setDouble(0);
     targetPositionEntry.setDouble(0);
     positiveSwitchEntry.setBoolean(false);
     negativeSwitchEntry.setBoolean(false);
     encoderEntry.setDouble(0);
 
-    climber.getEncoder().setPosition(Constants.ClimberConstants.MIN_ROTATION.getRotations());
+    climber.getEncoder().setPosition(Constants.ClimberConstants.MAX_ROTATION.getRotations());
 
     SparkBaseSetter closedLoopSetter = new SparkBaseSetter(new SparkBaseSetter.SparkConfiguration(climber, climberConfig));
-    closedLoopSetter.setPID(Constants.GAINS.PIVOT);
+    closedLoopSetter.setPID(Constants.GAINS.CLIMBER);
     PIDDisplay.PIDList.addOption("Climber", closedLoopSetter);
   }
 
@@ -78,7 +76,7 @@ public class Climber extends SubsystemBase {
     return new SequentialCommandGroup(
       new InstantCommand(() -> setPosition(target)),
       new WaitUntilCommand(() -> Math.abs(climber.getEncoder().getPosition() - target.getRotations()) < Constants.ClimberConstants.SETPOINT_RANGE.getRotations())
-    );
+    ).finallyDo(() -> setPosition(Rotation2d.fromRotations(climber.getEncoder().getPosition())));
   }
 
   @Override
@@ -88,7 +86,6 @@ public class Climber extends SubsystemBase {
     previousPositiveLimit = !positiveLimit.get();
     previousNegativeLimit = !negativeLimit.get();
 
-    outputEntry.setDouble(climber.get());
     positiveSwitchEntry.setBoolean(previousPositiveLimit);
     negativeSwitchEntry.setBoolean(previousNegativeLimit);
     encoderEntry.setDouble(360 * climber.getEncoder().getPosition());

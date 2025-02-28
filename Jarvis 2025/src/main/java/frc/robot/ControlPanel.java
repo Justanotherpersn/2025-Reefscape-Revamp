@@ -1,21 +1,26 @@
 package frc.robot;
 
+import com.pathplanner.lib.util.FlippingUtil;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.event.EventLoop;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Commands.JoystickDrive;
+import frc.robot.Commands.UniversalCommandFactory;
 import frc.robot.Subsystems.Climber;
 import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.Elevator;
 import frc.robot.Subsystems.EndEffector;
 import frc.robot.Subsystems.Pivot;
-import frc.robot.Util.UniversalCommandFactory;
 
 public class ControlPanel {
     private static final Joystick controller = new Joystick(0);
@@ -43,22 +48,24 @@ public class ControlPanel {
 
         new JoystickButton(controller, 3).onTrue(elevator.homeCommand());
 
-        new JoystickButton(controller, 6).whileTrue(climber.climbCommand(Rotation2d.fromDegrees(0)));
-        new JoystickButton(controller, 5).whileTrue(climber.climbCommand(Rotation2d.fromDegrees(-170)));
+        new JoystickButton(controller, 5).whileTrue(climber.climbCommand(Rotation2d.fromDegrees(170)));
+        new JoystickButton(controller, 6).whileTrue(climber.climbCommand(Rotation2d.fromDegrees(10)));
 
         new JoystickButton(controller, 2).onTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-90), false, pivot, endEffector));
         new JoystickButton(controller, 4).onTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(0), true, pivot, endEffector));
         new JoystickButton(controller, 8).onTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-160), false, pivot, endEffector));
 
+        EventLoop loop1 = new EventLoop();
+        loop1.bind(() -> {if (elevator.getCurrentCommand() == null) elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION).schedule();});
+        controller.axisGreaterThan(2, 0.5, loop1);
+
+        EventLoop loop2 = new EventLoop();
+        loop2.bind(() -> {if (elevator.getCurrentCommand() == null) elevator.moveCommand(Constants.ElevatorConstants.MAX_ELEVATOR_EXTENSION).schedule();});
+        controller.axisGreaterThan(3, 0.5, loop2);
         //new JoystickButton(controller, 5).whileTrue(endEffector.testIntakeCoral());
         //new JoystickButton(controller, 6).whileTrue(endEffector.testDepositCoral()); 
 
-        new JoystickButton(controller, 7).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
-
-        
-
-        
-
+        //new JoystickButton(controller, 7).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
 
 
         //new JoystickButton(controller, 5).whileTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(0), false, pivot, endEffector));
@@ -77,7 +84,7 @@ public class ControlPanel {
             );
         }
 
-        displayReefLocation(0, 0);
+        displayReefLocation(ReefCycle.targetPosition, ReefCycle.targetHeight);
         ControlPanel.drivetrain = drivetrain;
     }
 
@@ -110,8 +117,8 @@ public class ControlPanel {
     }
 
     public static class ReefCycle {
-        private static int targetPosition;
-        private static int targetHeight;
+        private static int targetPosition = 6;
+        private static int targetHeight = 3;
 
         private static boolean depositing;
         private static Pose2d previousLocation;
@@ -134,11 +141,13 @@ public class ControlPanel {
         }
     
         public static Pose2d getLocation() {
-            return depositing ? Constants.NavigationConstants.REEF_LOCATIONS[targetPosition] :  
+            Pose2d target = depositing ? Constants.NavigationConstants.REEF_LOCATIONS[targetPosition] :  
                 Constants.NavigationConstants.CORAL_STATIONS[
                     Math.abs(drivetrain.getPose().getY() - Constants.NavigationConstants.CORAL_STATIONS[0].getY()) 
                     < Math.abs(drivetrain.getPose().getY() - Constants.NavigationConstants.CORAL_STATIONS[1].getY()) ? 0 : 1
                 ];
+            if (DriverStation.getAlliance().get().equals(Alliance.Red)) target = FlippingUtil.flipFieldPose(target);
+            return target;
         }
     
         public static Pose2d getPreviousLocation() {

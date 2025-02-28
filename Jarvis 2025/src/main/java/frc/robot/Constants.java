@@ -16,8 +16,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Util.Gains;
-import frc.robot.Util.Elastic.Notification;
-import frc.robot.Util.Elastic.Notification.NotificationLevel;
 
 /** Add your docs here. */
 public class Constants {
@@ -127,7 +125,6 @@ public class Constants {
         public static final Rotation2d CORAL_DEPOSIT_ANGLES[] = {
             Rotation2d.fromDegrees(-35),
             Rotation2d.fromDegrees(-35),
-            
             Rotation2d.fromDegrees(-35),
             Rotation2d.fromDegrees(-90),
         };
@@ -142,6 +139,8 @@ public class Constants {
         public static final Rotation2d ACCEPTABLE_SCORING_RANGE = Rotation2d.fromDegrees(45);
         public static final double GEARING = 5 * 3 * 3 * 1.5;
         public static final double GEARING_TO_PIVOT = 42.0 / 16.0;
+        public static final double INTAKE_RPM = 100;
+        public static final double OUTAKE_RPM = -100;
     }
 
     public static class ClimberConstants {
@@ -152,7 +151,7 @@ public class Constants {
     }
 
     public static class PhotonConstants {
-        public final static double CAMS_PITCH = Math.toRadians(15);
+        public final static double CAMS_PITCH = Math.toRadians(15.5);
         public final static Translation3d CAM_OFFSET = new Translation3d(0, 0, 0.1);
 
         public static final Transform3d[] ROBOT_TO_CAMERAS = {
@@ -220,17 +219,18 @@ public class Constants {
         );
 
         public static final Pose2d[] REEF_LOCATIONS = {
-            new Pose2d(5.9, 4.2, Rotation2d.fromDegrees(180)),
-            new Pose2d(5.335, 5.152, Rotation2d.fromDegrees(-120)),
-            new Pose2d(5.071, 5.320, Rotation2d.fromDegrees(-120)),
-            new Pose2d(3.920, 5.320, Rotation2d.fromDegrees(-60)),
-            new Pose2d(3.644, 5.140, Rotation2d.fromDegrees(-60)),
             new Pose2d(3.093, 4.181, Rotation2d.fromDegrees(0)),
             new Pose2d(3.093, 3.881, Rotation2d.fromDegrees(0)),
             new Pose2d(3.656, 2.934, Rotation2d.fromDegrees(60)),
             new Pose2d(3.932, 2.754, Rotation2d.fromDegrees(60)),
             new Pose2d(5.023, 2.778, Rotation2d.fromDegrees(120)),
             new Pose2d(5.862, 3.869, Rotation2d.fromDegrees(120)),
+            new Pose2d(5.900, 3.857, Rotation2d.fromDegrees(180)),
+            new Pose2d(5.900, 4.200, Rotation2d.fromDegrees(180)),
+            new Pose2d(5.335, 5.152, Rotation2d.fromDegrees(-120)),
+            new Pose2d(5.071, 5.320, Rotation2d.fromDegrees(-120)),
+            new Pose2d(3.920, 5.320, Rotation2d.fromDegrees(-60)),
+            new Pose2d(3.644, 5.140, Rotation2d.fromDegrees(-60)),
         };
         public static final Pose2d CORAL_STATIONS[] = {
             new Pose2d(1.199, 1.028, Rotation2d.fromDegrees(55)),
@@ -238,44 +238,5 @@ public class Constants {
         };
 
         public static final double OPERATION_RADIUS = 0.5;
-    }
-
-    public static class Debug {
-        public static final Notification SWERVE_HOME_SUCCESS = new Notification(
-            NotificationLevel.INFO,
-            "Swerve",
-            "All swerve modules have been homed.",
-            5000
-        );
-
-        public static final Notification SWERVE_HOME_FAIL = new Notification(
-            NotificationLevel.ERROR,
-            "Swerve",
-            "Failed to home swerve modules; timed out after 3 seconds.",
-            10000
-        );
-
-        public static Notification PATH_SCHEDULED(Pose2d pose) {
-            return new Notification(
-                NotificationLevel.INFO,
-                "Navigation",
-                "Navigating to (" + pose.getX() + ", " + pose.getY() + "), heading: " + pose.getRotation().getDegrees() + " degrees.",
-                5000
-            );
-        }
-
-        public static final Notification ELEVATOR_HOME_SUCCESS = new Notification(
-            NotificationLevel.INFO,
-            "Elevator",
-            "Elevator has been homed.",
-            5000
-        );
-
-        public static final Notification ELEVATOR_HOME_FAIL = new Notification(
-            NotificationLevel.ERROR,
-            "Elevator",
-            "Elevator failed to home.",
-            10000
-        );
     }
 }

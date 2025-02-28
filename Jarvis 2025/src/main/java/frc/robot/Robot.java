@@ -1,8 +1,6 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
+
+import org.littletonrobotics.urcl.URCL;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.net.WebServer;
@@ -21,6 +19,7 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     CameraServer.startAutomaticCapture();
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
+    URCL.start();
   }
 
   @Override
@@ -29,7 +28,9 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    CommandScheduler.getInstance().cancelAll();
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -57,6 +58,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    m_robotContainer.onTeleopEnabled();
   }
 
   @Override

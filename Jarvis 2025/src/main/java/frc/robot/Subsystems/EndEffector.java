@@ -35,7 +35,6 @@ public class EndEffector extends SubsystemBase {
   private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/End Effector");
   private final GenericEntry targetSpeedEntry = nTable.getTopic("Target").getGenericEntry();
   private final GenericEntry encoderEntry = nTable.getTopic("Encoder").getGenericEntry();
-  private final GenericEntry outputEntry = nTable.getTopic("Output").getGenericEntry();
   private final GenericEntry coralSwitchEntry = nTable.getTopic("Coral Switch").getGenericEntry();
   
   public EndEffector() {
@@ -57,7 +56,6 @@ public class EndEffector extends SubsystemBase {
 
     targetSpeedEntry.setDouble(0);
     encoderEntry.setDouble(0);
-    outputEntry.setDouble(0);
     coralSwitchEntry.setBoolean(false);
 
     SparkBaseSetter closedLoopSetter = new SparkBaseSetter(new SparkBaseSetter.SparkConfiguration(coral, coralConfig));
@@ -66,6 +64,7 @@ public class EndEffector extends SubsystemBase {
   }
 
   public void setRPM(double speed){
+    targetSpeedEntry.setDouble(speed);
     coralController.setReference(speed, ControlType.kVelocity);
   }
 
@@ -76,28 +75,23 @@ public class EndEffector extends SubsystemBase {
 
   public Command moveCoralCommand(boolean intake) {
     return new SequentialCommandGroup(
-        new InstantCommand(() -> setRPM(intake ? 5 : -5)),
+        new InstantCommand(() -> setRPM(intake ? Constants.EndEffectorConstants.INTAKE_RPM : Constants.EndEffectorConstants.OUTAKE_RPM)),
         new WaitUntilCommand(() -> intake == coralPresent()),
         new WaitCommand(0.5),
         new InstantCommand(() -> setRPM(0))
     );
   }
+
   public Command testDepositCoral() {
-    return new SequentialCommandGroup(
-        new InstantCommand(() -> setRPM(-5))
-    );
+    return new InstantCommand(() -> setRPM(Constants.EndEffectorConstants.OUTAKE_RPM));
   }
 
   public Command testIntakeCoral() {
-    return new SequentialCommandGroup(
-      new InstantCommand(() -> setRPM(3))
-    );
-
+    return new InstantCommand(() -> setRPM(Constants.EndEffectorConstants.INTAKE_RPM));
   }
 
   @Override
   public void periodic() {
-    outputEntry.setDouble(coral.get());
     encoderEntry.setDouble(coral.getEncoder().getVelocity());
     coralSwitchEntry.setBoolean(coralPresent());
   }

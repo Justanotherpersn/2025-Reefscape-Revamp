@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
-import frc.robot.Util.Elastic;
+import frc.robot.Commands.Notifications;
 import frc.robot.Util.PIDDisplay;
 import frc.robot.Util.SparkBaseSetter;
 import frc.robot.Util.SparkBaseSetter.SparkConfiguration;
@@ -60,7 +60,6 @@ public class Elevator extends SubsystemBase {
       .positionWrappingEnabled(false)
       .outputRange(-Constants.GAINS.ELEVATOR.peakOutput, Constants.GAINS.ELEVATOR.peakOutput);
 
-    outputEntry.setDouble(0);
     targetPositionEntry.setDouble(0);
     topSwitchEntry.setBoolean(false);
     bottomSwitchEntry.setBoolean(false);
@@ -74,7 +73,10 @@ public class Elevator extends SubsystemBase {
   }
   
   public void move(double targetPosition){
-    if (targetPosition < Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION || targetPosition > Constants.ElevatorConstants.MAX_ELEVATOR_EXTENSION) return;
+    if (targetPosition < Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION || targetPosition > Constants.ElevatorConstants.MAX_ELEVATOR_EXTENSION) {
+      Notifications.ELEVATOR_INVALIDE_HEIGHT.send(targetPosition).schedule();
+      return;
+    }
     setPoint = targetPosition;
     elevatorController.setReference(setPoint, SparkFlex.ControlType.kPosition);
     targetPositionEntry.setDouble(targetPosition);
@@ -92,12 +94,12 @@ public class Elevator extends SubsystemBase {
           new WaitUntilCommand(() -> !bottomLimit.get()),
           new InstantCommand(() -> elevator.getEncoder().setPosition(Constants.ElevatorConstants.BOTTOM_LIMIT_POSITION)),
           moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION),
-          new InstantCommand(() -> Elastic.sendNotification(Constants.Debug.ELEVATOR_HOME_SUCCESS))
+          Notifications.ELEVATOR_HOME_SUCCESS.send()
         ),
         new SequentialCommandGroup(
           new WaitCommand(10),
           new InstantCommand(() -> elevator.set(0)),
-          new InstantCommand(() -> Elastic.sendNotification(Constants.Debug.ELEVATOR_HOME_FAIL))
+          Notifications.ELEVATOR_HOME_FAIL.send()
         )
       )
     );
