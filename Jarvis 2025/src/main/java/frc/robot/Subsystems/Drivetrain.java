@@ -62,7 +62,7 @@ public class Drivetrain extends SubsystemBase {
 
   private final GenericEntry headingEntry = nTable.getTopic("Heading").getGenericEntry();
 
-  private static Field2d field = new Field2d();
+  public static Field2d field = new Field2d();
 
   public Drivetrain() {
     poseEstimator = new SwerveDrivePoseEstimator(
@@ -128,7 +128,7 @@ public class Drivetrain extends SubsystemBase {
           builder.addDoubleProperty("Back Right Angle", () -> MODULES.BACK_RIGHT.base.getAngle().getRadians(), null);
           builder.addDoubleProperty("Back Right Velocity", () -> MODULES.BACK_RIGHT.base.getSpeed(), null);
 
-          builder.addDoubleProperty("Robot Angle", () -> getPose().getRotation().getRadians(), null);
+          builder.addDoubleProperty("Robot Angle", () -> -getPose().getRotation().getRadians(), null);
       }
     });
 
@@ -215,6 +215,7 @@ public class Drivetrain extends SubsystemBase {
    */
   public void setPose(Pose2d newPose){
     poseEstimator.resetPosition(getHeadingRaw(), MODULES.collectProperty(SwerveModule::getPosition, SwerveModulePosition.class), newPose);
+    IMU.setYaw(newPose.getRotation().getDegrees());
   }
 
   /**

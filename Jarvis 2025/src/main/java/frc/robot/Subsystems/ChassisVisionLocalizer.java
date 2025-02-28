@@ -58,7 +58,7 @@ public class ChassisVisionLocalizer extends SubsystemBase {
       camera.getAllUnreadResults().forEach(pipelineResult -> {
         PhotonTrackedTarget target = pipelineResult.getBestTarget();
 
-        if (target != null && target.getPoseAmbiguity() <= .05) {
+        if (target != null && target.getPoseAmbiguity() <= .025) {
           Transform3d camToTarget = target.getBestCameraToTarget();
           Transform3d targetToCamera = camToTarget.inverse();
 

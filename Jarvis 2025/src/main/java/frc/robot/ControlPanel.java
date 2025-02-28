@@ -46,14 +46,14 @@ public class ControlPanel {
 
         new JoystickButton(controller, 1).whileTrue(drivetrain.homeCommand());
 
-        new JoystickButton(controller, 3).onTrue(elevator.homeCommand());
+        //new JoystickButton(controller, 3).onTrue(elevator.homeCommand());
 
         new JoystickButton(controller, 5).whileTrue(climber.climbCommand(Rotation2d.fromDegrees(170)));
         new JoystickButton(controller, 6).whileTrue(climber.climbCommand(Rotation2d.fromDegrees(10)));
 
         new JoystickButton(controller, 2).onTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-90), false, pivot, endEffector));
-        new JoystickButton(controller, 4).onTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(0), true, pivot, endEffector));
-        new JoystickButton(controller, 8).onTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-160), false, pivot, endEffector));
+        new JoystickButton(controller, 4).onTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-35), true, pivot, endEffector));
+        new JoystickButton(controller, 3).onTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-215), true, pivot, endEffector));
 
         EventLoop loop1 = new EventLoop();
         loop1.bind(() -> {if (elevator.getCurrentCommand() == null) elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION).schedule();});
@@ -62,10 +62,12 @@ public class ControlPanel {
         EventLoop loop2 = new EventLoop();
         loop2.bind(() -> {if (elevator.getCurrentCommand() == null) elevator.moveCommand(Constants.ElevatorConstants.MAX_ELEVATOR_EXTENSION).schedule();});
         controller.axisGreaterThan(3, 0.5, loop2);
+
+        new JoystickButton(controller, 8).whileTrue(elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION + 0.5 * Constants.ElevatorConstants.MAX_ELEVATOR_EXTENSION));
         //new JoystickButton(controller, 5).whileTrue(endEffector.testIntakeCoral());
         //new JoystickButton(controller, 6).whileTrue(endEffector.testDepositCoral()); 
 
-        //new JoystickButton(controller, 7).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
+        new JoystickButton(controller, 7).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
 
 
         //new JoystickButton(controller, 5).whileTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(0), false, pivot, endEffector));
