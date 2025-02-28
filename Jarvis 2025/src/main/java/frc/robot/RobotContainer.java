@@ -53,16 +53,16 @@ public class RobotContainer {
 
 
     NamedCommands.registerCommand("Deposit Coral", new SequentialCommandGroup(
-    new InstantCommand(() -> endEffector.velcoityCoralCommand(5)),
+    new InstantCommand(() -> endEffector.velocityCoralCommand(5)),
     new WaitCommand(1),
-    new InstantCommand(() -> endEffector.velcoityCoralCommand(0))
+    new InstantCommand(() -> endEffector.velocityCoralCommand(0))
      )
     );
 
     NamedCommands.registerCommand("Intake Coral", new SequentialCommandGroup(
-      new InstantCommand(() -> endEffector.velcoityCoralCommand(-5)),
+      new InstantCommand(() -> endEffector.velocityCoralCommand(-5)),
       new WaitCommand(1),
-      new InstantCommand(() -> endEffector.velcoityCoralCommand(0))
+      new InstantCommand(() -> endEffector.velocityCoralCommand(0))
        )
       );
 

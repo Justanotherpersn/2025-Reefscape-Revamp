@@ -90,6 +90,10 @@ public class EndEffector extends SubsystemBase {
     return new InstantCommand(() -> setRPM(Constants.EndEffectorConstants.INTAKE_RPM));
   }
 
+  public Command velocityCoralCommand(double velocity) {
+    return new InstantCommand(() -> setRPM(velocity));
+  }
+
   @Override
   public void periodic() {
     encoderEntry.setDouble(coral.getEncoder().getVelocity());
