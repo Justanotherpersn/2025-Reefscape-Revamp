@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Commands.JoystickDrive;
 import frc.robot.Commands.UniversalCommandFactory;
@@ -52,20 +54,12 @@ public class ControlPanel {
         new JoystickButton(controller, 6).whileTrue(climber.climbCommand(Rotation2d.fromDegrees(10)));
 
         new JoystickButton(controller, 2).onTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-90), false, pivot, endEffector));
-        new JoystickButton(controller, 4).onTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-35), true, pivot, endEffector));
-        new JoystickButton(controller, 3).onTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-215), true, pivot, endEffector));
+        new JoystickButton(controller, 4).onTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-45), true, pivot, endEffector));
+        new JoystickButton(controller, 3).onTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(90), true, pivot, endEffector).alongWith(elevator.moveCommand(Constants.ElevatorConstants.MAX_ELEVATOR_EXTENSION)));
 
-        EventLoop loop1 = new EventLoop();
-        loop1.bind(() -> {if (elevator.getCurrentCommand() == null) elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION).schedule();});
-        controller.axisGreaterThan(2, 0.5, loop1);
-
-        EventLoop loop2 = new EventLoop();
-        loop2.bind(() -> {if (elevator.getCurrentCommand() == null) elevator.moveCommand(Constants.ElevatorConstants.MAX_ELEVATOR_EXTENSION).schedule();});
-        controller.axisGreaterThan(3, 0.5, loop2);
-
-        new JoystickButton(controller, 8).whileTrue(elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION + 0.5 * Constants.ElevatorConstants.MAX_ELEVATOR_EXTENSION));
-        //new JoystickButton(controller, 5).whileTrue(endEffector.testIntakeCoral());
-        //new JoystickButton(controller, 6).whileTrue(endEffector.testDepositCoral()); 
+        new JoystickButton(controller, 8).whileTrue(elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION));
+        new JoystickButton(controller, 5).whileTrue(endEffector.testIntakeCoral());
+        new JoystickButton(controller, 6).whileTrue(endEffector.testDepositCoral()); 
 
         new JoystickButton(controller, 7).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
 

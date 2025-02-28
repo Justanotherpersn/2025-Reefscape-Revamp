@@ -34,8 +34,6 @@ public class Elevator extends SubsystemBase {
   private SparkFlexConfig elevatorConfig;
   private SparkClosedLoopController elevatorController;
 
-  private double setPoint;
-
   private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Elevator");
   private final GenericEntry targetPositionEntry = nTable.getTopic("Target").getGenericEntry();
   private final GenericEntry outputEntry = nTable.getTopic("Output").getGenericEntry();
@@ -74,12 +72,16 @@ public class Elevator extends SubsystemBase {
   
   public void move(double targetPosition){
     if (targetPosition < Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION || targetPosition > Constants.ElevatorConstants.MAX_ELEVATOR_EXTENSION) {
-      Notifications.ELEVATOR_INVALIDE_HEIGHT.send(targetPosition).schedule();
+      Notifications.ELEVATOR_INVALID_HEIGHT.send(targetPosition).schedule();
+      System.out.println("Top limit: " + Constants.ElevatorConstants.MAX_ELEVATOR_EXTENSION + ", Set: " + targetPosition + ", " + Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION);
       return;
     }
-    setPoint = targetPosition;
-    elevatorController.setReference(setPoint, SparkFlex.ControlType.kPosition);
+    elevatorController.setReference(targetPosition, SparkFlex.ControlType.kPosition);
     targetPositionEntry.setDouble(targetPosition);
+  }
+
+  public double getPosition() {
+    return elevator.getEncoder().getPosition();
   }
 
   public double timeToReach(double position) {
@@ -97,7 +99,7 @@ public class Elevator extends SubsystemBase {
           Notifications.ELEVATOR_HOME_SUCCESS.send()
         ),
         new SequentialCommandGroup(
-          new WaitCommand(10),
+          new WaitCommand(3),
           new InstantCommand(() -> elevator.set(0)),
           Notifications.ELEVATOR_HOME_FAIL.send()
         )

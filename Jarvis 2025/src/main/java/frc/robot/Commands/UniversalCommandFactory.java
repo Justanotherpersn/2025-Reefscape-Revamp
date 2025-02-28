@@ -52,9 +52,11 @@ public class UniversalCommandFactory {
     }
     
     public static final Command pivotAngleCommand(Rotation2d angle, boolean coralAngle, Pivot pivot, EndEffector endEffector) {
+        final Rotation2d finalAngle = coralAngle ? angle.minus(Constants.PivotConstants.END_MOUNT_ANGLE) : angle;
         return new ParallelDeadlineGroup(
-            new WaitUntilCommand(() -> Math.abs(pivot.getAngle().minus(angle).getRadians()) < Constants.PivotConstants.POSITION_TOLERANCE.getRadians()),
-            new InstantCommand(coralAngle ? () -> pivot.setEndCoralAngle(angle) : () -> pivot.setAngle(angle))
+            new WaitUntilCommand(() -> Math.abs(pivot.getAngle().minus(finalAngle).getRadians()) < Constants.PivotConstants.POSITION_TOLERANCE.getRadians()),
+            new InstantCommand(() -> pivot.setAngle(finalAngle)),
+            Notifications.GENERAL.send("Finished")
             //new RunCommand(() -> endEffector.setRPM(pivot.getSpeed() / Constants.EndEffectorConstants.GEARING_TO_PIVOT))
         );
     }

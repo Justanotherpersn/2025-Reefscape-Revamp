@@ -38,7 +38,7 @@ public class Pivot extends SubsystemBase {
 
     pivotConfig = new SparkFlexConfig();
     pivotConfig
-      .inverted(true)
+      .inverted(false)
       .idleMode(IdleMode.kBrake)
       .voltageCompensation(12);
     pivotConfig.encoder

@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Commands.UniversalCommandFactory;
 import frc.robot.Subsystems.ChassisVisionLocalizer;
@@ -70,7 +71,10 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return new SequentialCommandGroup(
-      drivetrain.homeCommand(),
+      new ParallelCommandGroup(
+        drivetrain.homeCommand()
+        //elevator.homeCommand()
+      ),
       AutoBuilder.buildAuto(autoChooser.getSelected().getName())
     );
   }

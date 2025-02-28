@@ -120,8 +120,8 @@ public class Constants {
     public static class PivotConstants {
         public static final double GEARING = 90 * 5 / 1.5;
         /**The angle between the arm and a loaded coral, with positive x pointing radially outwards*/
-        public static final Rotation2d END_MOUNT_ANGLE = Rotation2d.fromDegrees(-55);
-        public static final Rotation2d POSITION_TOLERANCE = Rotation2d.fromDegrees(5);
+        public static final Rotation2d END_MOUNT_ANGLE = Rotation2d.fromDegrees(90-35);
+        public static final Rotation2d POSITION_TOLERANCE = Rotation2d.fromDegrees(15);
         public static final Rotation2d CORAL_DEPOSIT_ANGLES[] = {
             Rotation2d.fromDegrees(-35),
             Rotation2d.fromDegrees(-35),
@@ -139,8 +139,8 @@ public class Constants {
         public static final Rotation2d ACCEPTABLE_SCORING_RANGE = Rotation2d.fromDegrees(45);
         public static final double GEARING = 5 * 3 * 3 * 1.5;
         public static final double GEARING_TO_PIVOT = 42.0 / 16.0;
-        public static final double INTAKE_RPM = 500;
-        public static final double OUTAKE_RPM = -500;
+        public static final double INTAKE_RPM = 200;
+        public static final double OUTAKE_RPM = -200;
     }
 
     public static class ClimberConstants {
