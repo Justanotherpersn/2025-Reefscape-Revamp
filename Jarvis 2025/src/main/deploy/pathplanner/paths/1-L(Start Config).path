@@ -38,15 +38,15 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Raise Elevator",
-      "waypointRelativePos": 0,
+      "name": "Set Elevator L1",
+      "waypointRelativePos": 0.49285714285714277,
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 5.0,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
