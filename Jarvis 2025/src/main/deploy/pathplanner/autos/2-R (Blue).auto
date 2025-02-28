@@ -7,25 +7,31 @@
         {
           "type": "named",
           "data": {
-            "name": "Set Elevator Height L2"
+            "name": "Set Elevator Height L1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Set Pivot L2"
+            "name": "Set Pivot L1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Match 22"
+            "pathName": "2-R (Blue Start)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Deposit Coral"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Blue Autos",
   "choreoAuto": false
 }

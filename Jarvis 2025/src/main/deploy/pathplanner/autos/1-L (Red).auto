@@ -7,25 +7,25 @@
         {
           "type": "named",
           "data": {
-            "name": "Set Elevator Height L2"
+            "name": "Set Pivot L4"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Set Pivot L2"
+            "name": "Set Elevator Height L4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Match 22"
+            "pathName": "1-L (Red Start)"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Red Autos",
   "choreoAuto": false
 }
