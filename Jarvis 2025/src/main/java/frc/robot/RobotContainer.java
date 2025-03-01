@@ -4,17 +4,21 @@
 
 package frc.robot;
 
+import java.util.Set;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Commands.Notifications;
 import frc.robot.Commands.UniversalCommandFactory;
 import frc.robot.Subsystems.ChassisVisionLocalizer;
 import frc.robot.Subsystems.Climber;
@@ -40,7 +44,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("Set Elevator Height L1", new InstantCommand(() -> elevatorHeight = Constants.ElevatorConstants.PRESET_HEIGHTS[0] + Constants.PivotConstants.LENGTH));
     NamedCommands.registerCommand("Set Elevator Height L2", new InstantCommand(() -> elevatorHeight = Constants.ElevatorConstants.PRESET_HEIGHTS[1] + Constants.PivotConstants.LENGTH));
     NamedCommands.registerCommand("Set Elevator Height L3", new InstantCommand(() -> elevatorHeight = Constants.ElevatorConstants.PRESET_HEIGHTS[2] - Math.sin(Constants.PivotConstants.END_MOUNT_ANGLE.getRadians()) * Constants.PivotConstants.LENGTH));
-    NamedCommands.registerCommand("Set Elevator Height L4", new InstantCommand(() -> elevatorHeight = Constants.ElevatorConstants.PRESET_HEIGHTS[3] - Math.sin(Constants.PivotConstants.END_MOUNT_ANGLE.getRadians()) * Constants.PivotConstants.LENGTH));
+    NamedCommands.registerCommand("Set Elevator Height L4", new InstantCommand(() -> elevatorHeight = Constants.ElevatorConstants.PRESET_HEIGHTS[3]));
+    
     
     NamedCommands.registerCommand("Intake Position", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_INTAKE_ANGLE));
     NamedCommands.registerCommand("Default Posiiton", new InstantCommand(() -> pivotAngle = Rotation2d.fromDegrees(-90)));
@@ -51,6 +56,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("Set Pivot L2", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[1]));
     NamedCommands.registerCommand("Set Pivot L3", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[2]));
     NamedCommands.registerCommand("Set Pivot L4", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[3]));
+    
+    new EventTrigger("Elevator Move").onTrue(new DeferredCommand(() -> elevator.moveCommand(elevatorHeight), Set.of(elevator)));
+    new EventTrigger("Elevator Pivot").onTrue(new DeferredCommand(() -> UniversalCommandFactory.pivotAngleCommand(pivotAngle, true, pivot, endEffector), Set.of(pivot)));
+    new EventTrigger("Event Notification").onTrue(Notifications.PATHPLANNER_EVENT.send());
 
     NamedCommands.registerCommand("Elevator Pivot", new InstantCommand(() -> UniversalCommandFactory.pivotAngleCommand(pivotAngle, true, pivot, endEffector)));
 
@@ -76,6 +85,8 @@ public class RobotContainer {
       new InstantCommand(() -> endEffector.velocityCoralCommand(0))
        )
       );
+    new EventTrigger("Intake Coral").onTrue(endEffector.moveCoralCommand(true));
+    new EventTrigger("Outake Coral").onTrue(endEffector.moveCoralCommand(false));
 
     new PIDDisplay();
     new ChassisVisionLocalizer();

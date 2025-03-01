@@ -3,7 +3,26 @@
   "command": {
     "type": "sequential",
     "data": {
-      "commands": []
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Elevator Height L4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Pivot L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1-R (Red Start)"
+          }
+        }
+      ]
     }
   },
   "resetOdom": true,

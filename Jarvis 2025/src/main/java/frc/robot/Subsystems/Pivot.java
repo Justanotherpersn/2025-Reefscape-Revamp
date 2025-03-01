@@ -30,6 +30,7 @@ public class Pivot extends SubsystemBase {
   private final NetworkTable nTables = NetworkTableInstance.getDefault().getTable("SmartDashboard/Pivot");
   private final GenericEntry targetPositionEntry = nTables.getTopic("Target").getGenericEntry();
   private final GenericEntry encoderEntry = nTables.getTopic("Encoder").getGenericEntry();
+  private final GenericEntry speedEntry = nTables.getTopic("Encoder Speed").getGenericEntry();
 
   public Pivot() {
     pivot = new SparkFlex(Constants.CAN_DEVICES.PIVOT.id, MotorType.kBrushless);
@@ -43,7 +44,7 @@ public class Pivot extends SubsystemBase {
       .voltageCompensation(12);
     pivotConfig.encoder
       .positionConversionFactor(2 * Math.PI / Constants.PivotConstants.GEARING)
-      .velocityConversionFactor(2 * Math.PI / Constants.PivotConstants.GEARING);
+      .velocityConversionFactor(1 / Constants.PivotConstants.GEARING);
     pivotConfig.closedLoop
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       .positionWrappingEnabled(true)
@@ -53,6 +54,7 @@ public class Pivot extends SubsystemBase {
 
     targetPositionEntry.setDouble(0);
     encoderEntry.setDouble(0);
+    speedEntry.setDouble(0);
 
     SparkBaseSetter closedLoopSetter = new SparkBaseSetter(new SparkConfiguration(pivot, pivotConfig));
     closedLoopSetter.setPID(Constants.GAINS.PIVOT);
@@ -92,5 +94,6 @@ public class Pivot extends SubsystemBase {
   @Override
   public void periodic() {
     encoderEntry.setDouble(pivot.getEncoder().getPosition() * 180 / Math.PI);
+    speedEntry.setDouble(getSpeed());
   }
 }

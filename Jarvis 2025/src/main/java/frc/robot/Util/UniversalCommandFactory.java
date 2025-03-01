@@ -55,7 +55,7 @@ public class UniversalCommandFactory {
         return new ParallelDeadlineGroup(
             new WaitUntilCommand(() -> Math.abs(pivot.getAngle().minus(angle).getRadians()) < Constants.PivotConstants.POSITION_TOLERANCE.getRadians()),
             new InstantCommand(coralAngle ? () -> pivot.setEndCoralAngle(angle) : () -> pivot.setAngle(angle)),
-            new RunCommand(() -> endEffector.setRPM(pivot.getSpeed() / Constants.EndEffectorConstants.GEARING_TO_PIVOT))
+            new RunCommand(() -> endEffector.setRPM(-pivot.getSpeed() / Constants.EndEffectorConstants.GEARING_TO_PIVOT))
         );
     }
 }

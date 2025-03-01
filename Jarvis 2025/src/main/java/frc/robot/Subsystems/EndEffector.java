@@ -21,6 +21,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -64,8 +65,18 @@ public class EndEffector extends SubsystemBase {
   }
 
   public void setRPM(double speed){
-    targetSpeedEntry.setDouble(speed);
-    coralController.setReference(speed, ControlType.kVelocity);
+    if( Math.abs(speed) == Constants.EndEffectorConstants.INTAKE_RPM)
+    setSpeed(Math.signum(speed));
+    else
+    setSpeed(speed);
+    // targetSpeedEntry.setDouble(speed);
+    // coralController.setReference(speed, ControlType.kVelocity);
+  }
+
+  public void setSpeed(double speed) {
+    //revert and uncomment above
+    targetSpeedEntry.setDouble(speed * 0.01);
+    coral.set(speed);
   }
 
   public boolean coralPresent() {
@@ -77,26 +88,25 @@ public class EndEffector extends SubsystemBase {
     return new SequentialCommandGroup(
         new InstantCommand(() -> setRPM(intake ? Constants.EndEffectorConstants.INTAKE_RPM : Constants.EndEffectorConstants.OUTAKE_RPM)),
         new WaitUntilCommand(() -> intake == coralPresent()),
-        new WaitCommand(0.5),
-        new InstantCommand(() -> setRPM(0))
-    );
+        new WaitCommand(0.5)
+    ).finallyDo(() -> setRPM(0));
   }
 
   public Command testDepositCoral() {
-    return new InstantCommand(() -> setRPM(Constants.EndEffectorConstants.OUTAKE_RPM));
+    return new RunCommand(() -> setSpeed(Constants.EndEffectorConstants.OUTAKE_RPM)).finallyDo(() -> setSpeed(0));
   }
 
   public Command testIntakeCoral() {
-    return new InstantCommand(() -> setRPM(Constants.EndEffectorConstants.INTAKE_RPM));
+    return new RunCommand(() -> setSpeed(Constants.EndEffectorConstants.INTAKE_RPM)).finallyDo(() -> setSpeed(0));
   }
 
   public Command velocityCoralCommand(double velocity) {
-    return new InstantCommand(() -> setRPM(velocity));
+    return new InstantCommand(() -> setSpeed(velocity));
   }
 
   @Override
   public void periodic() {
-    encoderEntry.setDouble(coral.getEncoder().getVelocity());
+    encoderEntry.setDouble(coral.getOutputCurrent());
     coralSwitchEntry.setBoolean(coralPresent());
   }
 }
