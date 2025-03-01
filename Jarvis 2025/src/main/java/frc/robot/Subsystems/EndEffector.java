@@ -21,7 +21,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -64,24 +63,13 @@ public class EndEffector extends SubsystemBase {
     PIDDisplay.PIDList.addOption("End Effector", closedLoopSetter);
   }
 
-  public void setRPM(double speed){
-    if( Math.abs(speed) == Constants.EndEffectorConstants.INTAKE_RPM)
-    setSpeed(Math.signum(speed));
-    else
-    setSpeed(speed);
-    // targetSpeedEntry.setDouble(speed);
-    // coralController.setReference(speed, ControlType.kVelocity);
-  }
-
-  public void setSpeed(double speed) {
-    //revert and uncomment above
-    targetSpeedEntry.setDouble(speed * 0.01);
-    coral.set(speed);
+  public void setRPM(double speed) {
+    targetSpeedEntry.setDouble(speed);
+    coralController.setReference(speed, ControlType.kVelocity);
   }
 
   public boolean coralPresent() {
-    //return !sensor.get();
-    return true;
+    return !sensor.get();
   }
 
   public Command moveCoralCommand(boolean intake) {
@@ -90,18 +78,6 @@ public class EndEffector extends SubsystemBase {
         new WaitUntilCommand(() -> intake == coralPresent()),
         new WaitCommand(0.5)
     ).finallyDo(() -> setRPM(0));
-  }
-
-  public Command testDepositCoral() {
-    return new RunCommand(() -> setSpeed(Constants.EndEffectorConstants.OUTAKE_RPM)).finallyDo(() -> setSpeed(0));
-  }
-
-  public Command testIntakeCoral() {
-    return new RunCommand(() -> setSpeed(Constants.EndEffectorConstants.INTAKE_RPM)).finallyDo(() -> setSpeed(0));
-  }
-
-  public Command velocityCoralCommand(double velocity) {
-    return new InstantCommand(() -> setSpeed(velocity));
   }
 
   @Override

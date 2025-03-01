@@ -133,7 +133,7 @@ public class Drivetrain extends SubsystemBase {
     });
 
     PathPlannerLogging.setLogActivePathCallback(poses -> field.getObject("path").setPoses(poses));
-    PathPlannerLogging.setLogTargetPoseCallback(pose -> field.getObject("target pose").setPose(pose));
+    PathPlannerLogging.setLogTargetPoseCallback(pose -> {field.getObject("target pose").setPose(pose); setPose(pose);});
   }
 
   enum MODULES {

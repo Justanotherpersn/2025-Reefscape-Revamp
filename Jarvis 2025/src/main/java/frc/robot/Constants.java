@@ -89,7 +89,7 @@ public class Constants {
     }
 
     public static class ElevatorConstants{
-        public static final double TOP_LIMIT_POSITION = Units.inchesToMeters(63.25);
+        public static final double TOP_LIMIT_POSITION = Units.inchesToMeters(65.25);
         public static final double BOTTOM_LIMIT_POSITION = Units.inchesToMeters(39.25);
 
         public static final double MAX_ELEVATOR_EXTENSION = TOP_LIMIT_POSITION;
@@ -113,7 +113,7 @@ public class Constants {
             Units.inchesToMeters(39.25),
             Units.inchesToMeters(47.25),
             Units.inchesToMeters(57.875),
-            Units.inchesToMeters(63.25)
+            TOP_LIMIT_POSITION
         };
 
         public static final double CORAL_INTAKE_HEIGHT = Units.inchesToMeters(57.875);
@@ -226,7 +226,7 @@ public class Constants {
             new Pose2d(3.656, 2.934, Rotation2d.fromDegrees(60)),
             new Pose2d(3.932, 2.754, Rotation2d.fromDegrees(60)),
             new Pose2d(5.023, 2.778, Rotation2d.fromDegrees(120)),
-            new Pose2d(5.862, 3.869, Rotation2d.fromDegrees(120)),
+            new Pose2d(5.362, 2.922, Rotation2d.fromDegrees(120)),
             new Pose2d(5.900, 3.857, Rotation2d.fromDegrees(180)),
             new Pose2d(5.900, 4.200, Rotation2d.fromDegrees(180)),
             new Pose2d(5.335, 5.152, Rotation2d.fromDegrees(-120)),

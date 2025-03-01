@@ -64,8 +64,8 @@ public class ControlPanel {
         new JoystickButton(controller, 5).whileTrue(climber.climbCommand(Constants.ClimberConstants.MAX_ROTATION));
         new JoystickButton(controller, 6).whileTrue(climber.climbCommand(Constants.ClimberConstants.MIN_ROTATION)); 
 
-        new Trigger(() -> controller.getRawAxis(2) > 0.5).whileTrue(endEffector.testIntakeCoral());
-        new Trigger(() -> controller.getRawAxis(3) > 0.5).whileTrue(endEffector.testDepositCoral());
+        new Trigger(() -> controller.getRawAxis(2) > 0.5).whileTrue(endEffector.moveCoralCommand(true));
+        new Trigger(() -> controller.getRawAxis(3) > 0.5).whileTrue(endEffector.moveCoralCommand(false));
 
         new JoystickButton(controller, 7).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
 
@@ -117,8 +117,8 @@ public class ControlPanel {
     }
 
     public static class ReefCycle {
-        private static int targetPosition = 0;
-        private static int targetHeight = 0;
+        private static int targetPosition = 5;
+        private static int targetHeight = 3;
 
         private static boolean depositing = true;
         private static Pose2d previousLocation;
@@ -147,6 +147,7 @@ public class ControlPanel {
                     < Math.abs(drivetrain.getPose().getY() - Constants.NavigationConstants.CORAL_STATIONS[1].getY()) ? 0 : 1
                 ];
             if (DriverStation.getAlliance().get().equals(Alliance.Red)) target = FlippingUtil.flipFieldPose(target);
+            if (target.getRotation().getDegrees() > 0) target = new Pose2d(target.getTranslation(), target.getRotation().plus(Rotation2d.fromDegrees(180)));
             return target;
         }
     
@@ -156,7 +157,7 @@ public class ControlPanel {
     
         //TODO FIX
         public static double getHeight() {
-            return depositing ? Constants.ElevatorConstants.PRESET_HEIGHTS[targetHeight] : Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION;
+            return depositing ? Constants.ElevatorConstants.PRESET_HEIGHTS[targetHeight] : Constants.ElevatorConstants.CORAL_INTAKE_HEIGHT;
         }
     
         public static Rotation2d getAngle() {

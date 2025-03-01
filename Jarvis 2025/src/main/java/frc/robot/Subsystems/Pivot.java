@@ -47,7 +47,7 @@ public class Pivot extends SubsystemBase {
       .velocityConversionFactor(1 / Constants.PivotConstants.GEARING);
     pivotConfig.closedLoop
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-      .positionWrappingEnabled(true)
+      .positionWrappingEnabled(false)
       .outputRange(-Constants.GAINS.PIVOT.peakOutput, Constants.GAINS.PIVOT.peakOutput);
 
     pivot.getEncoder().setPosition(-Math.PI / 2);
