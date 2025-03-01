@@ -44,7 +44,7 @@ public class EndEffector extends SubsystemBase {
 
     coralConfig = new SparkMaxConfig();
     coralConfig
-      .inverted(true)
+      .inverted(false)
       .idleMode(IdleMode.kCoast)
       .voltageCompensation(12);
     coralConfig.encoder
@@ -76,7 +76,7 @@ public class EndEffector extends SubsystemBase {
     return new SequentialCommandGroup(
         new InstantCommand(() -> setRPM(intake ? Constants.EndEffectorConstants.INTAKE_RPM : Constants.EndEffectorConstants.OUTAKE_RPM)),
         new WaitUntilCommand(() -> intake == coralPresent()),
-        new WaitCommand(0.5)
+        new WaitCommand(intake ? 0.15 : 2)
     ).finallyDo(() -> setRPM(0));
   }
 

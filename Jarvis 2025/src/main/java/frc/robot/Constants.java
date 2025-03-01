@@ -47,7 +47,7 @@ public class Constants {
         public static Gains DRIVE = new Gains(5, 0, 0.15, 2.65, 12);
         public static Gains TURN = new Gains(.6, 1);
         public static Gains ELEVATOR = new Gains(3, 0, 0, 0, 0, 12);
-        public static Gains END_EFFECTOR = new Gains(0.01, 0, 0, 0, 12);
+        public static Gains END_EFFECTOR = new Gains(0.005, 0, 0, 0, 12);
         public static Gains PIVOT = new Gains(3, 0, 0, 0, 12);
         public static Gains CLIMBER = new Gains(100, 0, 0, 0, 12);
     }
@@ -141,8 +141,8 @@ public class Constants {
         public static final Rotation2d ACCEPTABLE_SCORING_RANGE = Rotation2d.fromDegrees(45);
         public static final double GEARING = 5 * 3 * 3 * 1.5;
         public static final double GEARING_TO_PIVOT = 42.0 / 16.0;
-        public static final double INTAKE_RPM = 1;
-        public static final double OUTAKE_RPM = -1;
+        public static final double INTAKE_RPM = 200;
+        public static final double OUTAKE_RPM = -200;
     }
 
     public static class ClimberConstants {
