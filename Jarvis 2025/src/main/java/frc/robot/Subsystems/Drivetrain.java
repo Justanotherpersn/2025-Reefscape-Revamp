@@ -128,7 +128,7 @@ public class Drivetrain extends SubsystemBase {
           builder.addDoubleProperty("Back Right Angle", () -> MODULES.BACK_RIGHT.base.getAngle().getRadians(), null);
           builder.addDoubleProperty("Back Right Velocity", () -> MODULES.BACK_RIGHT.base.getSpeed(), null);
 
-          builder.addDoubleProperty("Robot Angle", () -> -getPose().getRotation().getRadians(), null);
+          builder.addDoubleProperty("Robot Angle", () -> getPose().getRotation().getRadians(), null);
       }
     });
 
@@ -188,7 +188,7 @@ public class Drivetrain extends SubsystemBase {
     poseEstimator.update(getHeadingRaw(), MODULES.collectProperty(SwerveModule::getPosition, SwerveModulePosition.class));
     
     MODULES.forAll(m -> m.periodicDebug());
-    headingEntry.setDouble(getHeadingRaw().getDegrees());
+    headingEntry.setDouble(getPose().getRotation().getDegrees());
     field.setRobotPose(getPose());
     SmartDashboard.putData("Drivetrain/Robot Pose", field);
   }
@@ -215,7 +215,6 @@ public class Drivetrain extends SubsystemBase {
    */
   public void setPose(Pose2d newPose){
     poseEstimator.resetPosition(getHeadingRaw(), MODULES.collectProperty(SwerveModule::getPosition, SwerveModulePosition.class), newPose);
-    IMU.setYaw(newPose.getRotation().getDegrees());
   }
 
   /**

@@ -13,7 +13,8 @@ public enum Notifications {
     PATH_SCHEDULED(NotificationLevel.INFO, "Navigation", "Navigating to (%s, %s) at %s degrees heading"),
     ELEVATOR_HOME_SUCCESS(NotificationLevel.INFO, "Elevator", "Homed elevator"),
     ELEVATOR_HOME_FAIL(NotificationLevel.ERROR, "Elevator", "Failed to home elevator"),
-    ELEVATOR_INVALID_HEIGHT(NotificationLevel.ERROR, "Elevator", "Elevator commanded to move outside its bounds (%s)")
+    ELEVATOR_INVALID_HEIGHT(NotificationLevel.ERROR, "Elevator", "Elevator commanded to move outside its bounds (%s)"),
+    PATHPLANNER_EVENT(NotificationLevel.INFO, "PathPlanner", "PathPlanner has triggered an event")
     ;
     
     private final Notification notification;

@@ -65,12 +65,17 @@ public class EndEffector extends SubsystemBase {
   }
 
   public void setRPM(double speed){
-    targetSpeedEntry.setDouble(speed);
-    coralController.setReference(speed, ControlType.kVelocity);
+    if( Math.abs(speed) == Constants.EndEffectorConstants.INTAKE_RPM)
+    setSpeed(Math.signum(speed));
+    else
+    setSpeed(speed);
+    // targetSpeedEntry.setDouble(speed);
+    // coralController.setReference(speed, ControlType.kVelocity);
   }
 
   public void setSpeed(double speed) {
-    targetSpeedEntry.setDouble(speed);
+    //revert and uncomment above
+    targetSpeedEntry.setDouble(speed * 0.01);
     coral.set(speed);
   }
 
@@ -83,9 +88,8 @@ public class EndEffector extends SubsystemBase {
     return new SequentialCommandGroup(
         new InstantCommand(() -> setRPM(intake ? Constants.EndEffectorConstants.INTAKE_RPM : Constants.EndEffectorConstants.OUTAKE_RPM)),
         new WaitUntilCommand(() -> intake == coralPresent()),
-        new WaitCommand(0.5),
-        new InstantCommand(() -> setRPM(0))
-    );
+        new WaitCommand(0.5)
+    ).finallyDo(() -> setRPM(0));
   }
 
   public Command testDepositCoral() {
@@ -102,7 +106,7 @@ public class EndEffector extends SubsystemBase {
 
   @Override
   public void periodic() {
-    encoderEntry.setDouble(coral.getEncoder().getVelocity());
+    encoderEntry.setDouble(coral.getOutputCurrent());
     coralSwitchEntry.setBoolean(coralPresent());
   }
 }

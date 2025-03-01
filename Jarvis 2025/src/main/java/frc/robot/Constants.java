@@ -116,7 +116,7 @@ public class Constants {
             Units.inchesToMeters(63.25)
         };
 
-        public static final double CORAL_INTAKE_HEIGHT = Units.inchesToMeters(47.25);
+        public static final double CORAL_INTAKE_HEIGHT = Units.inchesToMeters(57.875);
     }
 
     public static class PivotConstants {
@@ -125,12 +125,12 @@ public class Constants {
         public static final Rotation2d END_MOUNT_ANGLE = Rotation2d.fromDegrees(90-35);
         public static final Rotation2d POSITION_TOLERANCE = Rotation2d.fromDegrees(15);
         public static final Rotation2d CORAL_DEPOSIT_ANGLES[] = {
-            Rotation2d.fromDegrees(-35),
-            Rotation2d.fromDegrees(-35),
-            Rotation2d.fromDegrees(-35),
+            Rotation2d.fromDegrees(-20),
+            Rotation2d.fromDegrees(-20),
+            Rotation2d.fromDegrees(-20),
             Rotation2d.fromDegrees(100),
         };
-        public static final Rotation2d CORAL_INTAKE_ANGLE = Rotation2d.fromDegrees(-40);
+        public static final Rotation2d CORAL_INTAKE_ANGLE = Rotation2d.fromDegrees(-50);
         public static final Rotation2d ANGULAR_SPEED = Rotation2d.fromDegrees(45);
         /**Length from pivot axis to center of coral when loaded*/
         public static final double LENGTH = 1;
@@ -147,7 +147,7 @@ public class Constants {
 
     public static class ClimberConstants {
         public static final Rotation2d MAX_ROTATION = Rotation2d.fromDegrees(170);
-        public static final Rotation2d MIN_ROTATION = Rotation2d.fromDegrees(0);
+        public static final Rotation2d MIN_ROTATION = Rotation2d.fromDegrees(10);
         public static final Rotation2d SETPOINT_RANGE = Rotation2d.fromDegrees(1);
         public static final double GEARING = 9 * 5 * 4 * 4;
     }

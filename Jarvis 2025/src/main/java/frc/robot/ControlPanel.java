@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.JoystickDrive;
 import frc.robot.Commands.UniversalCommandFactory;
 import frc.robot.Subsystems.Climber;
@@ -30,13 +31,6 @@ public class ControlPanel {
     private static final Joystick controller2 = new Joystick(1);
 
     private static final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Reef Locations");
-    
-    private static GenericEntry[] heightEntries = {
-        nTable.getTopic("L0").getGenericEntry(), 
-        nTable.getTopic("L1").getGenericEntry(),
-        nTable.getTopic("L2").getGenericEntry(),
-        nTable.getTopic("L3").getGenericEntry()
-    };
 
     private static GenericEntry reefDisplay = nTable.getStringTopic("Reef Display").getGenericEntry();
 
@@ -51,9 +45,6 @@ public class ControlPanel {
 
         //new JoystickButton(controller, 3).onTrue(elevator.homeCommand());
 
-        new JoystickButton(controller, 5).whileTrue(climber.climbCommand(Rotation2d.fromDegrees(170)));
-        new JoystickButton(controller, 6).whileTrue(climber.climbCommand(Rotation2d.fromDegrees(10)));
-
         new JoystickButton(controller, 2).onTrue(new ParallelCommandGroup(
             UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-90), false, pivot, endEffector),
             elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION)
@@ -67,10 +58,14 @@ public class ControlPanel {
         new JoystickButton(controller, 3).onTrue(new ParallelCommandGroup(
             UniversalCommandFactory.pivotAngleCommand(Constants.PivotConstants.CORAL_INTAKE_ANGLE, true, pivot, endEffector),
             elevator.moveCommand(Constants.ElevatorConstants.CORAL_INTAKE_HEIGHT)
+            //endEffector.moveCoralCommand(true)
         ));
 
-        new JoystickButton(controller, 5).whileTrue(endEffector.testIntakeCoral());
-        new JoystickButton(controller, 6).whileTrue(endEffector.testDepositCoral()); 
+        new JoystickButton(controller, 5).whileTrue(climber.climbCommand(Constants.ClimberConstants.MAX_ROTATION));
+        new JoystickButton(controller, 6).whileTrue(climber.climbCommand(Constants.ClimberConstants.MIN_ROTATION)); 
+
+        new Trigger(() -> controller.getRawAxis(2) > 0.5).whileTrue(endEffector.testIntakeCoral());
+        new Trigger(() -> controller.getRawAxis(3) > 0.5).whileTrue(endEffector.testDepositCoral());
 
         new JoystickButton(controller, 7).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
 
@@ -83,7 +78,6 @@ public class ControlPanel {
 
         for (int i = 0; i < 16; i++) {
             final int buttonID = buttonLookup[i];
-            if (buttonID < 4) heightEntries[buttonID].setBoolean(false);
             new JoystickButton(controller2, i + 1).onTrue(
                 (buttonID < 4 ? ReefCycle.setHeight(buttonID) : ReefCycle.setPosition(buttonID - 4))
                     .andThen(() -> displayReefLocation(ReefCycle.targetPosition, ReefCycle.targetHeight))
