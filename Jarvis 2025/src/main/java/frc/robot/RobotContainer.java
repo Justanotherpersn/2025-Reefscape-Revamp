@@ -42,6 +42,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("Set Elevator Height L3", new InstantCommand(() -> elevatorHeight = Constants.ElevatorConstants.PRESET_HEIGHTS[2] - Math.sin(Constants.PivotConstants.END_MOUNT_ANGLE.getRadians()) * Constants.PivotConstants.LENGTH));
     NamedCommands.registerCommand("Set Elevator Height L4", new InstantCommand(() -> elevatorHeight = Constants.ElevatorConstants.PRESET_HEIGHTS[3] - Math.sin(Constants.PivotConstants.END_MOUNT_ANGLE.getRadians()) * Constants.PivotConstants.LENGTH));
     
+    NamedCommands.registerCommand("Intake Position", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_INTAKE_ANGLE));
+    NamedCommands.registerCommand("Default Posiiton", new InstantCommand(() -> pivotAngle = Rotation2d.fromDegrees(-90)));
+    
     NamedCommands.registerCommand("Elevator Move", elevator.moveCommand(elevatorHeight));
 
     NamedCommands.registerCommand("Set Pivot L1", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[0]));
@@ -51,13 +54,21 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("Elevator Pivot", new InstantCommand(() -> UniversalCommandFactory.pivotAngleCommand(pivotAngle, true, pivot, endEffector)));
 
-
     NamedCommands.registerCommand("Deposit Coral", new SequentialCommandGroup(
     new InstantCommand(() -> endEffector.velocityCoralCommand(5)),
     new WaitCommand(1),
     new InstantCommand(() -> endEffector.velocityCoralCommand(0))
      )
     );
+    NamedCommands.registerCommand("Deposit Coral", new SequentialCommandGroup(
+    new InstantCommand(() -> endEffector.velocityCoralCommand(5)),
+    new WaitCommand(1),
+    new InstantCommand(() -> endEffector.velocityCoralCommand(0))
+     )
+    );
+    
+
+
 
     NamedCommands.registerCommand("Intake Coral", new SequentialCommandGroup(
       new InstantCommand(() -> endEffector.velocityCoralCommand(-5)),
