@@ -9,8 +9,9 @@
     "Leave Paths"
   ],
   "autoFolders": [
-    "Leave Autos",
     "Blue Autos",
+    "Leave Autos",
+    "High Coral Autos",
     "Red Autos"
   ],
   "defaultMaxVel": 5.0,

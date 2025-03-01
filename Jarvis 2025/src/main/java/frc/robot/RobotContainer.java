@@ -49,6 +49,11 @@ public class RobotContainer {
     NamedCommands.registerCommand("Set Elevator Height L4", new InstantCommand(() -> elevatorHeight = Constants.ElevatorConstants.PRESET_HEIGHTS[3]));
     
     
+    NamedCommands.registerCommand("Intake Position", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_INTAKE_ANGLE));
+    NamedCommands.registerCommand("Default Posiiton", new InstantCommand(() -> pivotAngle = Rotation2d.fromDegrees(-90)));
+    
+    NamedCommands.registerCommand("Elevator Move", elevator.moveCommand(elevatorHeight));
+
     NamedCommands.registerCommand("Set Pivot L1", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[0]));
     NamedCommands.registerCommand("Set Pivot L2", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[1]));
     NamedCommands.registerCommand("Set Pivot L3", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[2]));
@@ -58,6 +63,30 @@ public class RobotContainer {
     new EventTrigger("Elevator Pivot").onTrue(new DeferredCommand(() -> UniversalCommandFactory.pivotAngleCommand(pivotAngle, true, pivot, endEffector), Set.of(pivot)));
     new EventTrigger("Event Notification").onTrue(Notifications.PATHPLANNER_EVENT.send());
 
+    NamedCommands.registerCommand("Elevator Pivot", new InstantCommand(() -> UniversalCommandFactory.pivotAngleCommand(pivotAngle, true, pivot, endEffector)));
+
+    NamedCommands.registerCommand("Deposit Coral", new SequentialCommandGroup(
+    new InstantCommand(() -> endEffector.velocityCoralCommand(5)),
+    new WaitCommand(1),
+    new InstantCommand(() -> endEffector.velocityCoralCommand(0))
+     )
+    );
+    NamedCommands.registerCommand("Deposit Coral", new SequentialCommandGroup(
+    new InstantCommand(() -> endEffector.velocityCoralCommand(5)),
+    new WaitCommand(1),
+    new InstantCommand(() -> endEffector.velocityCoralCommand(0))
+     )
+    );
+    
+
+
+
+    NamedCommands.registerCommand("Intake Coral", new SequentialCommandGroup(
+      new InstantCommand(() -> endEffector.velocityCoralCommand(-5)),
+      new WaitCommand(1),
+      new InstantCommand(() -> endEffector.velocityCoralCommand(0))
+       )
+      );
     new EventTrigger("Intake Coral").onTrue(endEffector.moveCoralCommand(true));
     new EventTrigger("Outake Coral").onTrue(endEffector.moveCoralCommand(false));
 
