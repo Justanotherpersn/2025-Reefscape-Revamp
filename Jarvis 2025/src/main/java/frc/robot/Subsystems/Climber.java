@@ -56,13 +56,13 @@ public class Climber extends SubsystemBase {
       .positionWrappingEnabled(false)
       .outputRange(-Constants.GAINS.CLIMBER.peakOutput, Constants.GAINS.CLIMBER.peakOutput);
 
-    targetPositionEntry.setDouble(0);
+    climber.getEncoder().setPosition(Constants.ClimberConstants.MAX_ROTATION.getRotations());
+      
+    targetPositionEntry.setDouble(climber.getEncoder().getPosition());
     positiveSwitchEntry.setBoolean(false);
     negativeSwitchEntry.setBoolean(false);
     encoderEntry.setDouble(0);
-
-    climber.getEncoder().setPosition(Constants.ClimberConstants.MAX_ROTATION.getRotations());
-
+      
     SmartDashboard.putData("Climber/Go To Target", new InstantCommand(() -> setPosition(Rotation2d.fromDegrees(targetPositionEntry.getDouble(Constants.ClimberConstants.MAX_ROTATION.getDegrees())))));
 
     SparkBaseSetter closedLoopSetter = new SparkBaseSetter(new SparkBaseSetter.SparkConfiguration(climber, climberConfig));

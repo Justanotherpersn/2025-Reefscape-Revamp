@@ -18,7 +18,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Util.PIDDisplay;
@@ -55,7 +54,7 @@ public class Pivot extends SubsystemBase {
 
     pivot.getEncoder().setPosition(-Math.PI / 2);
 
-    targetPositionEntry.setDouble(0);
+    targetPositionEntry.setDouble(pivot.getEncoder().getPosition());
     encoderEntry.setDouble(0);
     speedEntry.setDouble(0);
 

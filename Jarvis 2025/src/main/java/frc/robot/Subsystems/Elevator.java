@@ -59,12 +59,12 @@ public class Elevator extends SubsystemBase {
       .positionWrappingEnabled(false)
       .outputRange(-Constants.GAINS.ELEVATOR.peakOutput, Constants.GAINS.ELEVATOR.peakOutput);
 
-    targetPositionEntry.setDouble(0);
-    topSwitchEntry.setBoolean(false);
-    bottomSwitchEntry.setBoolean(false);
-    encoderEntry.setDouble(0);
-
-    elevator.getEncoder().setPosition(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION);
+      elevator.getEncoder().setPosition(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION);
+      
+      targetPositionEntry.setDouble(elevator.getEncoder().getPosition());
+      topSwitchEntry.setBoolean(false);
+      bottomSwitchEntry.setBoolean(false);
+      encoderEntry.setDouble(0);
     
     SmartDashboard.putData("Elevator/Go To Target", new InstantCommand(() -> move(targetPositionEntry.getDouble(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION))));
 
