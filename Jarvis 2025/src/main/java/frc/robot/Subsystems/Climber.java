@@ -13,6 +13,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -61,6 +62,8 @@ public class Climber extends SubsystemBase {
     encoderEntry.setDouble(0);
 
     climber.getEncoder().setPosition(Constants.ClimberConstants.MAX_ROTATION.getRotations());
+
+    SmartDashboard.putData("Climber/Go To Target", new InstantCommand(() -> setPosition(Rotation2d.fromDegrees(targetPositionEntry.getDouble(Constants.ClimberConstants.MAX_ROTATION.getDegrees())))));
 
     SparkBaseSetter closedLoopSetter = new SparkBaseSetter(new SparkBaseSetter.SparkConfiguration(climber, climberConfig));
     closedLoopSetter.setPID(Constants.GAINS.CLIMBER);

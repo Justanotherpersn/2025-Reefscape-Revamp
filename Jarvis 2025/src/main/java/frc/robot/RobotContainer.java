@@ -65,28 +65,9 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("Elevator Pivot", new InstantCommand(() -> UniversalCommandFactory.pivotAngleCommand(pivotAngle, true, pivot, endEffector)));
 
-    NamedCommands.registerCommand("Deposit Coral", new SequentialCommandGroup(
-    new InstantCommand(() -> endEffector.velocityCoralCommand(5)),
-    new WaitCommand(1),
-    new InstantCommand(() -> endEffector.velocityCoralCommand(0))
-     )
-    );
-    NamedCommands.registerCommand("Deposit Coral", new SequentialCommandGroup(
-    new InstantCommand(() -> endEffector.velocityCoralCommand(5)),
-    new WaitCommand(1),
-    new InstantCommand(() -> endEffector.velocityCoralCommand(0))
-     )
-    );
-    
-
-
-
-    NamedCommands.registerCommand("Intake Coral", new SequentialCommandGroup(
-      new InstantCommand(() -> endEffector.velocityCoralCommand(-5)),
-      new WaitCommand(1),
-      new InstantCommand(() -> endEffector.velocityCoralCommand(0))
-       )
-      );
+    NamedCommands.registerCommand("Intake Coral", endEffector.moveCoralCommand(true));
+    NamedCommands.registerCommand("Deposit Coral", endEffector.moveCoralCommand(false));
+  
     new EventTrigger("Intake Coral").onTrue(endEffector.moveCoralCommand(true));
     new EventTrigger("Outake Coral").onTrue(endEffector.moveCoralCommand(false));
 

@@ -45,20 +45,19 @@ public class ControlPanel {
 
         //new JoystickButton(controller, 3).onTrue(elevator.homeCommand());
 
-        new JoystickButton(controller, 2).onTrue(new ParallelCommandGroup(
+        new JoystickButton(controller, 2).whileTrue(new ParallelCommandGroup(
             UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-90), false, pivot, endEffector),
             elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION)
         ));
 
-        new JoystickButton(controller, 4).onTrue(new DeferredCommand(() -> new ParallelCommandGroup(
+        new JoystickButton(controller, 4).whileTrue(new DeferredCommand(() -> new ParallelCommandGroup(
             UniversalCommandFactory.pivotAngleCommand(ControlPanel.ReefCycle.getAngle(), true, pivot, endEffector),
             elevator.moveCommand(ControlPanel.ReefCycle.getHeight())
         ), Set.of(elevator, pivot)));
 
-        new JoystickButton(controller, 3).onTrue(new ParallelCommandGroup(
+        new JoystickButton(controller, 3).whileTrue(new ParallelCommandGroup(
             UniversalCommandFactory.pivotAngleCommand(Constants.PivotConstants.CORAL_INTAKE_ANGLE, true, pivot, endEffector),
-            elevator.moveCommand(Constants.ElevatorConstants.CORAL_INTAKE_HEIGHT),
-            endEffector.moveCoralCommand(true)
+            elevator.moveCommand(Constants.ElevatorConstants.CORAL_INTAKE_HEIGHT)
         ));
 
         new JoystickButton(controller, 5).whileTrue(climber.climbCommand(Constants.ClimberConstants.MAX_ROTATION));

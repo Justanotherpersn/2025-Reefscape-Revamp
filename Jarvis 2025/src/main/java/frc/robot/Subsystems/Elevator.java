@@ -11,6 +11,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
@@ -65,6 +66,8 @@ public class Elevator extends SubsystemBase {
 
     elevator.getEncoder().setPosition(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION);
     
+    SmartDashboard.putData("Elevator/Go To Target", new InstantCommand(() -> move(targetPositionEntry.getDouble(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION))));
+
     SparkBaseSetter motorClosedLoopSetter = new SparkBaseSetter(new SparkConfiguration(elevator, elevatorConfig));
     motorClosedLoopSetter.setPID(Constants.GAINS.ELEVATOR);
     PIDDisplay.PIDList.addOption("Elevator Motors", motorClosedLoopSetter);

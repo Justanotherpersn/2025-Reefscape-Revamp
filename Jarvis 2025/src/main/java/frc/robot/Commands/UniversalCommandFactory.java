@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -56,7 +57,6 @@ public class UniversalCommandFactory {
         return new ParallelDeadlineGroup(
             new WaitUntilCommand(() -> Math.abs(pivot.getAngle().minus(finalAngle).getRadians()) < Constants.PivotConstants.POSITION_TOLERANCE.getRadians()),
             new InstantCommand(() -> pivot.setAngle(finalAngle))
-            //new RunCommand(() -> endEffector.setRPM(pivot.getSpeed() / Constants.EndEffectorConstants.GEARING_TO_PIVOT))
         );
     }
 }

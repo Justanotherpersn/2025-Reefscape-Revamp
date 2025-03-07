@@ -19,6 +19,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -58,6 +59,8 @@ public class EndEffector extends SubsystemBase {
     encoderEntry.setDouble(0);
     coralSwitchEntry.setBoolean(false);
 
+    SmartDashboard.putData("End Effector/Go To Target", new InstantCommand(() -> setRPM(targetSpeedEntry.getDouble(0))));
+
     SparkBaseSetter closedLoopSetter = new SparkBaseSetter(new SparkBaseSetter.SparkConfiguration(coral, coralConfig));
     closedLoopSetter.setPID(Constants.GAINS.END_EFFECTOR);
     PIDDisplay.PIDList.addOption("End Effector", closedLoopSetter);
@@ -76,7 +79,7 @@ public class EndEffector extends SubsystemBase {
     return new SequentialCommandGroup(
         new InstantCommand(() -> setRPM(intake ? Constants.EndEffectorConstants.INTAKE_RPM : Constants.EndEffectorConstants.OUTAKE_RPM)),
         new WaitUntilCommand(() -> intake == coralPresent()),
-        new WaitCommand(intake ? 0.15 : 2)
+        new WaitCommand(intake ? 0.3 : 2)
     ).finallyDo(() -> setRPM(0));
   }
 

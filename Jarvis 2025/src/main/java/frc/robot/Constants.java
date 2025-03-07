@@ -89,7 +89,7 @@ public class Constants {
     }
 
     public static class ElevatorConstants{
-        public static final double TOP_LIMIT_POSITION = Units.inchesToMeters(65.25);
+        public static final double TOP_LIMIT_POSITION = Units.inchesToMeters(67.25);
         public static final double BOTTOM_LIMIT_POSITION = Units.inchesToMeters(39.25);
 
         public static final double MAX_ELEVATOR_EXTENSION = TOP_LIMIT_POSITION;
@@ -112,7 +112,7 @@ public class Constants {
         public static final double[] PRESET_HEIGHTS = {
             Units.inchesToMeters(39.25),
             Units.inchesToMeters(47.25),
-            Units.inchesToMeters(57.875),
+            1.1,
             TOP_LIMIT_POSITION
         };
 
@@ -122,15 +122,15 @@ public class Constants {
     public static class PivotConstants {
         public static final double GEARING = 90 * 5 / 1.5;
         /**The angle between the arm and a loaded coral, with positive x pointing radially outwards*/
-        public static final Rotation2d END_MOUNT_ANGLE = Rotation2d.fromDegrees(90-35);
+        public static final Rotation2d END_MOUNT_ANGLE = Rotation2d.fromDegrees(90);
         public static final Rotation2d POSITION_TOLERANCE = Rotation2d.fromDegrees(15);
         public static final Rotation2d CORAL_DEPOSIT_ANGLES[] = {
-            Rotation2d.fromDegrees(-20),
-            Rotation2d.fromDegrees(-20),
-            Rotation2d.fromDegrees(-20),
-            Rotation2d.fromDegrees(100),
+            Rotation2d.fromDegrees(-135),
+            Rotation2d.fromDegrees(-135),
+            Rotation2d.fromDegrees(-135),
+            Rotation2d.fromDegrees(-135),
         };
-        public static final Rotation2d CORAL_INTAKE_ANGLE = Rotation2d.fromDegrees(-50);
+        public static final Rotation2d CORAL_INTAKE_ANGLE = Rotation2d.fromDegrees(35);
         public static final Rotation2d ANGULAR_SPEED = Rotation2d.fromDegrees(45);
         /**Length from pivot axis to center of coral when loaded*/
         public static final double LENGTH = 1;
