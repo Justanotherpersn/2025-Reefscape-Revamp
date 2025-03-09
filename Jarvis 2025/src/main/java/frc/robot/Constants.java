@@ -218,6 +218,8 @@ public class Constants {
             12
         );
 
+        public static final double DESTINATION_TOLERANCE = 0.01;
+
         public static final String[] REEF_LOCATIONS = {
             "Path",
             // new Pose2d(3.093, 4.181, Rotation2d.fromDegrees(0)),

@@ -261,10 +261,11 @@ public class Drivetrain extends SubsystemBase {
   public Command pathingCommand(PathPlannerPath destination) {
     return new SequentialCommandGroup(
       Notifications.PATH_SCHEDULED.send(),
-      AutoBuilder.pathfindThenFollowPath(
-        destination,
-        Constants.NavigationConstants.PATHING_CONSTRAINTS
-      )
+      new ParallelRaceGroup(
+        AutoBuilder.pathfindToPose(destination.getStartingHolonomicPose().get(), Constants.NavigationConstants.PATHING_CONSTRAINTS),
+        new WaitUntilCommand(() -> getPose().getTranslation().getDistance(destination.getStartingHolonomicPose().get().getTranslation()) < Constants.NavigationConstants.DESTINATION_TOLERANCE)
+      ),
+      AutoBuilder.followPath(destination)
     );
   }
 }
