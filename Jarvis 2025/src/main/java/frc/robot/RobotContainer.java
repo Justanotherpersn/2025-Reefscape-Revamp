@@ -11,6 +11,8 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -38,6 +40,7 @@ public class RobotContainer {
 
   double elevatorHeight;
   Rotation2d pivotAngle;
+  private static boolean isBlue = false;
 
   public RobotContainer() {
 
@@ -53,7 +56,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Set Pivot L4", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[3]));
     
     new EventTrigger("Elevator Move").onTrue(new DeferredCommand(() -> elevator.moveCommand(elevatorHeight), Set.of(elevator)));
-    new EventTrigger("Elevator Pivot").onTrue(new DeferredCommand(() -> UniversalCommandFactory.pivotAngleCommand(pivotAngle, true, pivot, endEffector), Set.of(pivot)));
+    new EventTrigger("Elevator Pivot").onTrue(new DeferredCommand(() -> UniversalCommandFactory.pivotAngleCommand(pivotAngle, pivot, endEffector), Set.of(pivot)));
     new EventTrigger("Event Notification").onTrue(Notifications.PATHPLANNER_EVENT.send());
 
     new EventTrigger("Intake Coral").onTrue(endEffector.moveCoralCommand(true));
@@ -68,7 +71,12 @@ public class RobotContainer {
     PIDDisplay.Init();
   }
 
-  public void onTeleopEnabled() { 
+  public static boolean isBlue() {
+    return isBlue;
+  }
+
+  public void onTeleopEnabled() {
+    isBlue = DriverStation.getAlliance().get().equals(Alliance.Blue);
       // Notifications.GENERAL.send("Starting test sequence").andThen(new RepeatCommand(new SequentialCommandGroup(
       //   new WaitCommand(1),
       //   UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector)

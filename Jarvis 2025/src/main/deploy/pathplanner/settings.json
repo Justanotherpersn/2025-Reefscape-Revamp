@@ -4,9 +4,10 @@
   "holonomicMode": true,
   "pathFolders": [
     "Intake Paths",
+    "Leave Paths",
+    "Lineup Paths",
     "Starting Blue",
-    "Starting Red",
-    "Leave Paths"
+    "Starting Red"
   ],
   "autoFolders": [
     "Blue Autos",
@@ -14,7 +15,7 @@
     "High Coral Autos",
     "Red Autos"
   ],
-  "defaultMaxVel": 5.0,
+  "defaultMaxVel": 1.0,
   "defaultMaxAccel": 5.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
@@ -25,7 +26,7 @@
   "driveWheelRadius": 0.049,
   "driveGearing": 8.0,
   "maxDriveSpeed": 5.0,
-  "driveMotorType": "krakenX60",
+  "driveMotorType": "falcon500",
   "driveCurrentLimit": 60.0,
   "wheelCOF": 1.2,
   "flModuleX": 0.273,

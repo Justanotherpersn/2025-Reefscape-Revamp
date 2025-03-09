@@ -191,7 +191,7 @@ public class SwerveModule {
      */
     public void setHomed(boolean state){
         homed = state;
-        wasHomed = false;
+        wasHomed = getSwitch();
     }
 
     /**

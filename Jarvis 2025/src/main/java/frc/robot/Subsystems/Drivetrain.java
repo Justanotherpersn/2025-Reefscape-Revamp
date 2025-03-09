@@ -19,6 +19,7 @@ import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.MatBuilder;
@@ -257,13 +258,12 @@ public class Drivetrain extends SubsystemBase {
     );
   }
 
-  public Command pathingCommand(Pose2d destination, double endSpeed) {
+  public Command pathingCommand(PathPlannerPath destination) {
     return new SequentialCommandGroup(
-      Notifications.PATH_SCHEDULED.send(destination.getX(), destination.getY(), destination.getRotation().getDegrees()),
-      AutoBuilder.pathfindToPose(
+      Notifications.PATH_SCHEDULED.send(),
+      AutoBuilder.pathfindThenFollowPath(
         destination,
-        Constants.NavigationConstants.PATHING_CONSTRAINTS,
-        endSpeed
+        Constants.NavigationConstants.PATHING_CONSTRAINTS
       )
     );
   }

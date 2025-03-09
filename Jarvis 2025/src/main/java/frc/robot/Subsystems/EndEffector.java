@@ -45,7 +45,7 @@ public class EndEffector extends SubsystemBase {
 
     coralConfig = new SparkMaxConfig();
     coralConfig
-      .inverted(false)
+      .inverted(true)
       .idleMode(IdleMode.kCoast)
       .voltageCompensation(12);
     coralConfig.encoder
@@ -86,6 +86,6 @@ public class EndEffector extends SubsystemBase {
   @Override
   public void periodic() {
     encoderEntry.setDouble(coral.getOutputCurrent());
-    coralSwitchEntry.setBoolean(coralPresent());
+    //coralSwitchEntry.setBoolean(coralPresent());
   }
 }

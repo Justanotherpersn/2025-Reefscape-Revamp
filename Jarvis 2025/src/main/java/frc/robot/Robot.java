@@ -1,6 +1,6 @@
 package frc.robot;
 
-import org.littletonrobotics.urcl.URCL;
+import com.pathplanner.lib.commands.PathfindingCommand;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.net.WebServer;
@@ -19,7 +19,7 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     CameraServer.startAutomaticCapture();
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
-    URCL.start();
+    PathfindingCommand.warmupCommand().schedule();
   }
 
   @Override

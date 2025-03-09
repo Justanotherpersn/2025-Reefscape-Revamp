@@ -75,7 +75,7 @@ public class Elevator extends SubsystemBase {
   
   public void move(double targetPosition){
     if (targetPosition < Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION || targetPosition > Constants.ElevatorConstants.MAX_ELEVATOR_EXTENSION) {
-      Notifications.ELEVATOR_INVALID_HEIGHT.send(targetPosition).schedule();
+      Notifications.ELEVATOR_INVALID_HEIGHT.sendImmediate(targetPosition);
       return;
     }
     elevatorController.setReference(targetPosition, SparkFlex.ControlType.kPosition);

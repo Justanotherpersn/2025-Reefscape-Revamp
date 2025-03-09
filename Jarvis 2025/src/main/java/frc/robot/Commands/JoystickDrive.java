@@ -5,11 +5,10 @@
 package frc.robot.Commands;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.Subsystems.Drivetrain;
 
 public class JoystickDrive extends Command {
@@ -35,8 +34,8 @@ public class JoystickDrive extends Command {
     xInputRight = Math.abs(xInputRight) * xInputRight;
     yInputRight = Math.abs(yInputRight) * yInputRight;
 
-    double xSpeed = yInputRight * Constants.DrivetrainConstants.MAX_DRIVE_SPEED * (DriverStation.getAlliance().get().equals(Alliance.Red) ? -1 : 1);
-    double ySpeed = xInputRight * Constants.DrivetrainConstants.MAX_DRIVE_SPEED * (DriverStation.getAlliance().get().equals(Alliance.Red) ? -1 : 1);
+    double xSpeed = yInputRight * Constants.DrivetrainConstants.MAX_DRIVE_SPEED * (RobotContainer.isBlue() ? 1 : -1);
+    double ySpeed = xInputRight * Constants.DrivetrainConstants.MAX_DRIVE_SPEED * (RobotContainer.isBlue() ? 1 : -1);
 
     double xInputLeft = applyDeadband(controller.getRawAxis(0), Constants.DrivetrainConstants.DRIVE_TOLERANCE_PERCENT);
     double rotationSpeed = -xInputLeft * Math.abs(xInputLeft) * Constants.DrivetrainConstants.MAX_ANGULAR_SPEED;

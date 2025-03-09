@@ -1,17 +1,21 @@
 package frc.robot;
 
+import java.io.IOException;
+import java.util.EnumSet;
 import java.util.Set;
 
-import com.pathplanner.lib.util.FlippingUtil;
+import org.json.simple.parser.ParseException;
 
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.FileVersionException;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.networktables.NetworkTableListener;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -19,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.JoystickDrive;
+import frc.robot.Commands.Notifications;
 import frc.robot.Commands.UniversalCommandFactory;
 import frc.robot.Subsystems.Climber;
 import frc.robot.Subsystems.Drivetrain;
@@ -32,7 +37,9 @@ public class ControlPanel {
 
     private static final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Reef Locations");
 
-    private static GenericEntry reefDisplay = nTable.getStringTopic("Reef Display").getGenericEntry();
+    private static GenericEntry reefDisplay = nTable.getTopic("Reef Display").getGenericEntry();
+    private static GenericEntry targetHeightEntry = nTable.getTopic("Level").getGenericEntry();
+    private static GenericEntry targetPositionEntry = nTable.getTopic("Position").getGenericEntry();
 
     private static final int[] buttonLookup = {14, 0, 8, 13, 12, 2, 3, 11, 10, 9, 1, 15, 4, 5, 7, 6};
 
@@ -41,53 +48,71 @@ public class ControlPanel {
     public static void configureBinding(Drivetrain drivetrain, Elevator elevator, Pivot pivot, EndEffector endEffector, Climber climber) {
         drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, controller));
 
-        new JoystickButton(controller, 1).whileTrue(drivetrain.homeCommand());
+        new JoystickButton(controller, 7).whileTrue(drivetrain.homeCommand());
+        new JoystickButton(controller, 8).onTrue(new InstantCommand(() -> drivetrain.resetIMU()));
 
-        //new JoystickButton(controller, 3).onTrue(elevator.homeCommand());
-
-        new JoystickButton(controller, 2).whileTrue(new ParallelCommandGroup(
-            UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-90), false, pivot, endEffector),
-            elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION)
-        ));
-
-        new JoystickButton(controller, 4).whileTrue(new DeferredCommand(() -> new ParallelCommandGroup(
-            UniversalCommandFactory.pivotAngleCommand(ControlPanel.ReefCycle.getAngle(), true, pivot, endEffector),
+        //A: Go to selected height
+        new JoystickButton(controller, 1).whileTrue(new DeferredCommand(() -> new ParallelCommandGroup(
+            UniversalCommandFactory.pivotAngleCommand(ControlPanel.ReefCycle.getAngle(), pivot, endEffector),
             elevator.moveCommand(ControlPanel.ReefCycle.getHeight())
         ), Set.of(elevator, pivot)));
 
+        //B: Height travel
+        new JoystickButton(controller, 2).whileTrue(new ParallelCommandGroup(
+            UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-90), pivot, endEffector),
+            elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION)
+        ));
+
+        //Y: Reef cycle
+        new JoystickButton(controller, 4).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
+
+        //X: Intake height
         new JoystickButton(controller, 3).whileTrue(new ParallelCommandGroup(
-            UniversalCommandFactory.pivotAngleCommand(Constants.PivotConstants.CORAL_INTAKE_ANGLE, true, pivot, endEffector),
+            UniversalCommandFactory.pivotAngleCommand(Constants.PivotConstants.CORAL_INTAKE_ANGLE, pivot, endEffector),
             elevator.moveCommand(Constants.ElevatorConstants.CORAL_INTAKE_HEIGHT)
         ));
 
-        new JoystickButton(controller, 5).whileTrue(climber.climbCommand(Constants.ClimberConstants.MAX_ROTATION));
-        new JoystickButton(controller, 6).whileTrue(climber.climbCommand(Constants.ClimberConstants.MIN_ROTATION)); 
+        //LB: Climb out
+        new JoystickButton(controller, 5).whileTrue(climber.climbCommand(Constants.ClimberConstants.MIN_ROTATION));
+        //RB: Climb in
+        new JoystickButton(controller, 6).whileTrue(climber.climbCommand(Constants.ClimberConstants.MAX_ROTATION)); 
 
+        //R Trigger: intake
         new Trigger(() -> controller.getRawAxis(3) > 0.5).whileTrue(endEffector.moveCoralCommand(true));
+        //L Trigger: reverse intake
         new Trigger(() -> controller.getRawAxis(2) > 0.5).whileTrue(endEffector.moveCoralCommand(false));
 
-        new JoystickButton(controller, 7).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
-
-        //new JoystickButton(controller, 5).whileTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(0), false, pivot, endEffector));
-        //new JoystickButton(controller, 6).whileTrue(UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-90), false, pivot, endEffector));
-        //new JoystickButton(controller, 5).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
-
-        // new JoystickButton(controller, 3).whileTrue(UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector));
-        // new JoystickButton(controller, 3).whileTrue(drivetrain.pathingCommand(new Pose2d(6, 6, Rotation2d.fromDegrees(90)), 0));
-
+        //Control panel height and position selector
         for (int i = 0; i < 16; i++) {
             final int buttonID = buttonLookup[i];
             new JoystickButton(controller2, i + 1).onTrue(
                 (buttonID < 4 ? ReefCycle.setHeight(buttonID) : ReefCycle.setPosition(buttonID - 4))
-                    .andThen(() -> displayReefLocation(ReefCycle.targetPosition, ReefCycle.targetHeight))
+                    .andThen(() -> updateReefDisplay())
             );
         }
 
-        displayReefLocation(ReefCycle.targetPosition, ReefCycle.targetHeight);
+        updateReefDisplay();
         ControlPanel.drivetrain = drivetrain;
+        
+        targetHeightEntry.setInteger(ReefCycle.targetHeight);
+        targetPositionEntry.setInteger(ReefCycle.targetPosition);
+
+        NetworkTableListener.createListener(targetHeightEntry.getTopic(), EnumSet.of(NetworkTableEvent.Kind.kValueAll), event -> {
+            int value = (int)event.valueData.value.getInteger();
+            if (value >= 0 && value <= 3) ReefCycle.targetHeight = value;
+            else Notifications.CONTROL_INVALID_INDEX.sendImmediate(value, ReefCycle.targetHeight);
+            updateReefDisplay();
+        });
+        
+        NetworkTableListener.createListener(targetPositionEntry.getTopic(), EnumSet.of(NetworkTableEvent.Kind.kValueAll), event -> {
+            int value = (int)event.valueData.value.getInteger();
+            if (value >= 0 && value <= 11) ReefCycle.targetPosition = value;
+            else Notifications.CONTROL_INVALID_INDEX.sendImmediate(value, ReefCycle.targetPosition);
+            updateReefDisplay();
+        });
     }
 
-    private static void displayReefLocation(int locationIndex, int height) {
+    private static void updateReefDisplay() {
         /*
               [ ] [ ]
           [ ]         [ ]
@@ -108,7 +133,7 @@ public class ControlPanel {
         """;
         String[] format = new String[12];
         for (int i = 0; i < format.length; i++)
-            format[i] = (i == locationIndex) ? Integer.toString(height) : " ";
+            format[i] = (i == ReefCycle.targetPosition) ? Integer.toString(ReefCycle.targetHeight) : " ";
 
         reefDisplay.setString(grid.formatted(
             format[7], format[6], format[8], format[5], format[9], format[4], format[10], format[3], format[11], format[2], format[0], format[1]
@@ -116,9 +141,8 @@ public class ControlPanel {
     }
 
     public static class ReefCycle {
-        private static int targetPosition = 5;
-        private static int targetHeight = 3;
-
+        public static int targetHeight = 3;
+        public static int targetPosition = 0;
         private static boolean depositing = true;
         private static Pose2d previousLocation;
 
@@ -131,7 +155,6 @@ public class ControlPanel {
         }
     
         public static void setTravelState(boolean _depositing) {
-            previousLocation = getLocation();
             depositing = _depositing;
         }
 
@@ -139,14 +162,18 @@ public class ControlPanel {
             return depositing;
         }
     
-        public static Pose2d getLocation() {
-            Pose2d target = depositing ? Constants.NavigationConstants.REEF_LOCATIONS[targetPosition] :  
-                Constants.NavigationConstants.CORAL_STATIONS[
-                    Math.abs(drivetrain.getPose().getY() - Constants.NavigationConstants.CORAL_STATIONS[0].getY()) 
-                    < Math.abs(drivetrain.getPose().getY() - Constants.NavigationConstants.CORAL_STATIONS[1].getY()) ? 0 : 1
-                ];
-            if (DriverStation.getAlliance().get().equals(Alliance.Red)) target = FlippingUtil.flipFieldPose(target);
-            if (target.getRotation().getDegrees() > 0) target = new Pose2d(target.getTranslation(), target.getRotation().plus(Rotation2d.fromDegrees(180)));
+        public static PathPlannerPath getLineupPath() {
+            PathPlannerPath target = null;
+            try {
+                target = PathPlannerPath.fromPathFile(depositing ? Constants.NavigationConstants.REEF_LOCATIONS[targetPosition] :  
+                    Constants.NavigationConstants.CORAL_STATIONS[
+                        Math.abs(drivetrain.getPose().getY() - 1.028) 
+                        < Math.abs(drivetrain.getPose().getY() - 7.000) ? 1 : 0
+                    ]);
+            } catch (FileVersionException | IOException | ParseException e) {
+                e.printStackTrace();
+            }
+            if (!RobotContainer.isBlue()) target.flipPath();
             return target;
         }
     

@@ -5,8 +5,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.path.PathConstraints;
-
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -46,7 +44,7 @@ public class Constants {
     public static class GAINS {
         public static Gains DRIVE = new Gains(5, 0, 0.15, 2.65, 12);
         public static Gains TURN = new Gains(.6, 1);
-        public static Gains ELEVATOR = new Gains(3, 0, 0, 0, 0, 12);
+        public static Gains ELEVATOR = new Gains(20, 0, 0, 0, 0, 12);
         public static Gains END_EFFECTOR = new Gains(0.005, 0, 0, 0, 12);
         public static Gains PIVOT = new Gains(3, 0, 0, 0, 12);
         public static Gains CLIMBER = new Gains(100, 0, 0, 0, 12);
@@ -54,14 +52,14 @@ public class Constants {
 
     public static class DrivetrainConstants {
         public static final double WHEEL_BASE = Units.inchesToMeters(22.5);
-        public static final double MAX_DRIVE_SPEED = 5;
+        public static final double MAX_DRIVE_SPEED = 1;
         public static final double MAX_ANGULAR_SPEED = 3;
         public static final double DRIVE_TOLERANCE_PERCENT = 0.05;
     }
 
     public static class ModuleConstants{
         /** Overall max speed of the module in m/s */
-        public static final double MAX_SPEED = 5;
+        public static final double MAX_SPEED = DrivetrainConstants.MAX_DRIVE_SPEED;
 
         /** rotational offset in radians of modules during homing */
         public static final double[] MODULE_OFFSETS = new double[] {
@@ -89,7 +87,7 @@ public class Constants {
     }
 
     public static class ElevatorConstants{
-        public static final double TOP_LIMIT_POSITION = Units.inchesToMeters(67.25);
+        public static final double TOP_LIMIT_POSITION = Units.inchesToMeters(65.25);
         public static final double BOTTOM_LIMIT_POSITION = Units.inchesToMeters(39.25);
 
         public static final double MAX_ELEVATOR_EXTENSION = TOP_LIMIT_POSITION;
@@ -110,27 +108,27 @@ public class Constants {
         public static final double LINEAR_SPEED = 1;
 
         public static final double[] PRESET_HEIGHTS = {
-            Units.inchesToMeters(39.25),
-            Units.inchesToMeters(47.25),
+            1,
+            1.25,
             1.1,
             TOP_LIMIT_POSITION
         };
 
-        public static final double CORAL_INTAKE_HEIGHT = Units.inchesToMeters(57.875);
+        public static final double CORAL_INTAKE_HEIGHT = 1.15;
     }
 
     public static class PivotConstants {
         public static final double GEARING = 90 * 5 / 1.5;
         /**The angle between the arm and a loaded coral, with positive x pointing radially outwards*/
-        public static final Rotation2d END_MOUNT_ANGLE = Rotation2d.fromDegrees(90);
+        public static final Rotation2d END_MOUNT_ANGLE = Rotation2d.fromDegrees(0);
         public static final Rotation2d POSITION_TOLERANCE = Rotation2d.fromDegrees(15);
         public static final Rotation2d CORAL_DEPOSIT_ANGLES[] = {
-            Rotation2d.fromDegrees(-135),
-            Rotation2d.fromDegrees(-135),
-            Rotation2d.fromDegrees(-135),
-            Rotation2d.fromDegrees(-135),
+            Rotation2d.fromDegrees(-125),
+            Rotation2d.fromDegrees(-115),
+            Rotation2d.fromDegrees(-223),
+            Rotation2d.fromDegrees(-223),
         };
-        public static final Rotation2d CORAL_INTAKE_ANGLE = Rotation2d.fromDegrees(35);
+        public static final Rotation2d CORAL_INTAKE_ANGLE = Rotation2d.fromDegrees(-40);
         public static final Rotation2d ANGULAR_SPEED = Rotation2d.fromDegrees(45);
         /**Length from pivot axis to center of coral when loaded*/
         public static final double LENGTH = 1;
@@ -220,23 +218,24 @@ public class Constants {
             12
         );
 
-        public static final Pose2d[] REEF_LOCATIONS = {
-            new Pose2d(3.093, 4.181, Rotation2d.fromDegrees(0)),
-            new Pose2d(3.093, 3.881, Rotation2d.fromDegrees(0)),
-            new Pose2d(3.656, 2.934, Rotation2d.fromDegrees(60)),
-            new Pose2d(3.932, 2.754, Rotation2d.fromDegrees(60)),
-            new Pose2d(5.023, 2.778, Rotation2d.fromDegrees(120)),
-            new Pose2d(5.362, 2.922, Rotation2d.fromDegrees(120)),
-            new Pose2d(5.900, 3.857, Rotation2d.fromDegrees(180)),
-            new Pose2d(5.900, 4.200, Rotation2d.fromDegrees(180)),
-            new Pose2d(5.335, 5.152, Rotation2d.fromDegrees(-120)),
-            new Pose2d(5.071, 5.320, Rotation2d.fromDegrees(-120)),
-            new Pose2d(3.920, 5.320, Rotation2d.fromDegrees(-60)),
-            new Pose2d(3.644, 5.140, Rotation2d.fromDegrees(-60)),
+        public static final String[] REEF_LOCATIONS = {
+            "Path",
+            // new Pose2d(3.093, 4.181, Rotation2d.fromDegrees(0)),
+            // new Pose2d(3.093, 3.881, Rotation2d.fromDegrees(0)),
+            // new Pose2d(3.656, 2.934, Rotation2d.fromDegrees(60)),
+            // new Pose2d(3.932, 2.754, Rotation2d.fromDegrees(60)),
+            // new Pose2d(5.023, 2.778, Rotation2d.fromDegrees(120)),
+            // new Pose2d(5.362, 2.922, Rotation2d.fromDegrees(120)),
+            // new Pose2d(5.900, 3.857, Rotation2d.fromDegrees(180)),
+            // new Pose2d(5.900, 4.200, Rotation2d.fromDegrees(180)),
+            // new Pose2d(5.335, 5.152, Rotation2d.fromDegrees(-120)),
+            // new Pose2d(5.071, 5.320, Rotation2d.fromDegrees(-120)),
+            // new Pose2d(3.920, 5.320, Rotation2d.fromDegrees(-60)),
+            // new Pose2d(3.644, 5.140, Rotation2d.fromDegrees(-60)),
         };
-        public static final Pose2d CORAL_STATIONS[] = {
-            new Pose2d(1.199, 1.028, Rotation2d.fromDegrees(55)),
-            new Pose2d(1.199, 7.000, Rotation2d.fromDegrees(-55)),
+        public static final String CORAL_STATIONS[] = {
+            "Lineup Left Station",
+            "Lineup Right Station"
         };
 
         public static final double OPERATION_RADIUS = 0.5;

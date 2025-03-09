@@ -70,13 +70,6 @@ public class Pivot extends SubsystemBase {
     targetPositionEntry.setDouble(angle.getDegrees());
   }
 
-  /**Set angle to be made along the x axis, which faces radially outwards along the forward direction of the robot
-   * @param angle The angle the coral inside the manipulator should make with this x-axis. 0 Would face straight forward.
-   */
-  public void setEndCoralAngle(Rotation2d angle) {
-    setAngle(angle.minus(Constants.PivotConstants.END_MOUNT_ANGLE));
-  }
-
   public Rotation2d getAngle() {
     return Rotation2d.fromRadians(pivot.getEncoder().getPosition());
   }
@@ -85,8 +78,8 @@ public class Pivot extends SubsystemBase {
     return pivot.getEncoder().getVelocity();
   }
 
-  public double timeToReach(Rotation2d endCoralAngle) {
-    return Math.abs(pivot.getEncoder().getPosition() - endCoralAngle.minus(Constants.PivotConstants.END_MOUNT_ANGLE).getRadians()) / Constants.PivotConstants.ANGULAR_SPEED.getRadians();
+  public double timeToReach(Rotation2d angle) {
+    return Math.abs(getAngle().minus(angle).getRadians()) / Constants.PivotConstants.ANGULAR_SPEED.getRadians();
   }
 
   //Use the command in UniversalCommandFactory instead.
@@ -97,7 +90,7 @@ public class Pivot extends SubsystemBase {
 
   @Override
   public void periodic() {
-    encoderEntry.setDouble(pivot.getEncoder().getPosition() * 180 / Math.PI);
+    encoderEntry.setDouble(getAngle().getDegrees());
     speedEntry.setDouble(getSpeed());
   }
 }
