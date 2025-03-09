@@ -212,9 +212,9 @@ public class Constants {
     public static class NavigationConstants {
         public static final PathConstraints PATHING_CONSTRAINTS = new PathConstraints(
             DrivetrainConstants.MAX_DRIVE_SPEED,
-            10,
-            DrivetrainConstants.MAX_ANGULAR_SPEED,
-            10,
+            5,
+            Math.toRadians(540),
+            Math.toRadians(720),
             12
         );
 

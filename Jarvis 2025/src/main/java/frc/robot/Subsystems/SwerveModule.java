@@ -137,12 +137,10 @@ public class SwerveModule {
         turnPIDController.setReference(desiredState.angle.getRadians(), SparkMax.ControlType.kPosition);
     }
 
-    /**
-     * Homes the swerve module to reset the encoder data
-     */
     public void home(){
+        boolean switchState = getSwitch();
         //only triggers on rising edge of switch, set new home state and target location
-        if (getSwitch() != wasHomed && getSwitch()) {
+        if (switchState != wasHomed && switchState) {
             turnEncoder.setPosition(moduleOffset);
             homed = true;
         }
@@ -153,12 +151,9 @@ public class SwerveModule {
         else
             turnMotor.set(0.25);
 
-        wasHomed = getSwitch();
+        wasHomed = switchState;
     }
 
-    /**
-     * @return state of the hall effect sensor
-     */
     public boolean getSwitch(){
         return !hallEffectSensor.get();
     }
@@ -186,9 +181,6 @@ public class SwerveModule {
         return new Rotation2d(MathUtil.angleModulus(getAngle().getRadians()));
     }
 
-    /**
-     * Set the home state. Called before homing module
-     */
     public void setHomed(boolean state){
         homed = state;
         wasHomed = getSwitch();
@@ -204,9 +196,6 @@ public class SwerveModule {
         driveMotor.set(drive);
     }
 
-    /**
-     * @return state of module 
-     */
     public SwerveModuleState getState(){
         return new SwerveModuleState(getSpeed(), getAngle());
     }
@@ -215,29 +204,13 @@ public class SwerveModule {
         return new SwerveModulePosition(driveMotor.getPosition().getValueAsDouble(), getAngle());
     }
 
-    /**
-     * stop module.
-     * Sets speeds to 0
-     */
     public void stop(){
         driveMotor.set(0);
         turnMotor.set(0);
     }
 
-    /**
-     * Resets the encoder position for both motors
-     */
     public void zeroEncoders() {
         driveMotor.setPosition(0);
         turnEncoder.setPosition(0);
-    }
-    
-    
-    /**
-     * test code for manual movement of steering angle 
-     * @param angle target angle in radians
-     */
-    public void setSteerAngle(double angle){
-        turnPIDController.setReference(angle, SparkMax.ControlType.kPosition);
     }
 }
