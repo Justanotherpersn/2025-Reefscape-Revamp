@@ -151,7 +151,7 @@ public class Constants {
     }
 
     public static class PhotonConstants {
-        public final static double CAMS_PITCH = Math.toRadians(15.5);
+        public final static double CAMS_PITCH = Math.toRadians(-31);
         public final static Translation3d CAM_OFFSET = new Translation3d(0.05, 0.05, 0.1);
 
         public static final Transform3d[] ROBOT_TO_CAMERAS = {
@@ -219,9 +219,11 @@ public class Constants {
         );
 
         public static final double DESTINATION_TOLERANCE = 0.01;
+        public static final double SECONDARY_DESTINATION_TOLERANCE = 0.005;
 
         public static final String[] REEF_LOCATIONS = {
-            "Path",
+            "1L Lineup",
+            "1R Lineup",
             // new Pose2d(3.093, 4.181, Rotation2d.fromDegrees(0)),
             // new Pose2d(3.093, 3.881, Rotation2d.fromDegrees(0)),
             // new Pose2d(3.656, 2.934, Rotation2d.fromDegrees(60)),

@@ -72,14 +72,14 @@ public class EndEffector extends SubsystemBase {
   }
 
   public boolean coralPresent() {
-    return !sensor.get();
+    return coralSwitchEntry.getBoolean(false);
   }
 
   public Command moveCoralCommand(boolean intake) {
     return new SequentialCommandGroup(
         new InstantCommand(() -> setRPM(intake ? Constants.EndEffectorConstants.INTAKE_RPM : Constants.EndEffectorConstants.OUTAKE_RPM)),
         new WaitUntilCommand(() -> intake == coralPresent()),
-        new WaitCommand(intake ? 0.3 : 2)
+        new WaitCommand(intake ? 5 : 5)
     ).finallyDo(() -> setRPM(0));
   }
 

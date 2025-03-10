@@ -83,13 +83,13 @@ public class ControlPanel {
         new Trigger(() -> controller.getRawAxis(2) > 0.5).whileTrue(endEffector.moveCoralCommand(false));
 
         //Control panel height and position selector
-        for (int i = 0; i < 16; i++) {
-            final int buttonID = buttonLookup[i];
-            new JoystickButton(controller2, i + 1).onTrue(
-                (buttonID < 4 ? ReefCycle.setHeight(buttonID) : ReefCycle.setPosition(buttonID - 4))
-                    .andThen(() -> updateReefDisplay())
-            );
-        }
+        // for (int i = 0; i < 16; i++) {
+        //     final int buttonID = buttonLookup[i];
+        //     new JoystickButton(controller2, i + 1).onTrue(
+        //         (buttonID < 4 ? ReefCycle.setHeight(buttonID) : ReefCycle.setPosition(buttonID - 4))
+        //             .andThen(() -> updateReefDisplay())
+        //     );
+        // }
 
         updateReefDisplay();
         ControlPanel.drivetrain = drivetrain;
