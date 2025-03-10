@@ -27,12 +27,6 @@
           "data": {
             "name": "Deposit Coral"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "L1 - Bottom Coral"
-          }
         }
       ]
     }

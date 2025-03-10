@@ -3,11 +3,10 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
-    "Intake Paths",
-    "Leave Paths",
-    "Lineup Paths",
+    "Starting Red",
     "Starting Blue",
-    "Starting Red"
+    "Lineup Paths",
+    "Leave Paths"
   ],
   "autoFolders": [
     "Blue Autos",

@@ -227,20 +227,18 @@ public class Constants {
         public static final double SECONDARY_DESTINATION_TOLERANCE = 0.005;
 
         public static final String[] REEF_LOCATIONS = {
-            "1L Lineup",
-            "1R Lineup",
-            // new Pose2d(3.093, 4.181, Rotation2d.fromDegrees(0)),
-            // new Pose2d(3.093, 3.881, Rotation2d.fromDegrees(0)),
-            // new Pose2d(3.656, 2.934, Rotation2d.fromDegrees(60)),
-            // new Pose2d(3.932, 2.754, Rotation2d.fromDegrees(60)),
-            // new Pose2d(5.023, 2.778, Rotation2d.fromDegrees(120)),
-            // new Pose2d(5.362, 2.922, Rotation2d.fromDegrees(120)),
-            // new Pose2d(5.900, 3.857, Rotation2d.fromDegrees(180)),
-            // new Pose2d(5.900, 4.200, Rotation2d.fromDegrees(180)),
-            // new Pose2d(5.335, 5.152, Rotation2d.fromDegrees(-120)),
-            // new Pose2d(5.071, 5.320, Rotation2d.fromDegrees(-120)),
-            // new Pose2d(3.920, 5.320, Rotation2d.fromDegrees(-60)),
-            // new Pose2d(3.644, 5.140, Rotation2d.fromDegrees(-60)),
+            "1-L Lineup",
+            "1-R Lineup",
+            "2-L Lineup",
+            "2-R Lineup",
+            "3-L Lineup",
+            "3-R Lineup",
+            "4-L Lineup",
+            "4-R Lineup",
+            "5-L Lineup",
+            "5-R Lineup",
+            "6-L Lineup",
+            "6-R Lineup",
         };
         public static final String CORAL_STATIONS[] = {
             "Lineup Left Station",

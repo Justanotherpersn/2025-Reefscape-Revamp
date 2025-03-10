@@ -45,7 +45,6 @@ public class UniversalCommandFactory {
                     // )
                 ),
                 new DeferredCommand(() -> endEffector.moveCoralCommand(ControlPanel.ReefCycle.getTravelState()), Set.of(endEffector))
-                //new InstantCommand(() -> ControlPanel.ReefCycle.setTravelState(!ControlPanel.ReefCycle.getTravelState()))
             )
         );
     }
