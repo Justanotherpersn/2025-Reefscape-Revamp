@@ -5,6 +5,9 @@
 package frc.robot;
 
 import com.pathplanner.lib.path.PathConstraints;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -179,6 +182,8 @@ public class Constants {
             ROBOT_TO_CAMERAS[2].inverse(),
             ROBOT_TO_CAMERAS[3].inverse()
         };
+
+        public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
         //Index = ID - 1
         public static final Pose3d[] APRILTAG_LOCATIONS = {
