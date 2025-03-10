@@ -57,6 +57,7 @@ public class Constants {
         public static final double WHEEL_BASE = Units.inchesToMeters(22.5);
         public static final double MAX_DRIVE_SPEED = 1;
         public static final double MAX_ANGULAR_SPEED = 3;
+        public static final double ALIGN_CONTROL_MULTIPLIER = 0.5;
         public static final double DRIVE_TOLERANCE_PERCENT = 0.05;
     }
 
@@ -108,7 +109,7 @@ public class Constants {
         //Tolerence for elevator height
         public static final double SETPOINT_RANGE = .25;
         
-        public static final double LINEAR_SPEED = 1;
+        public static final double LINEAR_SPEED = 0.24;
 
         public static final double[] PRESET_HEIGHTS = {
             1,

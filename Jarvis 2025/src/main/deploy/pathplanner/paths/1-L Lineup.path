@@ -20,7 +20,7 @@
         "y": 4.208367698251015
       },
       "prevControl": {
-        "x": 2.9149214533196166,
+        "x": 2.914921453319616,
         "y": 4.20356089469318
       },
       "nextControl": null,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": "Lineup Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

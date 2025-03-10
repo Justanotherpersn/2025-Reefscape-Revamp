@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.Commands;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -21,11 +17,9 @@ public class JoystickDrive extends Command {
     addRequirements(drivetrain);
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {}
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     double xInputRight = -applyDeadband(controller.getRawAxis(4), Constants.DrivetrainConstants.DRIVE_TOLERANCE_PERCENT);
@@ -34,8 +28,9 @@ public class JoystickDrive extends Command {
     xInputRight = Math.abs(xInputRight) * xInputRight;
     yInputRight = Math.abs(yInputRight) * yInputRight;
 
-    double xSpeed = yInputRight * Constants.DrivetrainConstants.MAX_DRIVE_SPEED * (RobotContainer.isBlue() ? 1 : -1);
-    double ySpeed = xInputRight * Constants.DrivetrainConstants.MAX_DRIVE_SPEED * (RobotContainer.isBlue() ? 1 : -1);
+    double multiplier = (drivetrain.alignMode ? Constants.DrivetrainConstants.ALIGN_CONTROL_MULTIPLIER : 1) * Constants.DrivetrainConstants.MAX_DRIVE_SPEED * (RobotContainer.isBlue() ? 1 : -1);
+    double xSpeed = yInputRight * multiplier;
+    double ySpeed = xInputRight * multiplier;
 
     double xInputLeft = applyDeadband(controller.getRawAxis(0), Constants.DrivetrainConstants.DRIVE_TOLERANCE_PERCENT);
     double rotationSpeed = -xInputLeft * Math.abs(xInputLeft) * Constants.DrivetrainConstants.MAX_ANGULAR_SPEED;
@@ -43,13 +38,11 @@ public class JoystickDrive extends Command {
     drivetrain.drive(new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed), true);
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     drivetrain.drive(new ChassisSpeeds(), false);
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;

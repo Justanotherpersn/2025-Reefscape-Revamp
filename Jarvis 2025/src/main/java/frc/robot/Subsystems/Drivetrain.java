@@ -55,8 +55,7 @@ import frc.robot.Constants.ModuleConstants;
 import frc.robot.Util.PIDDisplay;
 
 public class Drivetrain extends SubsystemBase {
-  Pigeon2 IMU = new Pigeon2(Constants.CAN_DEVICES.PIGEON_2.id);
-
+  private final Pigeon2 IMU = new Pigeon2(Constants.CAN_DEVICES.PIGEON_2.id);
   private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Constants.ModuleConstants.MODULE_POSITIONS);
   private static SwerveDrivePoseEstimator poseEstimator;
   private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Drivetrain");
@@ -64,6 +63,8 @@ public class Drivetrain extends SubsystemBase {
   private final GenericEntry headingEntry = nTable.getTopic("Heading").getGenericEntry();
 
   public static Field2d field = new Field2d();
+
+  public boolean alignMode = false;
 
   public Drivetrain() {
     poseEstimator = new SwerveDrivePoseEstimator(
@@ -242,7 +243,7 @@ public class Drivetrain extends SubsystemBase {
 
   public double timeToReach(Pose2d pose) {
     return Math.max(getPose().getTranslation().getDistance(pose.getTranslation()) / Constants.DrivetrainConstants.MAX_DRIVE_SPEED, 
-      getPose().getRotation().plus(pose.getRotation().unaryMinus()).getRadians() / Constants.DrivetrainConstants.MAX_ANGULAR_SPEED);
+      getPose().getRotation().minus(pose.getRotation()).getRadians() / Constants.DrivetrainConstants.MAX_ANGULAR_SPEED);
   }
  
   public Command homeCommand() {
