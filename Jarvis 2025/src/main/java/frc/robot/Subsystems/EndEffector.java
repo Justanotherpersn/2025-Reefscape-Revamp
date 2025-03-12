@@ -18,7 +18,7 @@ import frc.robot.Util.SparkBaseSetter;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -31,12 +31,13 @@ public class EndEffector extends SubsystemBase {
   private final SparkMax coral;
   private final SparkMaxConfig coralConfig;
   private final SparkClosedLoopController coralController;
-  private final DigitalInput sensor = new DigitalInput(8);
+  private final Ultrasonic sensor = new Ultrasonic(8, 9);
 
   private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/End Effector");
   private final GenericEntry targetSpeedEntry = nTable.getTopic("Target").getGenericEntry();
   private final GenericEntry encoderEntry = nTable.getTopic("Encoder").getGenericEntry();
   private final GenericEntry coralSwitchEntry = nTable.getTopic("Coral Switch").getGenericEntry();
+  private final GenericEntry coralSensorDistanceEntry = nTable.getTopic("Sensor Distance").getGenericEntry();
   
   public EndEffector() {
     coral = new SparkMax(Constants.CAN_DEVICES.END_EFFECTOR.id, MotorType.kBrushless);
@@ -58,6 +59,7 @@ public class EndEffector extends SubsystemBase {
     targetSpeedEntry.setDouble(0);
     encoderEntry.setDouble(0);
     coralSwitchEntry.setBoolean(false);
+    coralSensorDistanceEntry.setDouble(-1);
 
     SmartDashboard.putData("End Effector/Go To Target", new InstantCommand(() -> setRPM(targetSpeedEntry.getDouble(0))));
 
@@ -72,6 +74,7 @@ public class EndEffector extends SubsystemBase {
   }
 
   public boolean coralPresent() {
+    sensor.getRangeMM();
     return coralSwitchEntry.getBoolean(false);
   }
 
@@ -87,5 +90,6 @@ public class EndEffector extends SubsystemBase {
   public void periodic() {
     encoderEntry.setDouble(coral.getOutputCurrent());
     //coralSwitchEntry.setBoolean(coralPresent());
+    coralSensorDistanceEntry.setDouble(sensor.getRangeMM());
   }
 }

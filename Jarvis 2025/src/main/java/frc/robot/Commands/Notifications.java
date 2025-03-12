@@ -15,7 +15,8 @@ public enum Notifications {
     ELEVATOR_HOME_FAIL(NotificationLevel.ERROR, "Elevator", "Failed to home elevator"),
     ELEVATOR_INVALID_HEIGHT(NotificationLevel.ERROR, "Elevator", "Elevator commanded to move outside its bounds (%s)"),
     PATHPLANNER_EVENT(NotificationLevel.INFO, "PathPlanner", "PathPlanner has triggered an event"),
-    CONTROL_INVALID_INDEX(NotificationLevel.ERROR, "ControlPanel", "Invalid index %s, using previous value of %s")
+    CONTROL_INVALID_INDEX(NotificationLevel.ERROR, "ControlPanel", "Invalid index %s, using previous value of %s"),
+    VISION_TIMER_EXCEEDED(NotificationLevel.WARNING, "Vision", "Loop time was exceeded, disabling system")
     ;
     
     private final Notification notification;

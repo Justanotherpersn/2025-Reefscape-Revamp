@@ -25,7 +25,7 @@ public class UniversalCommandFactory {
             new SequentialCommandGroup(
                 new InstantCommand(() -> ControlPanel.ReefCycle.setTravelState(endEffector.coralPresent())),
                 new ParallelCommandGroup(
-                    new DeferredCommand(() -> drivetrain.pathingCommand(ControlPanel.ReefCycle.getLineupPath()), Set.of(drivetrain)),
+                    ControlPanel.ReefCycle.mutatingPathCommand(),
                     
                     new SequentialCommandGroup(
                         new WaitCommand(0.5),

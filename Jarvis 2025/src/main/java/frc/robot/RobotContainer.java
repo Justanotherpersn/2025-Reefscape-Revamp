@@ -13,6 +13,7 @@ import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,10 +33,10 @@ import frc.robot.Util.PIDDisplay;
 
 public class RobotContainer {
   private static final Drivetrain drivetrain = new Drivetrain();
-  private static final Elevator elevator = new Elevator();
-  private static final Pivot pivot = new Pivot();
-  private static final Climber climber = new Climber();
-  private static final EndEffector endEffector = new EndEffector();
+  // private static final Elevator elevator = new Elevator();
+  // private static final Pivot pivot = new Pivot();
+  // private static final Climber climber = new Climber();
+  //private static final EndEffector endEffector = new EndEffector();
   SendableChooser<Command> autoChooser;
 
   double elevatorHeight;
@@ -43,32 +44,32 @@ public class RobotContainer {
   private static boolean isBlue = false;
 
   public RobotContainer() {
-
     NamedCommands.registerCommand("Set Elevator Height L1", new InstantCommand(() -> elevatorHeight = Constants.ElevatorConstants.PRESET_HEIGHTS[0] + Constants.PivotConstants.LENGTH));
     NamedCommands.registerCommand("Set Elevator Height L2", new InstantCommand(() -> elevatorHeight = Constants.ElevatorConstants.PRESET_HEIGHTS[1] + Constants.PivotConstants.LENGTH));
     NamedCommands.registerCommand("Set Elevator Height L3", new InstantCommand(() -> elevatorHeight = Constants.ElevatorConstants.PRESET_HEIGHTS[2] - Math.sin(Constants.PivotConstants.END_MOUNT_ANGLE.getRadians()) * Constants.PivotConstants.LENGTH));
     NamedCommands.registerCommand("Set Elevator Height L4", new InstantCommand(() -> elevatorHeight = Constants.ElevatorConstants.PRESET_HEIGHTS[3]));
-    
     
     NamedCommands.registerCommand("Set Pivot L1", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[0]));
     NamedCommands.registerCommand("Set Pivot L2", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[1]));
     NamedCommands.registerCommand("Set Pivot L3", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[2]));
     NamedCommands.registerCommand("Set Pivot L4", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[3]));
     
-    new EventTrigger("Elevator Move").onTrue(new DeferredCommand(() -> elevator.moveCommand(elevatorHeight), Set.of(elevator)));
-    new EventTrigger("Elevator Pivot").onTrue(new DeferredCommand(() -> UniversalCommandFactory.pivotAngleCommand(pivotAngle, pivot, endEffector), Set.of(pivot)));
-    new EventTrigger("Event Notification").onTrue(Notifications.PATHPLANNER_EVENT.send());
+    // new EventTrigger("Elevator Move").onTrue(new DeferredCommand(() -> elevator.moveCommand(elevatorHeight), Set.of(elevator)));
+    // new EventTrigger("Elevator Pivot").onTrue(new DeferredCommand(() -> UniversalCommandFactory.pivotAngleCommand(pivotAngle, pivot, endEffector), Set.of(pivot)));
+    // new EventTrigger("Event Notification").onTrue(Notifications.PATHPLANNER_EVENT.send());
 
-    new EventTrigger("Intake Coral").onTrue(endEffector.moveCoralCommand(true));
-    new EventTrigger("Deposit Coral").onTrue(endEffector.moveCoralCommand(false));
+    // new EventTrigger("Intake Coral").onTrue(endEffector.moveCoralCommand(true));
+    // new EventTrigger("Deposit Coral").onTrue(endEffector.moveCoralCommand(false));
 
     new PIDDisplay();
     new ChassisVisionLocalizer();
 
-    ControlPanel.configureBinding(drivetrain, elevator, pivot, endEffector, climber);
+    // ControlPanel.configureBinding(drivetrain, elevator, pivot, endEffector, climber);
     configureAuto();
 
     PIDDisplay.Init();
+    
+    Ultrasonic.setAutomaticMode(true);
   }
 
   public static boolean isBlue() {

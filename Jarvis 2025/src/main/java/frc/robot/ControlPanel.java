@@ -20,6 +20,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.JoystickDrive;
@@ -83,15 +87,15 @@ public class ControlPanel {
         new Trigger(() -> controller.getRawAxis(2) > 0.5).whileTrue(endEffector.moveCoralCommand(false));
 
         //Control panel height and position selector
-        // for (int i = 0; i < 16; i++) {
-        //     final int buttonID = buttonLookup[i];
-        //     new JoystickButton(controller2, i + 1).onTrue(
-        //         (buttonID < 4 ? ReefCycle.setHeight(buttonID) : ReefCycle.setPosition(buttonID - 4))
-        //             .andThen(() -> updateReefDisplay())
-        //     );
-        // }
+        for (int i = 0; i < 16; i++) {
+            final int buttonID = buttonLookup[i];
+            new JoystickButton(controller2, i + 1).onTrue(
+                (buttonID < 4 ? ReefCycle.setHeight(buttonID) : ReefCycle.setPosition(buttonID - 4))
+                    .andThen(() -> ReefCycle.updateReefDisplay())
+            );
+        }
 
-        updateReefDisplay();
+        ReefCycle.updateReefDisplay();
         ControlPanel.drivetrain = drivetrain;
         
         targetHeightEntry.setInteger(ReefCycle.targetHeight);
@@ -101,59 +105,38 @@ public class ControlPanel {
             int value = (int)event.valueData.value.getInteger();
             if (value >= 0 && value <= 3) ReefCycle.targetHeight = value;
             else Notifications.CONTROL_INVALID_INDEX.sendImmediate(value, ReefCycle.targetHeight);
-            updateReefDisplay();
+            ReefCycle.updateReefDisplay();
         });
         
         NetworkTableListener.createListener(targetPositionEntry.getTopic(), EnumSet.of(NetworkTableEvent.Kind.kValueAll), event -> {
             int value = (int)event.valueData.value.getInteger();
             if (value >= 0 && value <= 11) ReefCycle.targetPosition = value;
             else Notifications.CONTROL_INVALID_INDEX.sendImmediate(value, ReefCycle.targetPosition);
-            updateReefDisplay();
+            ReefCycle.updateReefDisplay();
         });
-    }
-
-    private static void updateReefDisplay() {
-        /*
-              [ ] [ ]
-          [ ]         [ ]
-        [ ]             [ ]
-
-        [ ]             [ ]
-          [ ]         [ ]
-              [ ] [ ]
-        */
-        String grid = """
-        .            [%s] [%s]            .
-        .    [%s]                 [%s]    .
-        .[%s]                         [%s].
-
-        .[%s]                         [%s].
-        .    [%s]                 [%s]    .
-        .            [%s] [%s]            .
-        """;
-        String[] format = new String[12];
-        for (int i = 0; i < format.length; i++)
-            format[i] = (i == ReefCycle.targetPosition) ? Integer.toString(ReefCycle.targetHeight) : " ";
-
-        reefDisplay.setString(grid.formatted(
-            format[7], format[6], format[8], format[5], format[9], format[4], format[10], format[3], format[11], format[2], format[0], format[1]
-        ));
     }
 
     public static class ReefCycle {
         public static int targetHeight = 3;
         public static int targetPosition = 0;
         private static boolean depositing = true;
+        private static boolean mutatePath, pathEnd;
         private static Pose2d previousLocation;
 
         private static Command setPosition(int positionIndex) {
-            return new InstantCommand(() -> targetPosition = positionIndex);
+            return new InstantCommand(() -> {
+                targetPosition = positionIndex;
+                if (depositing) mutatePath = true;
+            });
         }
     
         private static Command setHeight(int heightIndex) {
-            return new InstantCommand(() -> targetHeight = heightIndex);
+            return new InstantCommand(() -> {
+                targetHeight = heightIndex;
+                if (depositing) mutatePath = true;
+            });
         }
-    
+
         public static void setTravelState(boolean _depositing) {
             depositing = _depositing;
         }
@@ -181,13 +164,61 @@ public class ControlPanel {
             return previousLocation;
         }
     
-        //TODO FIX
         public static double getHeight() {
             return depositing ? Constants.ElevatorConstants.PRESET_HEIGHTS[targetHeight] : Constants.ElevatorConstants.CORAL_INTAKE_HEIGHT;
         }
     
         public static Rotation2d getAngle() {
             return depositing ? Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[targetHeight] : Constants.PivotConstants.CORAL_INTAKE_ANGLE;
+        }
+
+        private static void updateReefDisplay() {
+            /*
+                  [ ] [ ]
+              [ ]         [ ]
+            [ ]             [ ]
+    
+            [ ]             [ ]
+              [ ]         [ ]
+                  [ ] [ ]
+            */
+            String grid = """
+            .            [%s] [%s]            .
+            .    [%s]                 [%s]    .
+            .[%s]                         [%s].
+    
+            .[%s]                         [%s].
+            .    [%s]                 [%s]    .
+            .            [%s] [%s]            .
+            """;
+            String[] format = new String[12];
+            for (int i = 0; i < format.length; i++)
+                format[i] = (i == ReefCycle.targetPosition) ? Integer.toString(ReefCycle.targetHeight) : " ";
+    
+            reefDisplay.setString(grid.formatted(
+                format[7], format[6], format[8], format[5], format[9], format[4], format[10], format[3], format[11], format[2], format[0], format[1]
+            ));
+        }
+        
+        /**Pathfind to the next location, updating according to inputs from the control panel
+         */
+        public static Command mutatingPathCommand() {
+            return new SequentialCommandGroup(
+                new InstantCommand(() -> mutatePath = pathEnd = false),
+                new ParallelDeadlineGroup(
+                    new WaitUntilCommand(() -> pathEnd), 
+                    new ParallelRaceGroup(
+                        new SequentialCommandGroup(
+                            new WaitUntilCommand(() -> mutatePath && !pathEnd),
+                            new InstantCommand(() -> mutatePath = false)
+                        ),
+                        new SequentialCommandGroup(
+                            new DeferredCommand(() -> drivetrain.pathingCommand(ControlPanel.ReefCycle.getLineupPath()), Set.of(drivetrain)),
+                            new InstantCommand(() -> pathEnd = true)
+                        )
+                    ).repeatedly()
+                )
+            );
         }
     }
 }

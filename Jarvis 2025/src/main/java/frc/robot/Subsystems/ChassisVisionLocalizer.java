@@ -14,10 +14,12 @@ import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Commands.Notifications;
 
 public class ChassisVisionLocalizer extends SubsystemBase {
   public boolean enabled = true;
@@ -76,6 +78,8 @@ public class ChassisVisionLocalizer extends SubsystemBase {
 
   private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Drivetrain/Vision");
 
+  private final GenericEntry enabledEntry = nTable.getTopic("Enabled").getGenericEntry();
+
   private NavCam[] navCams = {
     new NavCam(0),
     new NavCam(1),
@@ -86,16 +90,24 @@ public class ChassisVisionLocalizer extends SubsystemBase {
   public ChassisVisionLocalizer() {
     PortForwarder.add(5800, "navCams01.local", 5800);
     PortForwarder.add(5800, "navCams23.local", 5800);
+    enabledEntry.setBoolean(enabled);
   }
 
   @Override
   public void periodic() {
     if (!enabled) return;
+    double startTime = Timer.getFPGATimestamp();
 
     for (NavCam navCam : navCams) {
       navCam.getRobotPoses().forEach(pose -> {
         Drivetrain.addVisionMeasurement(pose.pose, pose.timeStamp);
       });
+    }
+
+    if (Timer.getFPGATimestamp() - startTime > 0.1) {
+      enabled = false;
+      enabledEntry.setBoolean(false);
+      Notifications.VISION_TIMER_EXCEEDED.sendImmediate();
     }
   }
 }
