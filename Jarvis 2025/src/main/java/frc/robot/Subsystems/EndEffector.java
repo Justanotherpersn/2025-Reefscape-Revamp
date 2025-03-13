@@ -82,7 +82,7 @@ public class EndEffector extends SubsystemBase {
     return new SequentialCommandGroup(
         new InstantCommand(() -> setRPM(intake ? Constants.EndEffectorConstants.INTAKE_RPM : Constants.EndEffectorConstants.OUTAKE_RPM)),
         new WaitUntilCommand(() -> intake == coralPresent()),
-        new WaitCommand(intake ? 5 : 5)
+        new WaitCommand(intake ? 0.2 : 2)
     ).finallyDo(() -> setRPM(0));
   }
 

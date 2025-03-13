@@ -18,6 +18,7 @@ import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.Elevator;
 import frc.robot.Subsystems.EndEffector;
 import frc.robot.Subsystems.Pivot;
+import frc.robot.Util.Elastic;
 
 public class UniversalCommandFactory {
     public static final Command reefCycle(Drivetrain drivetrain, Elevator elevator, Pivot pivot, EndEffector endEffector) {
@@ -31,7 +32,7 @@ public class UniversalCommandFactory {
                         new WaitCommand(0.5),
                         new ParallelCommandGroup(
                             elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION),
-                            UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-90), pivot, endEffector)
+                            UniversalCommandFactory.pivotAngleCommand(Constants.PivotConstants.TRAVEL_POSITION, pivot, endEffector)
                         ),
                         new ParallelCommandGroup(
                             new SequentialCommandGroup(
@@ -55,7 +56,10 @@ public class UniversalCommandFactory {
     public static final Command pivotAngleCommand(Rotation2d angle, Pivot pivot, EndEffector endEffector) {
         return new ParallelDeadlineGroup(
             new WaitUntilCommand(() -> Math.abs(pivot.getAngle().minus(angle).getRadians()) < Constants.PivotConstants.POSITION_TOLERANCE.getRadians()),
-            new InstantCommand(() -> pivot.setAngle(angle))
+            new InstantCommand(() -> {
+                pivot.setAngle(angle);
+                Elastic.selectTab(angle.getDegrees() == Constants.PivotConstants.TRAVEL_POSITION.getDegrees() ? "Teleoperated" : "End Effector View");
+            })
         );
     }
 }

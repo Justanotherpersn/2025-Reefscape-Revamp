@@ -33,10 +33,10 @@ import frc.robot.Util.PIDDisplay;
 
 public class RobotContainer {
   private static final Drivetrain drivetrain = new Drivetrain();
-  // private static final Elevator elevator = new Elevator();
-  // private static final Pivot pivot = new Pivot();
-  // private static final Climber climber = new Climber();
-  //private static final EndEffector endEffector = new EndEffector();
+  private static final Elevator elevator = new Elevator();
+  private static final Pivot pivot = new Pivot();
+  private static final Climber climber = new Climber();
+  private static final EndEffector endEffector = new EndEffector();
   SendableChooser<Command> autoChooser;
 
   double elevatorHeight;
@@ -54,17 +54,17 @@ public class RobotContainer {
     NamedCommands.registerCommand("Set Pivot L3", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[2]));
     NamedCommands.registerCommand("Set Pivot L4", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[3]));
     
-    // new EventTrigger("Elevator Move").onTrue(new DeferredCommand(() -> elevator.moveCommand(elevatorHeight), Set.of(elevator)));
-    // new EventTrigger("Elevator Pivot").onTrue(new DeferredCommand(() -> UniversalCommandFactory.pivotAngleCommand(pivotAngle, pivot, endEffector), Set.of(pivot)));
-    // new EventTrigger("Event Notification").onTrue(Notifications.PATHPLANNER_EVENT.send());
+    new EventTrigger("Elevator Move").onTrue(new DeferredCommand(() -> elevator.moveCommand(elevatorHeight), Set.of(elevator)));
+    new EventTrigger("Elevator Pivot").onTrue(new DeferredCommand(() -> UniversalCommandFactory.pivotAngleCommand(pivotAngle, pivot, endEffector), Set.of(pivot)));
+    new EventTrigger("Event Notification").onTrue(Notifications.PATHPLANNER_EVENT.send());
 
-    // new EventTrigger("Intake Coral").onTrue(endEffector.moveCoralCommand(true));
-    // new EventTrigger("Deposit Coral").onTrue(endEffector.moveCoralCommand(false));
+    new EventTrigger("Intake Coral").onTrue(endEffector.moveCoralCommand(true));
+    new EventTrigger("Deposit Coral").onTrue(endEffector.moveCoralCommand(false));
 
     new PIDDisplay();
     new ChassisVisionLocalizer();
 
-    // ControlPanel.configureBinding(drivetrain, elevator, pivot, endEffector, climber);
+    ControlPanel.configureBinding(drivetrain, elevator, pivot, endEffector, climber);
     configureAuto();
 
     PIDDisplay.Init();

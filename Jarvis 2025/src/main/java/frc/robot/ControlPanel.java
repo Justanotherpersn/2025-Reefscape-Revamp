@@ -51,6 +51,7 @@ public class ControlPanel {
 
     public static void configureBinding(Drivetrain drivetrain, Elevator elevator, Pivot pivot, EndEffector endEffector, Climber climber) {
         drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, controller));
+        ControlPanel.drivetrain = drivetrain;
 
         new JoystickButton(controller, 7).whileTrue(drivetrain.homeCommand());
         new JoystickButton(controller, 8).onTrue(new InstantCommand(() -> drivetrain.resetIMU()));
@@ -63,7 +64,7 @@ public class ControlPanel {
 
         //B: Height travel
         new JoystickButton(controller, 2).whileTrue(new ParallelCommandGroup(
-            UniversalCommandFactory.pivotAngleCommand(Rotation2d.fromDegrees(-90), pivot, endEffector),
+            UniversalCommandFactory.pivotAngleCommand(Constants.PivotConstants.TRAVEL_POSITION, pivot, endEffector),
             elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION)
         ));
 
@@ -73,7 +74,8 @@ public class ControlPanel {
         //X: Intake height
         new JoystickButton(controller, 3).whileTrue(new ParallelCommandGroup(
             UniversalCommandFactory.pivotAngleCommand(Constants.PivotConstants.CORAL_INTAKE_ANGLE, pivot, endEffector),
-            elevator.moveCommand(Constants.ElevatorConstants.CORAL_INTAKE_HEIGHT)
+            elevator.moveCommand(Constants.ElevatorConstants.CORAL_INTAKE_HEIGHT),
+            endEffector.moveCoralCommand(true)
         ));
 
         //LB: Climb out
@@ -96,7 +98,6 @@ public class ControlPanel {
         }
 
         ReefCycle.updateReefDisplay();
-        ControlPanel.drivetrain = drivetrain;
         
         targetHeightEntry.setInteger(ReefCycle.targetHeight);
         targetPositionEntry.setInteger(ReefCycle.targetPosition);

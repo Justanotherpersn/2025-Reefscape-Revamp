@@ -134,6 +134,7 @@ public class Constants {
         };
         public static final Rotation2d CORAL_INTAKE_ANGLE = Rotation2d.fromDegrees(-40);
         public static final Rotation2d ANGULAR_SPEED = Rotation2d.fromDegrees(45);
+        public static final Rotation2d TRAVEL_POSITION = Rotation2d.fromDegrees(-90);
         /**Length from pivot axis to center of coral when loaded*/
         public static final double LENGTH = 1;
     }
