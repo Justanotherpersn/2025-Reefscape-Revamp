@@ -23,6 +23,8 @@ import frc.robot.Commands.Notifications;
 
 public class ChassisVisionLocalizer extends SubsystemBase {
   public boolean enabled = true;
+  private int overrunCount = 0;
+  private double lastPeriodicStart = 0;
 
   private class PoseEntry {
     public final Pose2d pose;
@@ -96,18 +98,18 @@ public class ChassisVisionLocalizer extends SubsystemBase {
   @Override
   public void periodic() {
     if (!enabled) return;
-    double startTime = Timer.getFPGATimestamp();
+    if (Timer.getFPGATimestamp() - lastPeriodicStart > 0.2 && lastPeriodicStart != 0) overrunCount++;
+    if (overrunCount > 2) {
+      enabled = false;
+      enabledEntry.setBoolean(false);
+      Notifications.VISION_TIMER_EXCEEDED.sendImmediate();
+    }
+    lastPeriodicStart = Timer.getFPGATimestamp();
 
     for (NavCam navCam : navCams) {
       navCam.getRobotPoses().forEach(pose -> {
         Drivetrain.addVisionMeasurement(pose.pose, pose.timeStamp);
       });
-    }
-
-    if (Timer.getFPGATimestamp() - startTime > 0.1) {
-      enabled = false;
-      enabledEntry.setBoolean(false);
-      Notifications.VISION_TIMER_EXCEEDED.sendImmediate();
     }
   }
 }

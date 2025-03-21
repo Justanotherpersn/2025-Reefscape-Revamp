@@ -20,6 +20,8 @@ import frc.robot.Util.Gains;
 
 /** Add your docs here. */
 public class Constants {
+    public static boolean allowTabSwitching = false;
+
     public enum CAN_DEVICES {
         // These are assigned algorithmically in Drivetrain; do not use for anything else
         // DRIVE_FRONT_LEFT(1),
@@ -92,7 +94,7 @@ public class Constants {
 
     public static class ElevatorConstants{
         public static final double TOP_LIMIT_POSITION = Units.inchesToMeters(65.25);
-        public static final double BOTTOM_LIMIT_POSITION = Units.inchesToMeters(39.25);
+        public static final double BOTTOM_LIMIT_POSITION = Units.inchesToMeters(42);
 
         public static final double MAX_ELEVATOR_EXTENSION = TOP_LIMIT_POSITION;
         public static final double MIN_ELEVATOR_EXTENSION = BOTTOM_LIMIT_POSITION;
@@ -118,7 +120,7 @@ public class Constants {
             TOP_LIMIT_POSITION
         };
 
-        public static final double CORAL_INTAKE_HEIGHT = 1.15;
+        public static final double CORAL_INTAKE_HEIGHT = 1.14;
     }
 
     public static class PivotConstants {
@@ -129,12 +131,13 @@ public class Constants {
         public static final Rotation2d CORAL_DEPOSIT_ANGLES[] = {
             Rotation2d.fromDegrees(-125),
             Rotation2d.fromDegrees(-115),
-            Rotation2d.fromDegrees(-223),
-            Rotation2d.fromDegrees(-223),
+            Rotation2d.fromDegrees(-229),
+            Rotation2d.fromDegrees(-229),
         };
-        public static final Rotation2d CORAL_INTAKE_ANGLE = Rotation2d.fromDegrees(-40);
+        public static final Rotation2d CORAL_INTAKE_ANGLE = Rotation2d.fromDegrees(-46);
         public static final Rotation2d ANGULAR_SPEED = Rotation2d.fromDegrees(45);
         public static final Rotation2d TRAVEL_POSITION = Rotation2d.fromDegrees(-90);
+        public static final Rotation2d CLIMB_POSITION = Rotation2d.fromDegrees(-110);
         /**Length from pivot axis to center of coral when loaded*/
         public static final double LENGTH = 1;
     }

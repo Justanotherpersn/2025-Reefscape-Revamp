@@ -46,7 +46,7 @@ public class EndEffector extends SubsystemBase {
 
     coralConfig = new SparkMaxConfig();
     coralConfig
-      .inverted(true)
+      .inverted(false)
       .idleMode(IdleMode.kCoast)
       .voltageCompensation(12);
     coralConfig.encoder
@@ -74,8 +74,7 @@ public class EndEffector extends SubsystemBase {
   }
 
   public boolean coralPresent() {
-    sensor.getRangeMM();
-    return coralSwitchEntry.getBoolean(false);
+    return sensor.getRangeMM() < 110;//coralSwitchEntry.getBoolean(false);
   }
 
   public Command moveCoralCommand(boolean intake) {
@@ -89,7 +88,7 @@ public class EndEffector extends SubsystemBase {
   @Override
   public void periodic() {
     encoderEntry.setDouble(coral.getOutputCurrent());
-    //coralSwitchEntry.setBoolean(coralPresent());
+    coralSwitchEntry.setBoolean(coralPresent());
     coralSensorDistanceEntry.setDouble(sensor.getRangeMM());
   }
 }

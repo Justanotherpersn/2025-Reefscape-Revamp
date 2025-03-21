@@ -12,6 +12,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StringTopic;
+import frc.robot.Constants;
 
 public final class Elastic {
   private static final StringTopic notificationTopic =
@@ -48,7 +49,8 @@ public final class Elastic {
    * @param tabName the name of the tab to select
    */
   public static void selectTab(String tabName) {
-    selectedTabPublisher.set(tabName);
+    if (Constants.allowTabSwitching)
+      selectedTabPublisher.set(tabName);
   }
 
   /**

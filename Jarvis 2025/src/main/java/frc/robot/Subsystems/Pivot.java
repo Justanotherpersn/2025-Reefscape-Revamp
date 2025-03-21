@@ -17,9 +17,14 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
+import frc.robot.Util.Elastic;
 import frc.robot.Util.PIDDisplay;
 import frc.robot.Util.SparkBaseSetter;
 import frc.robot.Util.SparkBaseSetter.SparkConfiguration;
@@ -41,7 +46,7 @@ public class Pivot extends SubsystemBase {
 
     pivotConfig = new SparkFlexConfig();
     pivotConfig
-      .inverted(false)
+      .inverted(true)
       .idleMode(IdleMode.kBrake)
       .voltageCompensation(12);
     pivotConfig.encoder
@@ -82,11 +87,22 @@ public class Pivot extends SubsystemBase {
     return Math.abs(getAngle().minus(angle).getRadians()) / Constants.PivotConstants.ANGULAR_SPEED.getRadians();
   }
 
-  //Use the command in UniversalCommandFactory instead.
-  // public Command setAngleCommand(Rotation2d angle, boolean coralAngle) {
-  //   return new InstantCommand(coralAngle ? () -> setEndCoralAngle(angle) : () -> setAngle(angle)).andThen(
-  //     new WaitUntilCommand(() -> Math.abs(getAngle().minus(target).getRadians()) < Constants.PivotConstants.POSITION_TOLERANCE.getRadians()));
-  // }
+  public Command setAngleCommand(Rotation2d angle) {
+    return new ParallelDeadlineGroup(
+      new WaitUntilCommand(() -> Math.abs(getAngle().minus(angle).getRadians()) < Constants.PivotConstants.POSITION_TOLERANCE.getRadians()),
+      new InstantCommand(() -> {
+        setAngle(angle);
+        Elastic.selectTab(angle.getDegrees() == Constants.PivotConstants.TRAVEL_POSITION.getDegrees() ? "Teleoperated" : "End Effector View");
+      })
+    );
+  }
+
+  public Command climbModeCommand() {
+    return new InstantCommand(() -> {
+      Elastic.selectTab("End Effector View");
+      setAngle(Constants.PivotConstants.CLIMB_POSITION);
+    }).andThen(new WaitUntilCommand(() -> false));
+  }
 
   @Override
   public void periodic() {

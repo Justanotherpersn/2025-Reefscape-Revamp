@@ -34,7 +34,8 @@ import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.Elevator;
 import frc.robot.Subsystems.EndEffector;
 import frc.robot.Subsystems.Pivot;
-
+//-195 degrees algae discoring L3
+//-225
 public class ControlPanel {
     private static final Joystick controller = new Joystick(0);
     private static final Joystick controller2 = new Joystick(1);
@@ -48,23 +49,26 @@ public class ControlPanel {
     private static final int[] buttonLookup = {14, 0, 8, 13, 12, 2, 3, 11, 10, 9, 1, 15, 4, 5, 7, 6};
 
     private static Drivetrain drivetrain;
+    private static Pivot pivot;
+    private static boolean climbMode;
 
     public static void configureBinding(Drivetrain drivetrain, Elevator elevator, Pivot pivot, EndEffector endEffector, Climber climber) {
         drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, controller));
         ControlPanel.drivetrain = drivetrain;
+        ControlPanel.pivot = pivot;
 
         new JoystickButton(controller, 7).whileTrue(drivetrain.homeCommand());
         new JoystickButton(controller, 8).onTrue(new InstantCommand(() -> drivetrain.resetIMU()));
 
         //A: Go to selected height
         new JoystickButton(controller, 1).whileTrue(new DeferredCommand(() -> new ParallelCommandGroup(
-            UniversalCommandFactory.pivotAngleCommand(ControlPanel.ReefCycle.getAngle(), pivot, endEffector),
-            elevator.moveCommand(ControlPanel.ReefCycle.getHeight())
+            pivot.setAngleCommand(ControlPanel.ReefCycle.getRawAngle()),
+            elevator.moveCommand(ControlPanel.ReefCycle.getRawHeight())
         ), Set.of(elevator, pivot)));
 
         //B: Height travel
         new JoystickButton(controller, 2).whileTrue(new ParallelCommandGroup(
-            UniversalCommandFactory.pivotAngleCommand(Constants.PivotConstants.TRAVEL_POSITION, pivot, endEffector),
+            pivot.setAngleCommand(Constants.PivotConstants.TRAVEL_POSITION),
             elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION)
         ));
 
@@ -73,7 +77,7 @@ public class ControlPanel {
 
         //X: Intake height
         new JoystickButton(controller, 3).whileTrue(new ParallelCommandGroup(
-            UniversalCommandFactory.pivotAngleCommand(Constants.PivotConstants.CORAL_INTAKE_ANGLE, pivot, endEffector),
+            pivot.setAngleCommand(Constants.PivotConstants.CORAL_INTAKE_ANGLE),
             elevator.moveCommand(Constants.ElevatorConstants.CORAL_INTAKE_HEIGHT),
             endEffector.moveCoralCommand(true)
         ));
@@ -115,6 +119,12 @@ public class ControlPanel {
             else Notifications.CONTROL_INVALID_INDEX.sendImmediate(value, ReefCycle.targetPosition);
             ReefCycle.updateReefDisplay();
         });
+    }
+
+    public static void setClimbMode(boolean state) {
+        if (climbMode == state) return;
+        climbMode = state;
+        pivot.climbModeCommand().schedule();
     }
 
     public static class ReefCycle {
@@ -165,12 +175,20 @@ public class ControlPanel {
             return previousLocation;
         }
     
-        public static double getHeight() {
-            return depositing ? Constants.ElevatorConstants.PRESET_HEIGHTS[targetHeight] : Constants.ElevatorConstants.CORAL_INTAKE_HEIGHT;
+        public static double getTargetHeight() {
+            return depositing ? getRawHeight() : Constants.ElevatorConstants.CORAL_INTAKE_HEIGHT;
+        }
+
+        public static double getRawHeight() {
+            return Constants.ElevatorConstants.PRESET_HEIGHTS[targetHeight];
         }
     
-        public static Rotation2d getAngle() {
-            return depositing ? Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[targetHeight] : Constants.PivotConstants.CORAL_INTAKE_ANGLE;
+        public static Rotation2d getTargetAngle() {
+            return depositing ? getRawAngle() : Constants.PivotConstants.CORAL_INTAKE_ANGLE;
+        }
+
+        public static Rotation2d getRawAngle() {
+            return Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[targetHeight];
         }
 
         private static void updateReefDisplay() {

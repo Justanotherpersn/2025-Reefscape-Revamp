@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Commands.Notifications;
-import frc.robot.Commands.UniversalCommandFactory;
 import frc.robot.Subsystems.ChassisVisionLocalizer;
 import frc.robot.Subsystems.Climber;
 import frc.robot.Subsystems.Drivetrain;
@@ -55,7 +54,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Set Pivot L4", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[3]));
     
     new EventTrigger("Elevator Move").onTrue(new DeferredCommand(() -> elevator.moveCommand(elevatorHeight), Set.of(elevator)));
-    new EventTrigger("Elevator Pivot").onTrue(new DeferredCommand(() -> UniversalCommandFactory.pivotAngleCommand(pivotAngle, pivot, endEffector), Set.of(pivot)));
+      new EventTrigger("Elevator Pivot").onTrue(new DeferredCommand(() -> pivot.setAngleCommand(pivotAngle), Set.of(pivot)));
     new EventTrigger("Event Notification").onTrue(Notifications.PATHPLANNER_EVENT.send());
 
     new EventTrigger("Intake Coral").onTrue(endEffector.moveCoralCommand(true));

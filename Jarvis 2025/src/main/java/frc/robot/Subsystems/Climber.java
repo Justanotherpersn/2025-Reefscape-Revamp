@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
+import frc.robot.ControlPanel;
 import frc.robot.Util.PIDDisplay;
 import frc.robot.Util.SparkBaseSetter;
 
@@ -92,5 +93,9 @@ public class Climber extends SubsystemBase {
     positiveSwitchEntry.setBoolean(previousPositiveLimit);
     negativeSwitchEntry.setBoolean(previousNegativeLimit);
     encoderEntry.setDouble(360 * climber.getEncoder().getPosition());
+
+    if (climber.getEncoder().getPosition() * 360 < 125) {
+      ControlPanel.setClimbMode(true);
+    }
   }
 }
