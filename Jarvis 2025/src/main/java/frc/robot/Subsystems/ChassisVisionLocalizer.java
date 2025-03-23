@@ -14,7 +14,6 @@ import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,7 +23,6 @@ import frc.robot.Commands.Notifications;
 public class ChassisVisionLocalizer extends SubsystemBase {
   public boolean enabled = true;
   private int overrunCount = 0;
-  private double lastPeriodicStart = 0;
 
   private class PoseEntry {
     public final Pose2d pose;
@@ -98,13 +96,11 @@ public class ChassisVisionLocalizer extends SubsystemBase {
   @Override
   public void periodic() {
     if (!enabled) return;
-    if (Timer.getFPGATimestamp() - lastPeriodicStart > 0.2 && lastPeriodicStart != 0) overrunCount++;
     if (overrunCount > 2) {
       enabled = false;
       enabledEntry.setBoolean(false);
       Notifications.VISION_TIMER_EXCEEDED.sendImmediate();
     }
-    lastPeriodicStart = Timer.getFPGATimestamp();
 
     for (NavCam navCam : navCams) {
       navCam.getRobotPoses().forEach(pose -> {

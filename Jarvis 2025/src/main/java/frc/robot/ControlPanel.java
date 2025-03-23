@@ -46,8 +46,6 @@ public class ControlPanel {
     private static GenericEntry targetHeightEntry = nTable.getTopic("Level").getGenericEntry();
     private static GenericEntry targetPositionEntry = nTable.getTopic("Position").getGenericEntry();
 
-    private static final int[] buttonLookup = {14, 0, 8, 13, 12, 2, 3, 11, 10, 9, 1, 15, 4, 5, 7, 6};
-
     private static Drivetrain drivetrain;
     private static Pivot pivot;
     private static boolean climbMode;
@@ -78,8 +76,8 @@ public class ControlPanel {
         //X: Intake height
         new JoystickButton(controller, 3).whileTrue(new ParallelCommandGroup(
             pivot.setAngleCommand(Constants.PivotConstants.CORAL_INTAKE_ANGLE),
-            elevator.moveCommand(Constants.ElevatorConstants.CORAL_INTAKE_HEIGHT),
-            endEffector.moveCoralCommand(true)
+            elevator.moveCommand(Constants.ElevatorConstants.CORAL_INTAKE_HEIGHT)
+            //endEffector.moveCoralCommand(true)
         ));
 
         //LB: Climb out
@@ -94,9 +92,8 @@ public class ControlPanel {
 
         //Control panel height and position selector
         for (int i = 0; i < 16; i++) {
-            final int buttonID = buttonLookup[i];
             new JoystickButton(controller2, i + 1).onTrue(
-                (buttonID < 4 ? ReefCycle.setHeight(buttonID) : ReefCycle.setPosition(buttonID - 4))
+                (i < 4 ? ReefCycle.setHeight(i) : ReefCycle.setPosition(i - 4))
                     .andThen(() -> ReefCycle.updateReefDisplay())
             );
         }

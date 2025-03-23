@@ -27,6 +27,7 @@ import frc.robot.Subsystems.Climber;
 import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.Elevator;
 import frc.robot.Subsystems.EndEffector;
+import frc.robot.Subsystems.LED;
 import frc.robot.Subsystems.Pivot;
 import frc.robot.Util.PIDDisplay;
 
@@ -36,6 +37,7 @@ public class RobotContainer {
   private static final Pivot pivot = new Pivot();
   private static final Climber climber = new Climber();
   private static final EndEffector endEffector = new EndEffector();
+  private static final LED led = new LED();
   SendableChooser<Command> autoChooser;
 
   double elevatorHeight;
