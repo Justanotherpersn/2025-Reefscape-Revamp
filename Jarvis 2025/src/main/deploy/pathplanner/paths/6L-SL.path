@@ -3,35 +3,42 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3763506827514547,
-        "y": 1.4964020358196024
+        "x": 3.975491120002727,
+        "y": 5.184249226755185
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.245710168269133,
-        "y": 1.2832517227168665
+        "x": 3.5204880161968903,
+        "y": 5.973860078794998
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "6L Lineup End"
     },
     {
       "anchor": {
-        "x": 1.0846875000003575,
-        "y": 1.1014625000037563
+        "x": 1.6899687431439288,
+        "y": 6.71959324301368
       },
       "prevControl": {
-        "x": 1.2276356654224003,
-        "y": 1.3065620416962536
+        "x": 1.95,
+        "y": 6.2285
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "SL Lineup Start"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Elevator Travel",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 1.0,
     "maxAcceleration": 5.0,
@@ -41,14 +48,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -126.0
+    "velocity": 1.0,
+    "rotation": 126.0
   },
   "reversed": false,
-  "folder": "Lineup Paths",
+  "folder": "Scoring To Station",
   "idealStartingState": {
-    "velocity": 0.01,
-    "rotation": -126.0
+    "velocity": 0,
+    "rotation": 119.99999999999999
   },
   "useDefaultConstraints": true
 }

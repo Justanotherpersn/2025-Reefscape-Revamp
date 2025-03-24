@@ -246,8 +246,8 @@ public class Constants {
             "6R Lineup",
         };
         public static final String CORAL_STATIONS[] = {
-            "Lineup Left Station",
-            "Lineup Right Station"
+            "SL Lineup",
+            "SR Lineup"
         };
 
         public static final double OPERATION_RADIUS = 0.5;

@@ -50,10 +50,18 @@ public class RobotContainer {
     
     new EventTrigger("Move Elevator").onTrue(new DeferredCommand(() -> elevator.moveCommand(Constants.ElevatorConstants.PRESET_HEIGHTS[targetLevel]), Set.of(elevator)));
     new EventTrigger("Move Pivot").onTrue(new DeferredCommand(() -> pivot.setAngleCommand(Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[targetLevel]), Set.of(pivot)));
+    new EventTrigger("Elevator Travel").onTrue(new ParallelCommandGroup(
+      elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION),
+      pivot.setAngleCommand(Constants.PivotConstants.TRAVEL_POSITION)
+    ));
+    new EventTrigger("Elevator Intake").onTrue(new ParallelCommandGroup(
+      elevator.moveCommand(Constants.ElevatorConstants.CORAL_INTAKE_HEIGHT),
+      pivot.setAngleCommand(Constants.PivotConstants.CORAL_INTAKE_ANGLE)
+    ));
     new EventTrigger("Event Notification").onTrue(Notifications.PATHPLANNER_EVENT.send());
 
-    new EventTrigger("Intake Coral").onTrue(endEffector.moveCoralCommand(true));
-    new EventTrigger("Deposit Coral").onTrue(endEffector.moveCoralCommand(false));
+    NamedCommands.registerCommand("Intake Coral", endEffector.moveCoralCommand(true));
+    NamedCommands.registerCommand("Deposit Coral", endEffector.moveCoralCommand(false));
 
     new PIDDisplay();
     new ChassisVisionLocalizer();

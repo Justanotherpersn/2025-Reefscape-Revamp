@@ -3,35 +3,42 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.8337425801838316,
-        "y": 4.165
+        "x": 5.278158578733188,
+        "y": 3.033366730556411
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0837425801838316,
-        "y": 4.165
+        "x": 5.689124999999999,
+        "y": 2.35775
       },
       "isLocked": false,
-      "linkedName": "1L Lineup Start"
+      "linkedName": "3R Lineup End"
     },
     {
       "anchor": {
-        "x": 3.217,
-        "y": 4.165
+        "x": 1.3763506827514547,
+        "y": 1.4964020358196024
       },
       "prevControl": {
-        "x": 2.9670462149925387,
-        "y": 4.160193196442165
+        "x": 1.8086250000000001,
+        "y": 2.070124999999999
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "1L Lineup End"
+      "linkedName": "SR Lineup Start"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Elevator Intake",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 1.0,
     "maxAcceleration": 5.0,
@@ -41,14 +48,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 180.0
+    "velocity": 1.0,
+    "rotation": -126.0
   },
   "reversed": false,
-  "folder": "Lineup Paths",
+  "folder": "Scoring To Station",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -59.99999999999999
   },
   "useDefaultConstraints": true
 }

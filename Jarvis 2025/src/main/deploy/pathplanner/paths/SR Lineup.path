@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.8337425801838316,
-        "y": 4.165
+        "x": 1.3763506827514547,
+        "y": 1.4964020358196024
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0837425801838316,
-        "y": 4.165
+        "x": 1.245710168269133,
+        "y": 1.2832517227168665
       },
       "isLocked": false,
-      "linkedName": "1L Lineup Start"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.217,
-        "y": 4.165
+        "x": 1.0846875000003575,
+        "y": 1.1014625000037563
       },
       "prevControl": {
-        "x": 2.9670462149925387,
-        "y": 4.160193196442165
+        "x": 1.2276356654224003,
+        "y": 1.3065620416962536
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "1L Lineup End"
+      "linkedName": "RS Lineup End"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -126.0
   },
   "reversed": false,
   "folder": "Lineup Paths",
   "idealStartingState": {
-    "velocity": 0,
-    "rotation": 180.0
+    "velocity": 0.01,
+    "rotation": -126.0
   },
   "useDefaultConstraints": true
 }
