@@ -1,20 +1,23 @@
 #include<Adafruit_NeoPixel.h>
 
 #define LED_COUNT 32
-#define LED_PIN 4
+#define LED_PIN 2
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 byte LED_COLOR_RX[7];
 
 //code for limit switches, basically just sets up pins
-const int buttonPinLimUp = 0;
-const int buttonPinLimDwn = 1;
-const int buttonPinLimIn = 2;
-const int buttonPinLimOut = 3;
+const int buttonPinLimUp = 3;    // Elevator up
+const int buttonPinLimDwn = 4;   // Elevator down
+const int buttonPinLimIn = 5;    // Climber in
+const int buttonPinIntake = 6;   // Coral intake
 int buttonStateLimUp = 0;  
-int buttonStateLimDwn = 0;  // variable for reading the pushbutton status
-int buttonStateLimIn = 0;  // variable for reading the pushbutton status
-int buttonStateLimOut = 0;  // variable for reading the pushbutton status
+int buttonStateLimDwn = 0;    // variable for reading the pushbutton status
+int buttonStateLimIn = 0;     // variable for reading the pushbutton status
+int buttonStateIntake = 0;    // variable for reading the pushbutton status
 
+/* const int Trig_pin = 7;    // pin for triggering pulse
+const int Echo_pin = 8;       // pin for recieving echo
+long duration; */
 
 void setup() {
   Serial.begin(115200);
@@ -26,7 +29,7 @@ void setup() {
   LED_COLOR_RX[2] = LED_COUNT;
   LED_COLOR_RX[3] = LED_COUNT >> 8;
   LED_COLOR_RX[4] = 0x00;
-  LED_COLOR_RX[5] = 0xFF;
+  LED_COLOR_RX[5] = 0x00;
   LED_COLOR_RX[6] = 0x00;
 
   strip.begin();
@@ -34,20 +37,13 @@ void setup() {
   pinMode(buttonPinLimUp, INPUT_PULLUP);
   pinMode(buttonPinLimDwn, INPUT_PULLUP);
   pinMode(buttonPinLimIn, INPUT_PULLUP);
-  pinMode(buttonPinLimOut, INPUT_PULLUP);
+  pinMode(buttonPinIntake, INPUT_PULLUP);
 
-  pinMode(4,OUTPUT);
+/*  pinMode(4,OUTPUT);
   pinMode(5,OUTPUT);
   pinMode(6,OUTPUT);
   pinMode(7,OUTPUT);
-
-  //setLedColors(0, 10, 0x00, 0x00, 0xFF);
-  //setLedColor(11, 0xFF, 0xA5, 0x00);
-  //setLedColor(12, 0xFF, 0xFF, 0x00);
-  //setLedColor(13, 0x00, 0xFF, 0x00);
-  //setLedColor(14, 0xFF, 0x00, 0xFF);
-  //setLedColors(15, 32, 0x00, 0x00, 0xFF);
-  
+*/
 
 }
 
@@ -60,7 +56,7 @@ void loop() {
     receiveSignal();
     digitalWrite(LED_BUILTIN, LOW);
   }
-  switchStatusUpdate();
+switchStatusUpdate();
 }
 
 void setLedColor(uint16_t i, uint8_t r, uint8_t g, uint8_t b) {
@@ -82,6 +78,36 @@ void receiveSignal() {
 }
 
 void switchStatusUpdate() {
+  // limit switch code
+ setLedColors(0, 10, 0xFF, 0xFF, 0xFF);
+ setLedColors(15, 32, 0xFF, 0xFF, 0xFF);
+ buttonStateLimUp = digitalRead(buttonPinLimUp);
+  if (buttonStateLimUp == HIGH) {
+    setLedColor(11, 0x00, 0xFF, 0x00);
+  } else {
+    setLedColor(11, 0xFF, 0x00, 0x00);
+  }
+ buttonStateLimDwn = digitalRead(buttonPinLimDwn);
+  if (buttonStateLimDwn == HIGH) {
+    setLedColor(12, 0x00, 0xFF, 0x00);
+  } else {
+    setLedColor(12, 0xFF, 0x00, 0x00);
+  }
+buttonStateLimIn = digitalRead(buttonPinLimIn);
+  if (buttonStateLimIn == HIGH) {
+    setLedColor(13, 0x00, 0xFF, 0x00);
+  } else {
+    setLedColor(13, 0xFF, 0x00, 0x00);
+  }
+buttonStateIntake = digitalRead(buttonPinIntake);
+  if (buttonStateIntake == HIGH) {
+    setLedColor(14, 0x00, 0xFF, 0x00);
+  } else {
+    setLedColor(14, 0xFF, 0x00, 0x00);
+  }
+}
+
+/* void switchStatusUpdate() {
   //limit switch code
  buttonStateLimUp = digitalRead(buttonPinLimUp);
   // put your main code here, to run repeatedly:
@@ -111,4 +137,5 @@ buttonStateLimOut = digitalRead(buttonPinLimOut);
   } else {
     digitalWrite(7, LOW);
   }
-}
+} */
+
