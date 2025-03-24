@@ -1,7 +1,7 @@
 #include<Adafruit_NeoPixel.h>
 
 #define LED_COUNT 32
-#define LED_PIN 3
+#define LED_PIN 4
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 byte LED_COLOR_RX[7];
 
@@ -25,70 +25,90 @@ void setup() {
   LED_COLOR_RX[1] = 0x00;
   LED_COLOR_RX[2] = LED_COUNT;
   LED_COLOR_RX[3] = LED_COUNT >> 8;
-  LED_COLOR_RX[4] = 0xFF;
-  LED_COLOR_RX[5] = 0x00;
+  LED_COLOR_RX[4] = 0x00;
+  LED_COLOR_RX[5] = 0xFF;
   LED_COLOR_RX[6] = 0x00;
 
   strip.begin();
-  updateStripColor();
 //sets up pins as inputs or ouputs
-  pinMode(buttonPinLimUp, INPUT);
-  pinMode(buttonPinLimDwn, INPUT);
-  pinMode(buttonPinLimIn, INPUT);
-  pinMode(buttonPinLimOut, INPUT);
+  pinMode(buttonPinLimUp, INPUT_PULLUP);
+  pinMode(buttonPinLimDwn, INPUT_PULLUP);
+  pinMode(buttonPinLimIn, INPUT_PULLUP);
+  pinMode(buttonPinLimOut, INPUT_PULLUP);
 
   pinMode(4,OUTPUT);
   pinMode(5,OUTPUT);
   pinMode(6,OUTPUT);
   pinMode(7,OUTPUT);
 
+  //setLedColors(0, 10, 0x00, 0x00, 0xFF);
+  //setLedColor(11, 0xFF, 0xA5, 0x00);
+  //setLedColor(12, 0xFF, 0xFF, 0x00);
+  //setLedColor(13, 0x00, 0xFF, 0x00);
+  //setLedColor(14, 0xFF, 0x00, 0xFF);
+  //setLedColors(15, 32, 0x00, 0x00, 0xFF);
+  
+
 }
 
 void loop() {
+  return;
   if (Serial.available()) {
     digitalWrite(LED_BUILTIN, HIGH);
     Serial.readBytes(LED_COLOR_RX, 7);
     Serial.flush();
-    updateStripColor();
+    receiveSignal();
     digitalWrite(LED_BUILTIN, LOW);
-  } 
+  }
+  switchStatusUpdate();
 }
 
-void updateStripColor() {
-  uint16_t start = (uint16_t)LED_COLOR_RX[1] << 8 | (uint16_t)LED_COLOR_RX[0];
-  uint16_t end = (uint16_t)LED_COLOR_RX[3] << 8 | (uint16_t)LED_COLOR_RX[2];
+void setLedColor(uint16_t i, uint8_t r, uint8_t g, uint8_t b) {
+  strip.setPixelColor(i, g, r, b);
+}
+
+void setLedColors(uint16_t start, uint16_t end, uint8_t r, uint8_t g, uint8_t b) {
   if (start < end) {
     for (uint16_t i = start; i <= end; i++)
-      strip.setPixelColor(i, LED_COLOR_RX[4], LED_COLOR_RX[5], LED_COLOR_RX[6]);
+      setLedColor(i, r, g, b);
     strip.show();
   }
+}
+
+void receiveSignal() {
+  uint16_t start = (uint16_t)LED_COLOR_RX[1] << 8 | (uint16_t)LED_COLOR_RX[0];
+  uint16_t end = (uint16_t)LED_COLOR_RX[3] << 8 | (uint16_t)LED_COLOR_RX[2];
+  setLedColors(start, end, LED_COLOR_RX[4], LED_COLOR_RX[5], LED_COLOR_RX[6]);
+}
+
+void switchStatusUpdate() {
   //limit switch code
  buttonStateLimUp = digitalRead(buttonPinLimUp);
   // put your main code here, to run repeatedly:
   if (buttonStateLimUp == HIGH) {
     digitalWrite(4, HIGH);
-  } else{
+  } else {
     digitalWrite(4, LOW);
   }
  buttonStateLimDwn = digitalRead(buttonPinLimDwn);
   // put your main code here, to run repeatedly:
   if (buttonStateLimDwn == HIGH) {
     digitalWrite(5, HIGH);
-  } else{
+  } else {
     digitalWrite(5, LOW);
   }
 buttonStateLimIn = digitalRead(buttonPinLimIn);
   // put your main code here, to run repeatedly:
   if (buttonStateLimIn == HIGH) {
     digitalWrite(6, HIGH);
-  } else{
+  } else {
     digitalWrite(6, LOW);
   }
 buttonStateLimOut = digitalRead(buttonPinLimOut);
   // put your main code here, to run repeatedly:
   if (buttonStateLimOut == HIGH) {
     digitalWrite(7, HIGH);
-  } else{
+  } else {
     digitalWrite(7, LOW);
   }
 }
