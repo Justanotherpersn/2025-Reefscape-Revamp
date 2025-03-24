@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.6899687431439288,
-        "y": 6.71959324301368
+        "x": 5.4125201823415185,
+        "y": 5.353968927147653
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.542925818725168,
-        "y": 6.921777264089478
+        "x": 5.2875201823415185,
+        "y": 5.137462576201543
       },
       "isLocked": false,
-      "linkedName": "Coral Lineup Start Left"
+      "linkedName": "5L Lineup Start"
     },
     {
       "anchor": {
-        "x": 1.3740743885869566,
-        "y": 7.147209689439921
+        "x": 5.236622292601444,
+        "y": 5.0456535249066246
       },
       "prevControl": {
-        "x": 1.5302481504755625,
-        "y": 6.951992487079163
+        "x": 5.361622292601444,
+        "y": 5.262159875852734
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "5L Lineup End"
     }
   ],
   "rotationTargets": [],
@@ -41,14 +41,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 126.0
+    "velocity": 0.0,
+    "rotation": 59.99999999999999
   },
   "reversed": false,
   "folder": "Lineup Paths",
   "idealStartingState": {
-    "velocity": 0.01,
-    "rotation": 126.0
+    "velocity": 0,
+    "rotation": 59.99999999999999
   },
   "useDefaultConstraints": true
 }

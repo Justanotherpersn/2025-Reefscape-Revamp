@@ -232,18 +232,18 @@ public class Constants {
         public static final double SECONDARY_DESTINATION_TOLERANCE = 0.005;
 
         public static final String[] REEF_LOCATIONS = {
-            "1-L Lineup",
-            "1-R Lineup",
-            "2-L Lineup",
-            "2-R Lineup",
-            "3-L Lineup",
-            "3-R Lineup",
-            "4-L Lineup",
-            "4-R Lineup",
-            "5-L Lineup",
-            "5-R Lineup",
-            "6-L Lineup",
-            "6-R Lineup",
+            "1L Lineup",
+            "1R Lineup",
+            "2L Lineup",
+            "2R Lineup",
+            "3L Lineup",
+            "3R Lineup",
+            "4L Lineup",
+            "4R Lineup",
+            "5L Lineup",
+            "5R Lineup",
+            "6L Lineup",
+            "6R Lineup",
         };
         public static final String CORAL_STATIONS[] = {
             "Lineup Left Station",

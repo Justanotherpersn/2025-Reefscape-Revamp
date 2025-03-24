@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.6899687431439288,
-        "y": 6.71959324301368
+        "x": 6.254165514273194,
+        "y": 4.214005994683285
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.542925818725168,
-        "y": 6.921777264089478
+        "x": 6.004165514273193,
+        "y": 4.214005994683285
       },
       "isLocked": false,
-      "linkedName": "Coral Lineup Start Left"
+      "linkedName": "4R Lineup Start"
     },
     {
       "anchor": {
-        "x": 1.3740743885869566,
-        "y": 7.147209689439921
+        "x": 5.752164795239724,
+        "y": 4.214005994683285
       },
       "prevControl": {
-        "x": 1.5302481504755625,
-        "y": 6.951992487079163
+        "x": 6.002164795239724,
+        "y": 4.214005994683285
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "4R Lineup End"
     }
   ],
   "rotationTargets": [],
@@ -41,14 +41,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 126.0
+    "velocity": 0.0,
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "Lineup Paths",
   "idealStartingState": {
-    "velocity": 0.01,
-    "rotation": 126.0
+    "velocity": 0,
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

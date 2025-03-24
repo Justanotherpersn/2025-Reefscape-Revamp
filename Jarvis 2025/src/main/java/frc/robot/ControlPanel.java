@@ -34,8 +34,7 @@ import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.Elevator;
 import frc.robot.Subsystems.EndEffector;
 import frc.robot.Subsystems.Pivot;
-//-195 degrees algae discoring L3
-//-225
+
 public class ControlPanel {
     private static final Joystick controller = new Joystick(0);
     private static final Joystick controller2 = new Joystick(1);
