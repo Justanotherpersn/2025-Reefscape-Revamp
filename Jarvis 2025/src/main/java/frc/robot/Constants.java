@@ -57,7 +57,6 @@ public class Constants {
     }
 
     public static class DrivetrainConstants {
-        public static final double WHEEL_BASE_X = Units.inchesToMeters(0);
         public static final double WHEEL_BASE = Units.inchesToMeters(22.5);
         public static final double MAX_DRIVE_SPEED = 1;
         public static final double MAX_ANGULAR_SPEED = 3;
@@ -174,7 +173,7 @@ public class Constants {
             ),
             new Transform3d(
                 new Translation3d(-0.32940625, 0.314325, 0.11350625), 
-                new Rotation3d(0, CAMS_PITCH, Math.toRadians(173))
+                new Rotation3d(0, CAMS_PITCH, Math.toRadians(176))
             ),
             new Transform3d(
                 new Translation3d(-0.32940625, -0.314325, 0.11350625), 
