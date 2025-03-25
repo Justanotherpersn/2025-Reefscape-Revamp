@@ -93,7 +93,7 @@ public class ControlPanel {
         for (int i = 0; i < 16; i++) {
             new JoystickButton(controller2, i + 1).onTrue(
                 (i < 4 ? ReefCycle.setHeight(i) : ReefCycle.setPosition(i - 4))
-                    .andThen(() -> ReefCycle.updateReefDisplay())
+                .andThen(new InstantCommand(() -> ReefCycle.updateReefDisplay()))
             );
         }
 
@@ -117,6 +117,16 @@ public class ControlPanel {
         });
     }
 
+    public static void pullReefInput() {
+        for (int i = 0; i < 16; i++) {
+            if (controller2.getRawButton(i + 1)) {
+                if (i < 4) ReefCycle.targetHeight = i;
+                ReefCycle.targetPosition = i - 4;
+            }
+        }
+        ReefCycle.updateReefDisplay();
+    }
+
     public static void setClimbMode(boolean state) {
         if (climbMode == state) return;
         climbMode = state;
@@ -124,7 +134,7 @@ public class ControlPanel {
     }
 
     public static class ReefCycle {
-        public static int targetHeight = 3;
+        public static int targetHeight = 0;
         public static int targetPosition = 0;
         private static boolean depositing = true;
         private static boolean mutatePath, pathEnd;

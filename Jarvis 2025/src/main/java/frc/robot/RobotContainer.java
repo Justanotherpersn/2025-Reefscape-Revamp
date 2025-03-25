@@ -80,6 +80,7 @@ public class RobotContainer {
 
   public void onTeleopEnabled() {
     isBlue = DriverStation.getAlliance().get().equals(Alliance.Blue);
+    ControlPanel.pullReefInput();
       // Notifications.GENERAL.send("Starting test sequence").andThen(new RepeatCommand(new SequentialCommandGroup(
       //   new WaitCommand(1),
       //   UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector)
