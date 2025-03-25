@@ -91,14 +91,16 @@ public class Pivot extends SubsystemBase {
       new WaitUntilCommand(() -> Math.abs(getAngle().minus(angle).getRadians()) < Constants.PivotConstants.POSITION_TOLERANCE.getRadians()),
       new InstantCommand(() -> {
         setAngle(angle);
-        Elastic.selectTab(angle.getDegrees() == Constants.PivotConstants.TRAVEL_POSITION.getDegrees() ? "Teleoperated" : "End Effector View");
+        Elastic.selectTab(
+            angle.getDegrees() == Constants.PivotConstants.TRAVEL_POSITION.getDegrees() ? "Teleoperated" 
+          : (angle.getDegrees() > 0 ? "EE View Up" : "EE View Down"));
       })
     );
   }
 
   public Command climbModeCommand() {
     return new InstantCommand(() -> {
-      Elastic.selectTab("End Effector View");
+      Elastic.selectTab("ËE View Down");
       setAngle(Constants.PivotConstants.CLIMB_POSITION);
     }).andThen(new WaitUntilCommand(() -> false));
   }
