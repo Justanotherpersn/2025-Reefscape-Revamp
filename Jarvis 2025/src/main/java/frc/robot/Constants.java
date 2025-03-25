@@ -20,7 +20,7 @@ import frc.robot.Util.Gains;
 
 /** Add your docs here. */
 public class Constants {
-    public static boolean allowTabSwitching = false;
+    public static boolean allowTabSwitching = true;
     public static int LED_LENGTH = 32;
 
     public enum CAN_DEVICES {
@@ -115,13 +115,13 @@ public class Constants {
         public static final double LINEAR_SPEED = 0.24;
 
         public static final double[] PRESET_HEIGHTS = {
-            1,
-            1.25,
-            1.1,
+            0.95,
+            1.20,
+            1.05,
             TOP_LIMIT_POSITION
         };
 
-        public static final double CORAL_INTAKE_HEIGHT = 1.14;
+        public static final double CORAL_INTAKE_HEIGHT = 1.13;
     }
 
     public static class PivotConstants {
@@ -135,7 +135,7 @@ public class Constants {
             Rotation2d.fromDegrees(131),
             Rotation2d.fromDegrees(131),
         };
-        public static final Rotation2d CORAL_INTAKE_ANGLE = Rotation2d.fromDegrees(-46);
+        public static final Rotation2d CORAL_INTAKE_ANGLE = Rotation2d.fromDegrees(-48);
         public static final Rotation2d ANGULAR_SPEED = Rotation2d.fromDegrees(45);
         public static final Rotation2d TRAVEL_POSITION = Rotation2d.fromDegrees(-90);
         public static final Rotation2d CLIMB_POSITION = Rotation2d.fromDegrees(-110);
@@ -221,7 +221,7 @@ public class Constants {
 
     public static class NavigationConstants {
         public static final PathConstraints PATHING_CONSTRAINTS = new PathConstraints(
-            DrivetrainConstants.MAX_DRIVE_SPEED,
+            DrivetrainConstants.MAX_DRIVE_SPEED * 3/5,
             5,
             Math.toRadians(540),
             Math.toRadians(720),
