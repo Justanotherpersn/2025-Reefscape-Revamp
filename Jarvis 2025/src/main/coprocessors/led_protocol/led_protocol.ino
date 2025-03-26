@@ -15,10 +15,6 @@ int buttonStateLimDwn = 0;    // variable for reading the pushbutton status
 int buttonStateLimIn = 0;     // variable for reading the pushbutton status
 int buttonStateIntake = 0;    // variable for reading the pushbutton status
 
-/* const int Trig_pin = 7;    // pin for triggering pulse
-const int Echo_pin = 8;       // pin for recieving echo
-long duration; */
-
 void setup() {
   Serial.begin(115200);
   pinMode(LED_BUILTIN, OUTPUT);
@@ -39,16 +35,16 @@ void setup() {
   pinMode(buttonPinLimIn, INPUT_PULLUP);
   pinMode(buttonPinIntake, INPUT_PULLUP);
 
-/*  pinMode(4,OUTPUT);
+}
+
+/*
+  pinMode(4,OUTPUT);
   pinMode(5,OUTPUT);
   pinMode(6,OUTPUT);
   pinMode(7,OUTPUT);
 */
 
-}
-
 void loop() {
-  return;
   if (Serial.available()) {
     digitalWrite(LED_BUILTIN, HIGH);
     Serial.readBytes(LED_COLOR_RX, 7);
@@ -89,15 +85,15 @@ void switchStatusUpdate() {
   }
  buttonStateLimDwn = digitalRead(buttonPinLimDwn);
   if (buttonStateLimDwn == HIGH) {
-    setLedColor(12, 0x00, 0xFF, 0x00);
-  } else {
     setLedColor(12, 0xFF, 0x00, 0x00);
+  } else {
+    setLedColor(12, 0x00, 0xFF, 0x00);
   }
 buttonStateLimIn = digitalRead(buttonPinLimIn);
   if (buttonStateLimIn == HIGH) {
-    setLedColor(13, 0x00, 0xFF, 0x00);
-  } else {
     setLedColor(13, 0xFF, 0x00, 0x00);
+  } else {
+    setLedColor(13, 0x00, 0xFF, 0x00);
   }
 buttonStateIntake = digitalRead(buttonPinIntake);
   if (buttonStateIntake == HIGH) {
@@ -107,7 +103,8 @@ buttonStateIntake = digitalRead(buttonPinIntake);
   }
 }
 
-/* void switchStatusUpdate() {
+/*
+void switchStatusUpdate() {
   //limit switch code
  buttonStateLimUp = digitalRead(buttonPinLimUp);
   // put your main code here, to run repeatedly:
@@ -137,5 +134,5 @@ buttonStateLimOut = digitalRead(buttonPinLimOut);
   } else {
     digitalWrite(7, LOW);
   }
-} */
-
+}
+*/

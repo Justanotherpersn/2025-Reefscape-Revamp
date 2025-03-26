@@ -35,7 +35,6 @@ void setup() {
 
   Serial.begin(9600);
   Joystick.begin();
-  delay(5000);
   inputChanged();
 }
 
