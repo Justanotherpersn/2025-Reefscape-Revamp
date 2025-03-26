@@ -28,15 +28,13 @@ public class Climber extends SubsystemBase {
   private final SparkMax climber;
   private final SparkMaxConfig climberConfig;
   private final SparkClosedLoopController climberController;
-  private final DigitalInput negativeLimit = new DigitalInput(6);
-  private final DigitalInput positiveLimit = new DigitalInput(7);
+  private final DigitalInput innerLimit = new DigitalInput(7);
 
-  private boolean previousPositiveLimit, previousNegativeLimit;
+  private boolean previousLimit = false;
 
   private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Climber");
   private final GenericEntry targetPositionEntry = nTable.getTopic("Target").getGenericEntry();
-  private final GenericEntry positiveSwitchEntry = nTable.getTopic("Positive Switch").getGenericEntry();
-  private final GenericEntry negativeSwitchEntry = nTable.getTopic("Negative Switch").getGenericEntry();
+  private final GenericEntry innerSwitchEntry = nTable.getTopic("Switch").getGenericEntry();
   private final GenericEntry encoderEntry = nTable.getTopic("Encoder").getGenericEntry();
 
   public Climber() {
@@ -60,8 +58,7 @@ public class Climber extends SubsystemBase {
     climber.getEncoder().setPosition(Constants.ClimberConstants.MAX_ROTATION.getRotations());
       
     targetPositionEntry.setDouble(climber.getEncoder().getPosition());
-    positiveSwitchEntry.setBoolean(false);
-    negativeSwitchEntry.setBoolean(false);
+    innerSwitchEntry.setBoolean(false);
     encoderEntry.setDouble(0);
       
     SmartDashboard.putData("Climber/Go To Target", new InstantCommand(() -> setPosition(Rotation2d.fromDegrees(targetPositionEntry.getDouble(Constants.ClimberConstants.MAX_ROTATION.getDegrees())))));
@@ -85,13 +82,10 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (!positiveLimit.get() && !previousPositiveLimit) climber.getEncoder().setPosition(Constants.ClimberConstants.MAX_ROTATION.getRotations());
-    if (!negativeLimit.get() && !previousNegativeLimit) climber.getEncoder().setPosition(Constants.ClimberConstants.MIN_ROTATION.getRotations());
-    previousPositiveLimit = !positiveLimit.get();
-    previousNegativeLimit = !negativeLimit.get();
+    if (!innerLimit.get() && !previousLimit) climber.getEncoder().setPosition(Constants.ClimberConstants.MAX_ROTATION.getRotations());
+    previousLimit = !innerLimit.get();
 
-    positiveSwitchEntry.setBoolean(previousPositiveLimit);
-    negativeSwitchEntry.setBoolean(previousNegativeLimit);
+    innerSwitchEntry.setBoolean(previousLimit);
     encoderEntry.setDouble(360 * climber.getEncoder().getPosition());
 
     if (climber.getEncoder().getPosition() * 360 < 125) {

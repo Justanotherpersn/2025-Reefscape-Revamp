@@ -163,12 +163,12 @@ public class Constants {
 
         public static final Transform3d[] ROBOT_TO_CAMERAS = {
             new Transform3d(
-                new Translation3d(0.32940625, 0.314325, 0.11350625), 
-                new Rotation3d(0, CAMS_PITCH, Math.toRadians(2))
+                new Translation3d(0.351, 0.279, 0.242), 
+                new Rotation3d(0.037, -0.639, 0.071)
             ),
             new Transform3d(
-                new Translation3d(0.32940625, -0.314325, 0.11350625), 
-                new Rotation3d(0, CAMS_PITCH, Math.toRadians(-5))
+                new Translation3d(0.378, -0.351, 0.187), 
+                new Rotation3d(-0.015, -0.472, -0.051)
             ),
             new Transform3d(
                 new Translation3d(-0.335, 0.350, 0.223), 
@@ -191,11 +191,11 @@ public class Constants {
 
         public static final Pose3d ROBOT_TO_CALIBRATION = new Pose3d(
             new Translation3d(
-                Units.inchesToMeters(-44.75), 
-                Units.inchesToMeters(0.05),
+                Units.inchesToMeters(44.75), 
+                Units.inchesToMeters(-0.05),
                 Units.inchesToMeters(35.875)
             ),
-            new Rotation3d(0, 0, 0)
+            new Rotation3d(0, 0, Math.PI)
         );
     }
 
