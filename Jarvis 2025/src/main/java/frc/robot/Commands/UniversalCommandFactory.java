@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -45,8 +46,11 @@ public class UniversalCommandFactory {
                         )
                     )
                 ),
-                new WaitUntilCommand(() -> false)
-                //new DeferredCommand(() -> endEffector.moveCoralCommand(ControlPanel.ReefCycle.getTravelState()), Set.of(endEffector))
+                new ProxyCommand(() -> 
+                    ControlPanel.ReefCycle.getTravelState() ? 
+                        new WaitUntilCommand(() -> false) :
+                        endEffector.moveCoralCommand(true)
+                )
             )
         );
     }

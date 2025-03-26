@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import java.util.Set;
@@ -81,10 +77,6 @@ public class RobotContainer {
   public void onTeleopEnabled() {
     isBlue = DriverStation.getAlliance().get().equals(Alliance.Blue);
     ControlPanel.pullReefInput();
-      // Notifications.GENERAL.send("Starting test sequence").andThen(new RepeatCommand(new SequentialCommandGroup(
-      //   new WaitCommand(1),
-      //   UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector)
-      // ))).schedule();
   }
 
   private void configureAuto() {
@@ -94,10 +86,7 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return new SequentialCommandGroup(
-      new ParallelCommandGroup(
-        drivetrain.homeCommand()
-        //elevator.homeCommand()
-      ),
+      drivetrain.homeCommand(),
       AutoBuilder.buildAuto(autoChooser.getSelected().getName())
     );
   }

@@ -64,7 +64,7 @@ public class Drivetrain extends SubsystemBase {
 
   public static Field2d field = new Field2d();
 
-  public boolean alignMode = false;
+  public static boolean alignMode = false;
 
   public Drivetrain() {
     poseEstimator = new SwerveDrivePoseEstimator(

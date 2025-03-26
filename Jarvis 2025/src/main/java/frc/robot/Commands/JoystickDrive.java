@@ -28,7 +28,7 @@ public class JoystickDrive extends Command {
     xInputRight = Math.abs(xInputRight) * xInputRight;
     yInputRight = Math.abs(yInputRight) * yInputRight;
 
-    double multiplier = (drivetrain.alignMode ? Constants.DrivetrainConstants.ALIGN_CONTROL_MULTIPLIER : 1) * Constants.DrivetrainConstants.MAX_DRIVE_SPEED * (RobotContainer.isBlue() ? 1 : -1);
+    double multiplier = (Drivetrain.alignMode ? Constants.DrivetrainConstants.ALIGN_CONTROL_MULTIPLIER : 1) * Constants.DrivetrainConstants.MAX_DRIVE_SPEED * (RobotContainer.isBlue() ? 1 : -1);
     double xSpeed = yInputRight * multiplier;
     double ySpeed = xInputRight * multiplier;
 

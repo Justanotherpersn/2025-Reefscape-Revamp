@@ -48,7 +48,7 @@ public enum Notifications {
         return new InstantCommand(() -> sendImmediate(formatting));
     }
 
-    /**Send the notification represented by this enum object to the Elastic dashboard
+    /**Send the notification represented by this enum object to the Elastic dashboard.
      * To send a notification using a command, use send()
      * @param formatting The formatting to apply to the string using String.format()
      */

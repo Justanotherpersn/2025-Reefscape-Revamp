@@ -12,6 +12,8 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
@@ -69,8 +71,21 @@ public class ChassisVisionLocalizer extends SubsystemBase {
     public List<PoseEntry> getRobotPoses() {
       List<PoseEntry> poses = new ArrayList<PoseEntry>();
       cam.getAllUnreadResults().forEach(r -> {
-        if (r.hasTargets() && !shouldReject(r.getBestTarget()))
+        if (r.hasTargets() && !shouldReject(r.getBestTarget())) {
           poses.add(new PoseEntry(poseEstimator.update(r).get().estimatedPose.toPose2d(), r.getTimestampSeconds()));
+
+          if (calibrationEntry.getDouble(-1) == index) {
+            Transform3d targetToCam = r.getBestTarget().getBestCameraToTarget().inverse();
+            Pose3d robotToCam = Constants.PhotonConstants.ROBOT_TO_CALIBRATION.transformBy(targetToCam);
+            calibrationXEntry.setDouble(robotToCam.getX());
+            calibrationYEntry.setDouble(robotToCam.getY());
+            calibrationZEntry.setDouble(robotToCam.getZ());
+            calibrationRollEntry.setDouble(robotToCam.getRotation().getX());
+            calibrationPitchEntry.setDouble(robotToCam.getRotation().getY());
+            calibrationYawEntry.setDouble(robotToCam.getRotation().getZ());
+            calibrationAmbiguity.setDouble(r.getBestTarget().getPoseAmbiguity());
+          }
+        }
       });
 
       trustEntry.setBoolean(poses.size() > 0);
@@ -88,6 +103,14 @@ public class ChassisVisionLocalizer extends SubsystemBase {
   private final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Drivetrain/Vision");
 
   private final GenericEntry enabledEntry = nTable.getTopic("Enabled").getGenericEntry();
+  private final GenericEntry calibrationEntry = nTable.getTopic("Calibration Index").getGenericEntry();
+  private final GenericEntry calibrationXEntry = nTable.getTopic("Cal Translation X").getGenericEntry();
+  private final GenericEntry calibrationYEntry = nTable.getTopic("Cal Translation Y").getGenericEntry();
+  private final GenericEntry calibrationZEntry = nTable.getTopic("Cal Translation Z").getGenericEntry();
+  private final GenericEntry calibrationRollEntry = nTable.getTopic("Cal Roll").getGenericEntry();
+  private final GenericEntry calibrationPitchEntry = nTable.getTopic("Cal Pitch").getGenericEntry();
+  private final GenericEntry calibrationYawEntry = nTable.getTopic("Cal Yaw").getGenericEntry();
+  private final GenericEntry calibrationAmbiguity = nTable.getTopic("Cal Ambiguity").getGenericEntry();
 
   private NavCam[] navCams = {
     new NavCam(0),
@@ -100,6 +123,15 @@ public class ChassisVisionLocalizer extends SubsystemBase {
     PortForwarder.add(5800, "navCams01.local", 5800);
     PortForwarder.add(5800, "navCams23.local", 5800);
     enabledEntry.setBoolean(enabled);
+
+    calibrationEntry.setDouble(-1);
+    calibrationXEntry.setDouble(0);
+    calibrationYEntry.setDouble(0);
+    calibrationZEntry.setDouble(0);
+    calibrationRollEntry.setDouble(0);
+    calibrationPitchEntry.setDouble(0);
+    calibrationYawEntry.setDouble(0);
+    calibrationAmbiguity.setDouble(0);
   }
 
   @Override
