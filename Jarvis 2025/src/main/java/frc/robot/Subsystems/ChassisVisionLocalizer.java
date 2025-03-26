@@ -9,6 +9,8 @@ import java.util.List;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.GenericEntry;
@@ -57,10 +59,17 @@ public class ChassisVisionLocalizer extends SubsystemBase {
       SmartDashboard.putData("Drivetrain/Vision/" + getName(), field);
     }
 
+    private boolean shouldReject(PhotonTrackedTarget bestTarget) {
+      return 
+           bestTarget.getPoseAmbiguity() > 0.05
+        || bestTarget.getBestCameraToTarget().getTranslation().getNorm() > 1.5
+      ;
+    }
+
     public List<PoseEntry> getRobotPoses() {
       List<PoseEntry> poses = new ArrayList<PoseEntry>();
       cam.getAllUnreadResults().forEach(r -> {
-        if (r.hasTargets() && r.getBestTarget().getPoseAmbiguity() <= 0.05)
+        if (r.hasTargets() && !shouldReject(r.getBestTarget()))
           poses.add(new PoseEntry(poseEstimator.update(r).get().estimatedPose.toPose2d(), r.getTimestampSeconds()));
       });
 

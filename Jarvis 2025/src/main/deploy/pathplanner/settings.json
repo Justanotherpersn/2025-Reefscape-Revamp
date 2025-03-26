@@ -3,19 +3,19 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
-    "Starting Red",
-    "Starting Blue",
+    "Leave Paths",
     "Lineup Paths",
-    "Leave Paths"
+    "Scoring To Station",
+    "Starting Left",
+    "Starting Right"
   ],
   "autoFolders": [
-    "Blue Autos",
     "Leave Autos",
-    "High Coral Autos",
-    "Red Autos"
+    "Left Autos",
+    "Right Autos"
   ],
   "defaultMaxVel": 1.0,
-  "defaultMaxAccel": 5.0,
+  "defaultMaxAccel": 1.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,

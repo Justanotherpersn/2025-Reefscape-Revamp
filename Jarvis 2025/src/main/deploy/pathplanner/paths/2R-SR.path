@@ -1,0 +1,61 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.023240243063069,
+        "y": 2.8440026811280688
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.6499255730837143,
+        "y": 2.172950931372029
+      },
+      "isLocked": false,
+      "linkedName": "2R Lineup End"
+    },
+    {
+      "anchor": {
+        "x": 1.3763506827514547,
+        "y": 1.4964020358196024
+      },
+      "prevControl": {
+        "x": 1.8086250000000001,
+        "y": 2.070124999999999
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "SR Lineup Start"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Elevator Intake",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 1.0,
+    "maxAcceleration": 1.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 1.0,
+    "rotation": -126.0
+  },
+  "reversed": false,
+  "folder": "Scoring To Station",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -119.99999999999999
+  },
+  "useDefaultConstraints": true
+}

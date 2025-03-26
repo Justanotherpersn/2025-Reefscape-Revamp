@@ -10,7 +10,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Ultrasonic;
@@ -40,27 +39,29 @@ public class RobotContainer {
   private static final LED led = new LED();
   SendableChooser<Command> autoChooser;
 
-  double elevatorHeight;
-  Rotation2d pivotAngle;
+  int targetLevel;
   private static boolean isBlue = false;
 
   public RobotContainer() {
-    NamedCommands.registerCommand("Set Elevator Height L1", new InstantCommand(() -> elevatorHeight = Constants.ElevatorConstants.PRESET_HEIGHTS[0] + Constants.PivotConstants.LENGTH));
-    NamedCommands.registerCommand("Set Elevator Height L2", new InstantCommand(() -> elevatorHeight = Constants.ElevatorConstants.PRESET_HEIGHTS[1] + Constants.PivotConstants.LENGTH));
-    NamedCommands.registerCommand("Set Elevator Height L3", new InstantCommand(() -> elevatorHeight = Constants.ElevatorConstants.PRESET_HEIGHTS[2] - Math.sin(Constants.PivotConstants.END_MOUNT_ANGLE.getRadians()) * Constants.PivotConstants.LENGTH));
-    NamedCommands.registerCommand("Set Elevator Height L4", new InstantCommand(() -> elevatorHeight = Constants.ElevatorConstants.PRESET_HEIGHTS[3]));
+    NamedCommands.registerCommand("Set Target L1", new InstantCommand(() -> targetLevel = 0));
+    NamedCommands.registerCommand("Set Target L2", new InstantCommand(() -> targetLevel = 1));
+    NamedCommands.registerCommand("Set Target L3", new InstantCommand(() -> targetLevel = 2));
+    NamedCommands.registerCommand("Set Target L4", new InstantCommand(() -> targetLevel = 3));
     
-    NamedCommands.registerCommand("Set Pivot L1", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[0]));
-    NamedCommands.registerCommand("Set Pivot L2", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[1]));
-    NamedCommands.registerCommand("Set Pivot L3", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[2]));
-    NamedCommands.registerCommand("Set Pivot L4", new InstantCommand(() -> pivotAngle = Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[3]));
-    
-    new EventTrigger("Elevator Move").onTrue(new DeferredCommand(() -> elevator.moveCommand(elevatorHeight), Set.of(elevator)));
-      new EventTrigger("Elevator Pivot").onTrue(new DeferredCommand(() -> pivot.setAngleCommand(pivotAngle), Set.of(pivot)));
+    new EventTrigger("Move Elevator").onTrue(new DeferredCommand(() -> elevator.moveCommand(Constants.ElevatorConstants.PRESET_HEIGHTS[targetLevel]), Set.of(elevator)));
+    new EventTrigger("Move Pivot").onTrue(new DeferredCommand(() -> pivot.setAngleCommand(Constants.PivotConstants.CORAL_DEPOSIT_ANGLES[targetLevel]), Set.of(pivot)));
+    new EventTrigger("Elevator Travel").onTrue(new ParallelCommandGroup(
+      elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION),
+      pivot.setAngleCommand(Constants.PivotConstants.TRAVEL_POSITION)
+    ));
+    new EventTrigger("Elevator Intake").onTrue(new ParallelCommandGroup(
+      elevator.moveCommand(Constants.ElevatorConstants.CORAL_INTAKE_HEIGHT),
+      pivot.setAngleCommand(Constants.PivotConstants.CORAL_INTAKE_ANGLE)
+    ));
     new EventTrigger("Event Notification").onTrue(Notifications.PATHPLANNER_EVENT.send());
 
-    new EventTrigger("Intake Coral").onTrue(endEffector.moveCoralCommand(true));
-    new EventTrigger("Deposit Coral").onTrue(endEffector.moveCoralCommand(false));
+    NamedCommands.registerCommand("Intake Coral", endEffector.moveCoralCommand(true));
+    NamedCommands.registerCommand("Deposit Coral", endEffector.moveCoralCommand(false));
 
     new PIDDisplay();
     new ChassisVisionLocalizer();
@@ -79,6 +80,7 @@ public class RobotContainer {
 
   public void onTeleopEnabled() {
     isBlue = DriverStation.getAlliance().get().equals(Alliance.Blue);
+    ControlPanel.pullReefInput();
       // Notifications.GENERAL.send("Starting test sequence").andThen(new RepeatCommand(new SequentialCommandGroup(
       //   new WaitCommand(1),
       //   UniversalCommandFactory.reefCycle(drivetrain, elevator, pivot, endEffector)

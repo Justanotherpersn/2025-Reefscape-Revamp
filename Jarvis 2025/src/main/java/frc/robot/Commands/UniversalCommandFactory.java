@@ -26,7 +26,7 @@ public class UniversalCommandFactory {
                     ControlPanel.ReefCycle.mutatingPathCommand(),
                     
                     new SequentialCommandGroup(
-                        new WaitCommand(0.5),
+                        new WaitCommand(0.2),
                         new ParallelCommandGroup(
                             elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION),
                             pivot.setAngleCommand(Constants.PivotConstants.TRAVEL_POSITION)

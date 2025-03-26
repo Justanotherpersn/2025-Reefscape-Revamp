@@ -34,8 +34,7 @@ import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.Elevator;
 import frc.robot.Subsystems.EndEffector;
 import frc.robot.Subsystems.Pivot;
-//-195 degrees algae discoring L3
-//-225
+
 public class ControlPanel {
     private static final Joystick controller = new Joystick(0);
     private static final Joystick controller2 = new Joystick(1);
@@ -94,7 +93,7 @@ public class ControlPanel {
         for (int i = 0; i < 16; i++) {
             new JoystickButton(controller2, i + 1).onTrue(
                 (i < 4 ? ReefCycle.setHeight(i) : ReefCycle.setPosition(i - 4))
-                    .andThen(() -> ReefCycle.updateReefDisplay())
+                .andThen(new InstantCommand(() -> ReefCycle.updateReefDisplay()))
             );
         }
 
@@ -118,6 +117,16 @@ public class ControlPanel {
         });
     }
 
+    public static void pullReefInput() {
+        for (int i = 0; i < 16; i++) {
+            if (controller2.getRawButton(i + 1)) {
+                if (i < 4) ReefCycle.targetHeight = i;
+                ReefCycle.targetPosition = i - 4;
+            }
+        }
+        ReefCycle.updateReefDisplay();
+    }
+
     public static void setClimbMode(boolean state) {
         if (climbMode == state) return;
         climbMode = state;
@@ -125,7 +134,7 @@ public class ControlPanel {
     }
 
     public static class ReefCycle {
-        public static int targetHeight = 3;
+        public static int targetHeight = 0;
         public static int targetPosition = 0;
         private static boolean depositing = true;
         private static boolean mutatePath, pathEnd;
