@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "Elevator Travel",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.2,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -52,7 +52,7 @@
     "rotation": 126.0
   },
   "reversed": false,
-  "folder": "Scoring To Station",
+  "folder": "Reef to Station",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 119.99999999999999

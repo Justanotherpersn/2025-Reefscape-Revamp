@@ -13,13 +13,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "IL-5L"
+            "pathName": "IC-4R"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "5L Lineup"
+            "pathName": "4R Lineup"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "5L-SL"
+            "pathName": "4R-SL"
           }
         },
         {
@@ -45,11 +45,29 @@
           "data": {
             "name": "Intake Coral"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SL-6R"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "6R Lineup"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Deposit Coral"
+          }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Left Autos",
+  "folder": "Center Autos",
   "choreoAuto": false
 }

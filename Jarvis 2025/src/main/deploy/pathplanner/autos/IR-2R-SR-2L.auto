@@ -13,13 +13,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "IR-3R"
+            "pathName": "IR-2R"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3R Lineup"
+            "pathName": "2R Lineup"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "3R-SR"
+            "pathName": "2R-SR"
           }
         },
         {
@@ -44,6 +44,24 @@
           "type": "named",
           "data": {
             "name": "Intake Coral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SR-2L"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2L Lineup"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Deposit Coral"
           }
         }
       ]

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.761,
-        "y": 1.904375
+        "x": 1.332003806254296,
+        "y": 7.201053243558952
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.728125000000001,
-        "y": 1.7191249999999996
+        "x": 1.896375,
+        "y": 6.47225
       },
       "isLocked": false,
-      "linkedName": "IR"
+      "linkedName": "SL Lineup End"
     },
     {
       "anchor": {
-        "x": 3.810414276406864,
-        "y": 2.4880304237315705
+        "x": 3.4953403733813486,
+        "y": 5.36184271257101
       },
       "prevControl": {
-        "x": 3.466125,
-        "y": 1.904375
+        "x": 3.0433229756687195,
+        "y": 6.092854675989507
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "2R Lineup Start"
+      "linkedName": "6R Lineup Start"
     }
   ],
   "rotationTargets": [],
@@ -34,13 +34,13 @@
   "eventMarkers": [
     {
       "name": "Move Pivot",
-      "waypointRelativePos": 0.4428904428904428,
+      "waypointRelativePos": 0.5133093525179865,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "Move Elevator",
-      "waypointRelativePos": 0.6550116550116548,
+      "waypointRelativePos": 0.5931654676259002,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -55,13 +55,13 @@
   },
   "goalEndState": {
     "velocity": 1.0,
-    "rotation": -119.99999999999999
+    "rotation": 119.99999999999999
   },
   "reversed": false,
-  "folder": "Init Right",
+  "folder": "Station to Reef",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 126.0
   },
   "useDefaultConstraints": true
 }

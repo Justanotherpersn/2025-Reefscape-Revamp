@@ -5,10 +5,11 @@
   "pathFolders": [
     "Leave Paths",
     "Lineup Paths",
-    "Starting Center",
-    "Scoring To Station",
-    "Starting Left",
-    "Starting Right"
+    "Station to Reef",
+    "Reef to Station",
+    "Init Center",
+    "Init Left",
+    "Init Right"
   ],
   "autoFolders": [
     "Leave Autos",

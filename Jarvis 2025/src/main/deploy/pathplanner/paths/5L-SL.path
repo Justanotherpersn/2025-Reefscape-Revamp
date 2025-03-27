@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.679375,
-        "y": 5.75075
+        "x": 5.796375,
+        "y": 5.940875
       },
       "isLocked": false,
       "linkedName": "5L Lineup End"
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "Elevator Intake",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.2,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -52,7 +52,7 @@
     "rotation": 126.0
   },
   "reversed": false,
-  "folder": "Scoring To Station",
+  "folder": "Reef to Station",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 59.99999999999999

@@ -45,6 +45,24 @@
           "data": {
             "name": "Intake Coral"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SL-6R"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "6R Lineup"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Deposit Coral"
+          }
         }
       ]
     }

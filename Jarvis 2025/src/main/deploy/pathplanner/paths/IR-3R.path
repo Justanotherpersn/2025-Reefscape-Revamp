@@ -12,7 +12,7 @@
         "y": 1.499527814476325
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "IR"
     },
     {
       "anchor": {
@@ -58,10 +58,10 @@
     "rotation": -59.99999999999999
   },
   "reversed": false,
-  "folder": "Starting Right",
+  "folder": "Init Right",
   "idealStartingState": {
     "velocity": 0.0,
-    "rotation": 0.0
+    "rotation": -90.0
   },
   "useDefaultConstraints": true
 }
