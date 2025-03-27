@@ -49,7 +49,7 @@ public final class Elastic {
    * @param tabName the name of the tab to select
    */
   public static void selectTab(String tabName) {
-    if (Constants.allowTabSwitching)
+    if (!Constants.DEBUG.PREVENT_TAB_SWITCHING)
       selectedTabPublisher.set(tabName);
   }
 

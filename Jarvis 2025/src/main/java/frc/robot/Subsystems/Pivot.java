@@ -58,7 +58,7 @@ public class Pivot extends SubsystemBase {
 
     pivot.getEncoder().setPosition(-Math.PI / 2);
 
-    targetPositionEntry.setDouble(pivot.getEncoder().getPosition());
+    targetPositionEntry.setDouble(Math.toDegrees(pivot.getEncoder().getPosition()));
     encoderEntry.setDouble(0);
     speedEntry.setDouble(0);
 
@@ -82,11 +82,8 @@ public class Pivot extends SubsystemBase {
     return pivot.getEncoder().getVelocity();
   }
 
-  public double timeToReach(Rotation2d angle) {
-    return Math.abs(getAngle().minus(angle).getRadians()) / Constants.PivotConstants.ANGULAR_SPEED.getRadians();
-  }
-
   public Command setAngleCommand(Rotation2d angle) {
+    System.out.println("set angle");
     return new ParallelDeadlineGroup(
       new WaitUntilCommand(() -> Math.abs(getAngle().minus(angle).getRadians()) < Constants.PivotConstants.POSITION_TOLERANCE.getRadians()),
       new InstantCommand(() -> {

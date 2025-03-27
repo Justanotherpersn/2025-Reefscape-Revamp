@@ -20,6 +20,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.FlippingUtil;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.MatBuilder;
@@ -50,6 +51,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.Commands.Notifications;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Util.PIDDisplay;
@@ -73,7 +75,11 @@ public class Drivetrain extends SubsystemBase {
       MODULES.collectProperty(SwerveModule::getPosition, SwerveModulePosition.class),
       new Pose2d(0,0, new Rotation2d()),
       MatBuilder.fill(Nat.N3(), Nat.N1(),0.05,0.05,0.05), //Standard deviations for state estimate, (m,m,rad). Increase to trust less
-      MatBuilder.fill(Nat.N3(), Nat.N1(),0.9,0.9,0.9) //Standard deviations for vision estimate, (m,m,rad). Increase to trust less
+      MatBuilder.fill(Nat.N3(), Nat.N1(), 
+        Constants.PhotonConstants.STANDARD_DEVIATION,
+        Constants.PhotonConstants.STANDARD_DEVIATION,
+        Constants.PhotonConstants.STANDARD_DEVIATION
+      )
     );
 
     RobotConfig config;
@@ -135,7 +141,10 @@ public class Drivetrain extends SubsystemBase {
     });
 
     PathPlannerLogging.setLogActivePathCallback(poses -> field.getObject("path").setPoses(poses));
-    PathPlannerLogging.setLogTargetPoseCallback(pose -> field.getObject("target pose").setPose(pose));
+    PathPlannerLogging.setLogTargetPoseCallback(pose -> {
+      field.getObject("target pose").setPose(pose);
+      if (Constants.DEBUG.FORCE_UPDATE_POSE) setPose(pose);
+    });
   }
 
   enum MODULES {
@@ -241,9 +250,10 @@ public class Drivetrain extends SubsystemBase {
     poseEstimator.addVisionMeasurement(visionPose, timestamp);
   }
 
-  public double timeToReach(Pose2d pose) {
-    return Math.max(getPose().getTranslation().getDistance(pose.getTranslation()) / Constants.DrivetrainConstants.MAX_DRIVE_SPEED, 
-      getPose().getRotation().minus(pose.getRotation()).getRadians() / Constants.DrivetrainConstants.MAX_ANGULAR_SPEED);
+  public double getDistanceToPath(PathPlannerPath path) {
+    Pose2d pose = path.getStartingHolonomicPose().get();
+    if (!RobotContainer.isBlue()) pose = FlippingUtil.flipFieldPose(pose);
+    return pose.getTranslation().getDistance(getPose().getTranslation());
   }
  
   public Command homeCommand() {

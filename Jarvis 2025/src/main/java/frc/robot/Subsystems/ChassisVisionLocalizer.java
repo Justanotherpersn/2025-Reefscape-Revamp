@@ -67,8 +67,8 @@ public class ChassisVisionLocalizer extends SubsystemBase {
 
     private boolean shouldReject(PhotonTrackedTarget bestTarget) {
       return 
-           bestTarget.getPoseAmbiguity() > 0.05
-        || bestTarget.getBestCameraToTarget().getTranslation().getNorm() > 1.5
+           bestTarget.getPoseAmbiguity() > Constants.PhotonConstants.MAX_AMBIGUITY
+        || bestTarget.getBestCameraToTarget().getTranslation().getNorm() > Constants.PhotonConstants.MAX_DISTANCE
       ;
     }
 

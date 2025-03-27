@@ -19,7 +19,6 @@ import frc.robot.Util.Gains;
 
 /** Add your docs here. */
 public class Constants {
-    public static boolean allowTabSwitching = true;
     public static int LED_LENGTH = 10;
 
     public enum CAN_DEVICES {
@@ -44,6 +43,11 @@ public class Constants {
         private CAN_DEVICES(int id) {
             this.id = id;
         }
+    }
+
+    public static class DEBUG {
+        public static boolean PREVENT_TAB_SWITCHING = true;
+        public static boolean FORCE_UPDATE_POSE = true;
     }
 
     public static class GAINS {
@@ -108,8 +112,6 @@ public class Constants {
 
         //Tolerence for elevator height
         public static final double SETPOINT_RANGE = .25;
-        
-        public static final double LINEAR_SPEED = 0.24;
 
         public static final double[] PRESET_HEIGHTS = {
             1.07,
@@ -133,7 +135,6 @@ public class Constants {
             Rotation2d.fromDegrees(131),
         };
         public static final Rotation2d CORAL_INTAKE_ANGLE = Rotation2d.fromDegrees(-48);
-        public static final Rotation2d ANGULAR_SPEED = Rotation2d.fromDegrees(45);
         public static final Rotation2d TRAVEL_POSITION = Rotation2d.fromDegrees(-90);
         public static final Rotation2d CLIMB_POSITION = Rotation2d.fromDegrees(-110);
         /**Length from pivot axis to center of coral when loaded*/
@@ -150,14 +151,16 @@ public class Constants {
     }
 
     public static class ClimberConstants {
-        public static final Rotation2d MAX_ROTATION = Rotation2d.fromDegrees(170);
+        public static final Rotation2d MAX_ROTATION = Rotation2d.fromDegrees(135);
         public static final Rotation2d MIN_ROTATION = Rotation2d.fromDegrees(10);
         public static final Rotation2d SETPOINT_RANGE = Rotation2d.fromDegrees(1);
         public static final double GEARING = 9 * 5 * 4 * 4;
     }
 
     public static class PhotonConstants {
-        public final static double CAMS_PITCH = Math.toRadians(-31);
+        public static final double MAX_DISTANCE = 1.75;
+        public static final double MAX_AMBIGUITY = 0.05;
+        public static final double STANDARD_DEVIATION = 0.5; //Decrease to trust more
 
         public static final Transform3d[] ROBOT_TO_CAMERAS = {
             new Transform3d(
@@ -201,14 +204,13 @@ public class Constants {
     public static class NavigationConstants {
         public static final PathConstraints PATHING_CONSTRAINTS = new PathConstraints(
             DrivetrainConstants.MAX_DRIVE_SPEED * 3/5,
-            3.5,
+            2.5,
             Math.toRadians(540),
             Math.toRadians(720),
             12
         );
 
-        public static final double DESTINATION_TOLERANCE = 0.01;
-        public static final double SECONDARY_DESTINATION_TOLERANCE = 0.005;
+        public static final double PRIME_SCORE_RADIUS = 3;
 
         public static final String[] REEF_LOCATIONS = {
             "1L Lineup",
@@ -228,7 +230,5 @@ public class Constants {
             "SL Lineup",
             "SR Lineup"
         };
-
-        public static final double OPERATION_RADIUS = 0.5;
     }
 }

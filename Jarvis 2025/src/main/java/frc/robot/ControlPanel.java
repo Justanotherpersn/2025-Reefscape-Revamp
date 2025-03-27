@@ -34,16 +34,18 @@ import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.Elevator;
 import frc.robot.Subsystems.EndEffector;
 import frc.robot.Subsystems.Pivot;
+import frc.robot.Util.Elastic;
 
 public class ControlPanel {
     private static final Joystick controller = new Joystick(0);
     private static final Joystick controller2 = new Joystick(1);
 
-    private static final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Reef Locations");
+    private static final NetworkTable nTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/Control Panel");
 
     private static GenericEntry reefDisplay = nTable.getTopic("Reef Display").getGenericEntry();
     private static GenericEntry targetHeightEntry = nTable.getTopic("Level").getGenericEntry();
     private static GenericEntry targetPositionEntry = nTable.getTopic("Position").getGenericEntry();
+    private static GenericEntry climbModeEntry = nTable.getTopic("Climb Mode").getGenericEntry();
 
     private static Drivetrain drivetrain;
     private static Pivot pivot;
@@ -101,6 +103,7 @@ public class ControlPanel {
         
         targetHeightEntry.setInteger(ReefCycle.targetHeight);
         targetPositionEntry.setInteger(ReefCycle.targetPosition);
+        climbModeEntry.setBoolean(false);
 
         NetworkTableListener.createListener(targetHeightEntry.getTopic(), EnumSet.of(NetworkTableEvent.Kind.kValueAll), event -> {
             int value = (int)event.valueData.value.getInteger();
@@ -131,6 +134,8 @@ public class ControlPanel {
         if (climbMode == state) return;
         climbMode = state;
         pivot.climbModeCommand().schedule();
+        Elastic.selectTab("EE View Down");
+        climbModeEntry.setBoolean(true);
     }
 
     public static class ReefCycle {
@@ -168,7 +173,8 @@ public class ControlPanel {
                 target = PathPlannerPath.fromPathFile(depositing ? Constants.NavigationConstants.REEF_LOCATIONS[targetPosition] :  
                     Constants.NavigationConstants.CORAL_STATIONS[
                         Math.abs(drivetrain.getPose().getY() - 1.028) 
-                        < Math.abs(drivetrain.getPose().getY() - 7.000) ? 1 : 0
+                        < Math.abs(drivetrain.getPose().getY() - 7.000) ? 
+                            (RobotContainer.isBlue() ? 1 : 0) : (RobotContainer.isBlue() ? 0 : 1)
                     ]);
             } catch (FileVersionException | IOException | ParseException e) {
                 e.printStackTrace();

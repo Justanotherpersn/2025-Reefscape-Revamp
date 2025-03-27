@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -27,29 +28,24 @@ public class UniversalCommandFactory {
                     ControlPanel.ReefCycle.mutatingPathCommand(),
                     
                     new SequentialCommandGroup(
-                        new WaitCommand(0.2),
-                        new ParallelCommandGroup(
-                            elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION),
-                            pivot.setAngleCommand(Constants.PivotConstants.TRAVEL_POSITION)
+                        new ParallelDeadlineGroup(
+                            new WaitUntilCommand(() -> endEffector.coralPresent()),
+                            new SequentialCommandGroup(
+                                new WaitCommand(0.2),
+                                new ParallelCommandGroup(
+                                    elevator.moveCommand(Constants.ElevatorConstants.MIN_ELEVATOR_EXTENSION),
+                                    pivot.setAngleCommand(Constants.PivotConstants.TRAVEL_POSITION)
+                                )
+                            )
                         ),
-                        new ParallelCommandGroup(
-                            new SequentialCommandGroup(
-                                new WaitUntilCommand(() -> pivot.timeToReach(ControlPanel.ReefCycle.getTargetAngle()) 
-                                    > drivetrain.timeToReach(ControlPanel.ReefCycle.getLineupPath().getStartingHolonomicPose().get())),
-                                new DeferredCommand(() -> pivot.setAngleCommand(ControlPanel.ReefCycle.getTargetAngle()), Set.of(pivot))
-                            ),
-                            new SequentialCommandGroup(
-                                new WaitUntilCommand(() -> elevator.timeToReach(ControlPanel.ReefCycle.getTargetHeight()) 
-                                    > drivetrain.timeToReach(ControlPanel.ReefCycle.getLineupPath().getStartingHolonomicPose().get())),
+                        new SequentialCommandGroup(
+                            new WaitUntilCommand(() -> drivetrain.getDistanceToPath(ControlPanel.ReefCycle.getLineupPath()) < Constants.NavigationConstants.PRIME_SCORE_RADIUS),
+                            new ParallelCommandGroup(
+                                new DeferredCommand(() -> pivot.setAngleCommand(ControlPanel.ReefCycle.getTargetAngle()), Set.of(pivot)),
                                 new DeferredCommand(() -> elevator.moveCommand(ControlPanel.ReefCycle.getTargetHeight()), Set.of(elevator))
                             )
                         )
                     )
-                ),
-                new ProxyCommand(() -> 
-                    ControlPanel.ReefCycle.getTravelState() ? 
-                        new WaitUntilCommand(() -> false) :
-                        endEffector.moveCoralCommand(true)
                 )
             )
         );
