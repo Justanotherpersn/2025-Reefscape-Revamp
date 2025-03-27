@@ -46,8 +46,8 @@ public class Constants {
     }
 
     public static class DEBUG {
-        public static boolean PREVENT_TAB_SWITCHING = true;
-        public static boolean FORCE_UPDATE_POSE = true;
+        public static boolean PREVENT_TAB_SWITCHING = false;
+        public static boolean FORCE_UPDATE_POSE = false;
     }
 
     public static class GAINS {
@@ -136,7 +136,7 @@ public class Constants {
         };
         public static final Rotation2d CORAL_INTAKE_ANGLE = Rotation2d.fromDegrees(-48);
         public static final Rotation2d TRAVEL_POSITION = Rotation2d.fromDegrees(-90);
-        public static final Rotation2d CLIMB_POSITION = Rotation2d.fromDegrees(-110);
+        public static final Rotation2d CLIMB_POSITION = Rotation2d.fromDegrees(-120);
         /**Length from pivot axis to center of coral when loaded*/
         public static final double LENGTH = 1;
     }
@@ -158,9 +158,9 @@ public class Constants {
     }
 
     public static class PhotonConstants {
-        public static final double MAX_DISTANCE = 1.75;
+        public static final double MAX_DISTANCE = 1.5;
         public static final double MAX_AMBIGUITY = 0.05;
-        public static final double STANDARD_DEVIATION = 0.5; //Decrease to trust more
+        public static final double STANDARD_DEVIATION = 0.8; //Decrease to trust more
 
         public static final Transform3d[] ROBOT_TO_CAMERAS = {
             new Transform3d(
