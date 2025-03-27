@@ -163,20 +163,20 @@ public class Constants {
 
         public static final Transform3d[] ROBOT_TO_CAMERAS = {
             new Transform3d(
-                new Translation3d(0.351, 0.279, 0.242), 
-                new Rotation3d(0.037, -0.639, 0.071)
+                new Translation3d(0.36131825544983764, 0.2828967240769298, 0.24398308011415953), 
+                new Rotation3d(0.04297364217214592, -0.651388421457077, 0.05937144813225164)
             ),
             new Transform3d(
-                new Translation3d(0.378, -0.351, 0.187), 
-                new Rotation3d(-0.015, -0.472, -0.051)
+                new Translation3d(0.37158888338880347, -0.35179733777755445, 0.1897655874189626), 
+                new Rotation3d(-0.013738996804999229, -0.4724985726508548, -0.045998497869259296)
             ),
             new Transform3d(
-                new Translation3d(-0.335, 0.350, 0.223), 
-                new Rotation3d(0.015, -0.569, 3.055)
+                new Translation3d(-0.32640013519352523, 0.3448957075421277, 0.22699882408163932), 
+                new Rotation3d(0.019564276550408863, -0.5619005036195722, 3.0486914317085922)
             ),
             new Transform3d(
-                new Translation3d(-0.365, -0.235, 0.255), 
-                new Rotation3d(0.064, -0.663, -3.098)
+                new Translation3d(-0.36698280706318676, -0.23131990452158516, 0.2556158176288365), 
+                new Rotation3d(0.06141322240459643, -0.6644324625969564, -3.0962299059608647)
             )
         };
 
@@ -191,12 +191,13 @@ public class Constants {
 
         public static final Pose3d ROBOT_TO_CALIBRATION = new Pose3d(
             new Translation3d(
-                Units.inchesToMeters(44.75), 
-                Units.inchesToMeters(-0.05),
+                Units.inchesToMeters(-44.75), 
+                Units.inchesToMeters(0.05),
                 Units.inchesToMeters(35.875)
             ),
-            new Rotation3d(0, 0, Math.PI)
+            new Rotation3d(0, 0, 0)
         );
+        public static final int NUM_CALIBRATION_ENTRIES = 100;
     }
 
     public static class NavigationConstants {

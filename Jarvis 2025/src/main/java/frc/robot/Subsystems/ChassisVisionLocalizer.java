@@ -27,6 +27,7 @@ import frc.robot.Commands.Notifications;
 public class ChassisVisionLocalizer extends SubsystemBase {
   public boolean enabled = true;
   private int overrunCount = 0;
+  private int previousIndex = -1;
 
   private class PoseEntry {
     public final Pose2d pose;
@@ -44,6 +45,9 @@ public class ChassisVisionLocalizer extends SubsystemBase {
     private final PhotonPoseEstimator poseEstimator;
     private final Field2d field = new Field2d();
     private final GenericEntry trustEntry;
+
+    private double[] calibrationEntries = new double[7];
+    private int currentCalibrationEntry = 0;
     
     public NavCam(int index) {
       this.index = index;
@@ -74,16 +78,32 @@ public class ChassisVisionLocalizer extends SubsystemBase {
         if (r.hasTargets() && !shouldReject(r.getBestTarget())) {
           poses.add(new PoseEntry(poseEstimator.update(r).get().estimatedPose.toPose2d(), r.getTimestampSeconds()));
 
-          if (calibrationEntry.getDouble(-1) == index) {
+          if (calibrationEntry.getDouble(-1) == index && currentCalibrationEntry != Constants.PhotonConstants.NUM_CALIBRATION_ENTRIES) {
             Transform3d targetToCam = r.getBestTarget().getBestCameraToTarget().inverse();
             Pose3d robotToCam = Constants.PhotonConstants.ROBOT_TO_CALIBRATION.transformBy(targetToCam);
-            calibrationXEntry.setDouble(robotToCam.getX());
-            calibrationYEntry.setDouble(robotToCam.getY());
-            calibrationZEntry.setDouble(robotToCam.getZ());
-            calibrationRollEntry.setDouble(robotToCam.getRotation().getX());
-            calibrationPitchEntry.setDouble(robotToCam.getRotation().getY());
-            calibrationYawEntry.setDouble(robotToCam.getRotation().getZ());
-            calibrationAmbiguity.setDouble(r.getBestTarget().getPoseAmbiguity());
+
+            currentCalibrationEntry++;
+            calibrationEntriesEntry.setInteger(currentCalibrationEntry);
+
+            calibrationEntries[0] += robotToCam.getX();
+            calibrationEntries[1] += robotToCam.getY();
+            calibrationEntries[2] += robotToCam.getZ();
+            calibrationEntries[3] += robotToCam.getRotation().getX();
+            calibrationEntries[4] += robotToCam.getRotation().getY();
+            calibrationEntries[5] += robotToCam.getRotation().getZ();
+            calibrationEntries[6] += r.getBestTarget().getPoseAmbiguity();
+
+            if (currentCalibrationEntry == Constants.PhotonConstants.NUM_CALIBRATION_ENTRIES) {
+              for (int i = 0; i < 7; i++) calibrationEntries[i] /= Constants.PhotonConstants.NUM_CALIBRATION_ENTRIES;
+
+              calibrationXEntry.setDouble(calibrationEntries[0]);
+              calibrationYEntry.setDouble(calibrationEntries[1]);
+              calibrationZEntry.setDouble(calibrationEntries[2]);
+              calibrationRollEntry.setDouble(calibrationEntries[3]);
+              calibrationPitchEntry.setDouble(calibrationEntries[4]);
+              calibrationYawEntry.setDouble(calibrationEntries[5]);
+              calibrationAmbiguity.setDouble(calibrationEntries[6]);
+            }
           }
         }
       });
@@ -111,6 +131,7 @@ public class ChassisVisionLocalizer extends SubsystemBase {
   private final GenericEntry calibrationPitchEntry = nTable.getTopic("Cal Pitch").getGenericEntry();
   private final GenericEntry calibrationYawEntry = nTable.getTopic("Cal Yaw").getGenericEntry();
   private final GenericEntry calibrationAmbiguity = nTable.getTopic("Cal Ambiguity").getGenericEntry();
+  private final GenericEntry calibrationEntriesEntry = nTable.getTopic("Cal Entries").getGenericEntry();
 
   private NavCam[] navCams = {
     new NavCam(0),
@@ -124,7 +145,7 @@ public class ChassisVisionLocalizer extends SubsystemBase {
     PortForwarder.add(5800, "navCams23.local", 5800);
     enabledEntry.setBoolean(enabled);
 
-    calibrationEntry.setDouble(-1);
+    calibrationEntry.setInteger(-1);
     calibrationXEntry.setDouble(0);
     calibrationYEntry.setDouble(0);
     calibrationZEntry.setDouble(0);
@@ -132,8 +153,9 @@ public class ChassisVisionLocalizer extends SubsystemBase {
     calibrationPitchEntry.setDouble(0);
     calibrationYawEntry.setDouble(0);
     calibrationAmbiguity.setDouble(0);
+    calibrationEntriesEntry.setInteger(0);
   }
-
+  
   @Override
   public void periodic() {
     if (!enabled) return;
@@ -142,6 +164,13 @@ public class ChassisVisionLocalizer extends SubsystemBase {
       enabledEntry.setBoolean(false);
       Notifications.VISION_TIMER_EXCEEDED.sendImmediate();
     }
+
+    int currentIndex =(int)calibrationEntry.getInteger(-1);
+    if (previousIndex != currentIndex && currentIndex >= 0 && currentIndex <= 3) {
+      navCams[currentIndex].currentCalibrationEntry = 0;
+      for (int i = 0; i < 7; i++) navCams[currentIndex].calibrationEntries[i] = 0;
+    }
+    previousIndex = currentIndex;
 
     for (NavCam navCam : navCams) {
       navCam.getRobotPoses().forEach(pose -> {

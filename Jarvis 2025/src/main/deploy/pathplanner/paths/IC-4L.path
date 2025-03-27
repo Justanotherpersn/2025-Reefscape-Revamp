@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.672445928631657,
-        "y": 6.158156622099163
+        "x": 7.785375,
+        "y": 3.9859999999999998
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.181038557693249,
-        "y": 6.155678942996466
+        "x": 7.036830759758043,
+        "y": 4.005539090479202
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.615275451711297,
-        "y": 6.158156622099163
+        "x": 6.240282343199974,
+        "y": 3.88367204317356
       },
       "prevControl": {
-        "x": 7.180314844548041,
-        "y": 6.13081600631674
+        "x": 7.231434980195972,
+        "y": 3.871846005077638
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "4L Lineup Start"
     }
   ],
   "rotationTargets": [],
@@ -41,14 +41,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 180.0
+    "velocity": 1.0,
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Leave Paths",
+  "folder": "Starting Center",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }
