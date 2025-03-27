@@ -5,6 +5,7 @@
   "pathFolders": [
     "Leave Paths",
     "Lineup Paths",
+    "Starting Center",
     "Scoring To Station",
     "Starting Left",
     "Starting Right"
@@ -12,10 +13,11 @@
   "autoFolders": [
     "Leave Autos",
     "Left Autos",
+    "Center Autos",
     "Right Autos"
   ],
-  "defaultMaxVel": 1.0,
-  "defaultMaxAccel": 1.0,
+  "defaultMaxVel": 3.5,
+  "defaultMaxAccel": 4.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,
