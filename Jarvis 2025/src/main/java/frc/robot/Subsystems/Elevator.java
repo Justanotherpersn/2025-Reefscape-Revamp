@@ -106,7 +106,6 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command moveCommand(double targetPosition) {
-    System.out.println("move elevator");
     return new SequentialCommandGroup(
       new InstantCommand(() -> move(targetPosition)),
       new WaitUntilCommand(() -> Math.abs(elevator.getEncoder().getPosition() - targetPosition) < Constants.ElevatorConstants.SETPOINT_RANGE)

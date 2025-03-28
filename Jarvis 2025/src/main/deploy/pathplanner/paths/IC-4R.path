@@ -31,7 +31,20 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Move Elevator",
+      "waypointRelativePos": 0.564295807819124,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "Move Pivot",
+      "waypointRelativePos": 0.5708902496467251,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.5,
     "maxAcceleration": 2.5,

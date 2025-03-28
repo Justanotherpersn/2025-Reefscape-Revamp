@@ -83,7 +83,6 @@ public class Pivot extends SubsystemBase {
   }
 
   public Command setAngleCommand(Rotation2d angle) {
-    System.out.println("set angle");
     return new ParallelDeadlineGroup(
       new WaitUntilCommand(() -> Math.abs(getAngle().minus(angle).getRadians()) < Constants.PivotConstants.POSITION_TOLERANCE.getRadians()),
       new InstantCommand(() -> {

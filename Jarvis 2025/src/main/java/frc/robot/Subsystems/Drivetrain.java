@@ -67,6 +67,7 @@ public class Drivetrain extends SubsystemBase {
   public static Field2d field = new Field2d();
 
   public static boolean alignMode = false;
+  private PathPlannerPath currentLineupPath = null;
 
   public Drivetrain() {
     poseEstimator = new SwerveDrivePoseEstimator(
@@ -250,9 +251,15 @@ public class Drivetrain extends SubsystemBase {
     poseEstimator.addVisionMeasurement(visionPose, timestamp);
   }
 
+  public double getDistanceToCurrentPath() {
+    if (currentLineupPath == null) return 0;
+    return getDistanceToPath(currentLineupPath);
+  }
+
   public double getDistanceToPath(PathPlannerPath path) {
     Pose2d pose = path.getStartingHolonomicPose().get();
     if (!RobotContainer.isBlue()) pose = FlippingUtil.flipFieldPose(pose);
+    System.out.println("Pose: " + pose.getX() + ", " + pose.getY());
     return pose.getTranslation().getDistance(getPose().getTranslation());
   }
  
@@ -280,6 +287,7 @@ public class Drivetrain extends SubsystemBase {
       //   AutoBuilder.pathfindToPose(destination.getStartingHolonomicPose().get(), Constants.NavigationConstants.PATHING_CONSTRAINTS),
       //   new WaitUntilCommand(() -> getPose().getTranslation().getDistance(destination.getStartingHolonomicPose().get().getTranslation()) < Constants.NavigationConstants.SECONDARY_DESTINATION_TOLERANCE)
       // ),
+      new InstantCommand(() -> currentLineupPath = destination),
       AutoBuilder.pathfindThenFollowPath(destination, Constants.NavigationConstants.PATHING_CONSTRAINTS)
     );
   }

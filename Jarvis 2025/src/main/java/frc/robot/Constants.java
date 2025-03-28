@@ -160,24 +160,24 @@ public class Constants {
     public static class PhotonConstants {
         public static final double MAX_DISTANCE = 1.5;
         public static final double MAX_AMBIGUITY = 0.05;
-        public static final double STANDARD_DEVIATION = 0.8; //Decrease to trust more
+        public static final double STANDARD_DEVIATION = 0.5; //Decrease to trust more
 
         public static final Transform3d[] ROBOT_TO_CAMERAS = {
             new Transform3d(
-                new Translation3d(0.36131825544983764, 0.2828967240769298, 0.24398308011415953), 
-                new Rotation3d(0.04297364217214592, -0.651388421457077, 0.05937144813225164)
+                new Translation3d(0.3427920204264734, 0.2743797923096529, 0.2552700284612291), 
+                new Rotation3d(0.043313011402100504, -0.6286858552653907, 0.06756944691730396)
             ),
             new Transform3d(
-                new Translation3d(0.37158888338880347, -0.35179733777755445, 0.1897655874189626), 
-                new Rotation3d(-0.013738996804999229, -0.4724985726508548, -0.045998497869259296)
+                new Translation3d(0.36989407217844056, -0.34934358915182817, 0.1960746849609884), 
+                new Rotation3d(-0.009310973845960677, -0.46471606065446996, -0.049877760937597264)
             ),
             new Transform3d(
-                new Translation3d(-0.32640013519352523, 0.3448957075421277, 0.22699882408163932), 
-                new Rotation3d(0.019564276550408863, -0.5619005036195722, 3.0486914317085922)
+                new Translation3d(-0.3341210310485878, 0.26746260157618835, 0.2325700723726466), 
+                new Rotation3d(0.023193918482595763, -0.5565355951577495, 3.0599241251685845)
             ),
             new Transform3d(
-                new Translation3d(-0.36698280706318676, -0.23131990452158516, 0.2556158176288365), 
-                new Rotation3d(0.06141322240459643, -0.6644324625969564, -3.0962299059608647)
+                new Translation3d(-0.3531964431772765, -0.30941972352780843, 0.26445212888245784), 
+                new Rotation3d(0.061995396118376844, -0.6501071778295155, -3.0874453173905994)
             )
         };
 
