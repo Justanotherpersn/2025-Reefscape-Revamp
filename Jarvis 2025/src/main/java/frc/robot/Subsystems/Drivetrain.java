@@ -51,6 +51,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
+import frc.robot.ControlPanel;
 import frc.robot.RobotContainer;
 import frc.robot.Commands.Notifications;
 import frc.robot.Constants.ModuleConstants;
@@ -288,7 +289,8 @@ public class Drivetrain extends SubsystemBase {
       //   new WaitUntilCommand(() -> getPose().getTranslation().getDistance(destination.getStartingHolonomicPose().get().getTranslation()) < Constants.NavigationConstants.SECONDARY_DESTINATION_TOLERANCE)
       // ),
       new InstantCommand(() -> currentLineupPath = destination),
-      AutoBuilder.pathfindThenFollowPath(destination, Constants.NavigationConstants.PATHING_CONSTRAINTS)
+      AutoBuilder.pathfindThenFollowPath(destination, ControlPanel.ReefCycle.getTravelState() ? 
+        Constants.NavigationConstants.MANIPULATING_PATHING_CONSTRAINTS : Constants.NavigationConstants.TRAVEL_PATHING_CONSTRAINTS)
     );
   }
 }

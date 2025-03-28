@@ -203,7 +203,15 @@ public class Constants {
     }
 
     public static class NavigationConstants {
-        public static final PathConstraints PATHING_CONSTRAINTS = new PathConstraints(
+        public static final PathConstraints TRAVEL_PATHING_CONSTRAINTS = new PathConstraints(
+            DrivetrainConstants.MAX_DRIVE_SPEED * 4/5,
+            3.5,
+            Math.toRadians(540),
+            Math.toRadians(720),
+            12
+        );
+
+        public static final PathConstraints MANIPULATING_PATHING_CONSTRAINTS = new PathConstraints(
             DrivetrainConstants.MAX_DRIVE_SPEED * 3/5,
             2.5,
             Math.toRadians(540),

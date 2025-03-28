@@ -33,7 +33,7 @@ public class JoystickDrive extends Command {
     double ySpeed = xInputRight * multiplier;
 
     double xInputLeft = applyDeadband(controller.getRawAxis(0), Constants.DrivetrainConstants.DRIVE_TOLERANCE_PERCENT);
-    double rotationSpeed = -xInputLeft * Math.abs(xInputLeft) * Constants.DrivetrainConstants.MAX_ANGULAR_SPEED;
+    double rotationSpeed = -xInputLeft * Math.abs(xInputLeft) * Constants.DrivetrainConstants.MAX_ANGULAR_SPEED * (Drivetrain.alignMode ? Constants.DrivetrainConstants.ALIGN_CONTROL_MULTIPLIER : 1);
 
     drivetrain.drive(new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed), true);
   }
