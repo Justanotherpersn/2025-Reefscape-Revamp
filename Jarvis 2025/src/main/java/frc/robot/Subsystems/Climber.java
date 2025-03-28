@@ -82,7 +82,7 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (!innerLimit.get() && !previousLimit) climber.getEncoder().setPosition(Constants.ClimberConstants.MAX_ROTATION.getRotations());
+    //if (!innerLimit.get() && !previousLimit) climber.getEncoder().setPosition(Constants.ClimberConstants.MAX_ROTATION.getRotations());
     previousLimit = !innerLimit.get();
 
     innerSwitchEntry.setBoolean(previousLimit);

@@ -160,7 +160,7 @@ public class Constants {
     public static class PhotonConstants {
         public static final double MAX_DISTANCE = 1.5;
         public static final double MAX_AMBIGUITY = 0.05;
-        public static final double STANDARD_DEVIATION = 0.5; //Decrease to trust more
+        public static final double STANDARD_DEVIATION = 0.65; //Decrease to trust more
 
         public static final Transform3d[] ROBOT_TO_CAMERAS = {
             new Transform3d(
