@@ -1,0 +1,86 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.2618628131897403,
+        "y": 7.290477832201923
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.1005333811351643,
+        "y": 7.83511686721695
+      },
+      "isLocked": false,
+      "linkedName": "SL Lineup End"
+    },
+    {
+      "anchor": {
+        "x": 1.047066418857584,
+        "y": 7.120666363523123
+      },
+      "prevControl": {
+        "x": 0.20839585091216184,
+        "y": 6.576027328508097
+      },
+      "nextControl": {
+        "x": 1.6989772231352864,
+        "y": 7.544022189908559
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.5736774493803127,
+        "y": 7.51151048773921
+      },
+      "prevControl": {
+        "x": 1.1581399326934714,
+        "y": 7.241657269144338
+      },
+      "nextControl": {
+        "x": 2.0050410156878593,
+        "y": 7.791641263128089
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.2618628131897403,
+        "y": 7.290477832201923
+      },
+      "prevControl": {
+        "x": 1.5874006014121138,
+        "y": 7.553707763822401
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "SL Lineup End"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 126.0
+  },
+  "reversed": false,
+  "folder": "Lineup Paths",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 126.0
+  },
+  "useDefaultConstraints": true
+}

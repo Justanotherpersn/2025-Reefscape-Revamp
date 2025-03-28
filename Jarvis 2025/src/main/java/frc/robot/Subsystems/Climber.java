@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -73,12 +74,24 @@ public class Climber extends SubsystemBase {
     climberController.setReference(target.getRotations(), ControlType.kPosition);
   }
 
+  public void setVelocity(double speed) {
+    climberController.setReference(speed, ControlType.kVelocity);
+  }
+
   public Command climbCommand(Rotation2d target) {
     return new SequentialCommandGroup(
       new InstantCommand(() -> setPosition(target)),
       new WaitUntilCommand(() -> Math.abs(climber.getEncoder().getPosition() - target.getRotations()) < Constants.ClimberConstants.SETPOINT_RANGE.getRotations())
     ).finallyDo(() -> setPosition(Rotation2d.fromRotations(climber.getEncoder().getPosition())));
   }
+
+  // public Command climbCommand(double speed) {
+  //   return new RunCommand(() -> setVelocity(speed))
+  //     .finallyDo(() -> {
+  //       setVelocity(0);
+  //       setPosition(Rotation2d.fromRotations(climber.getEncoder().getPosition()));
+  //     });
+  // }
 
   @Override
   public void periodic() {

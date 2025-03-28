@@ -97,7 +97,7 @@ public class Constants {
     }
 
     public static class ElevatorConstants{
-        public static final double TOP_LIMIT_POSITION = Units.inchesToMeters(65.25);
+        public static final double TOP_LIMIT_POSITION =1.675;
         public static final double BOTTOM_LIMIT_POSITION = Units.inchesToMeters(42);
 
         public static final double MAX_ELEVATOR_EXTENSION = TOP_LIMIT_POSITION;
@@ -117,7 +117,7 @@ public class Constants {
             1.07,
             1.20,
             1.05,
-            TOP_LIMIT_POSITION
+            1.675
         };
 
         public static final double CORAL_INTAKE_HEIGHT = 1.13;
@@ -154,6 +154,7 @@ public class Constants {
         public static final Rotation2d MAX_ROTATION = Rotation2d.fromDegrees(135);
         public static final Rotation2d MIN_ROTATION = Rotation2d.fromDegrees(10);
         public static final Rotation2d SETPOINT_RANGE = Rotation2d.fromDegrees(1);
+        public static final double SPEED_RPM = 10;
         public static final double GEARING = 9 * 5 * 4 * 4;
     }
 
@@ -172,11 +173,11 @@ public class Constants {
                 new Rotation3d(-0.009310973845960677, -0.46471606065446996, -0.049877760937597264)
             ),
             new Transform3d(
-                new Translation3d(-0.3341210310485878, 0.26746260157618835, 0.2325700723726466), 
+                new Translation3d(-0.3341210310485878, 0.25044460157618835, 0.2325700723726466), 
                 new Rotation3d(0.023193918482595763, -0.5565355951577495, 3.0599241251685845)
             ),
             new Transform3d(
-                new Translation3d(-0.3531964431772765, -0.30941972352780843, 0.26445212888245784), 
+                new Translation3d(-0.3531964431772765, -0.32643772352780843, 0.26445212888245784), 
                 new Rotation3d(0.061995396118376844, -0.6501071778295155, -3.0874453173905994)
             )
         };
@@ -210,7 +211,7 @@ public class Constants {
             12
         );
 
-        public static final double PRIME_SCORE_RADIUS = 3;
+        public static final double PRIME_SCORE_RADIUS = 2.5;
 
         public static final String[] REEF_LOCATIONS = {
             "1L Lineup",
