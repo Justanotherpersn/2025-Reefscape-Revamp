@@ -203,7 +203,7 @@ public class Drivetrain extends SubsystemBase {
     MODULES.forAll(m -> m.periodicDebug());
     headingEntry.setDouble(getPose().getRotation().getDegrees());
     field.setRobotPose(getPose());
-    SmartDashboard.putData("Drivetrain/Robot Pose", field);
+    //SmartDashboard.putData("Drivetrain/Robot Pose", field);
   }
 
   /**
@@ -277,20 +277,5 @@ public class Drivetrain extends SubsystemBase {
     );
   }
 
-  public Command pathingCommand(PathPlannerPath destination) {
-    return new SequentialCommandGroup(
-      Notifications.PATH_SCHEDULED.send(),
-      // new ParallelRaceGroup(
-      //   AutoBuilder.pathfindToPose(destination.getStartingHolonomicPose().get(), Constants.NavigationConstants.PATHING_CONSTRAINTS),
-      //   new WaitUntilCommand(() -> getPose().getTranslation().getDistance(destination.getStartingHolonomicPose().get().getTranslation()) < Constants.NavigationConstants.DESTINATION_TOLERANCE)
-      // ),
-      // new ParallelRaceGroup(
-      //   AutoBuilder.pathfindToPose(destination.getStartingHolonomicPose().get(), Constants.NavigationConstants.PATHING_CONSTRAINTS),
-      //   new WaitUntilCommand(() -> getPose().getTranslation().getDistance(destination.getStartingHolonomicPose().get().getTranslation()) < Constants.NavigationConstants.SECONDARY_DESTINATION_TOLERANCE)
-      // ),
-      new InstantCommand(() -> currentLineupPath = destination),
-      AutoBuilder.pathfindThenFollowPath(destination, ControlPanel.ReefCycle.getTravelState() ? 
-        Constants.NavigationConstants.MANIPULATING_PATHING_CONSTRAINTS : Constants.NavigationConstants.TRAVEL_PATHING_CONSTRAINTS)
-    );
-  }
+
 }
